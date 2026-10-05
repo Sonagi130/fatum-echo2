@@ -6448,15 +6448,25 @@ if ("serviceWorker" in navigator){
     function tick(){
       var ctx = audioCtx(); if (!ctx) return;
       var t0 = ctx.currentTime;
+      /* 1) 低频"咯"——齿轮撞击 */
       var o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = "triangle";
-      o.frequency.setValueAtTime(2200, t0);
-      o.frequency.exponentialRampToValueAtTime(780, t0 + 0.022);
+      o.type = "square";
+      o.frequency.setValueAtTime(320, t0);
+      o.frequency.exponentialRampToValueAtTime(110, t0 + 0.038);
       g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(0.085, t0 + 0.003);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.032);
+      g.gain.exponentialRampToValueAtTime(0.115, t0 + 0.002);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.055);
       o.connect(g); g.connect(ctx.destination);
-      o.start(t0); o.stop(t0 + 0.042);
+      o.start(t0); o.stop(t0 + 0.06);
+      /* 2) 极短金属摩擦 */
+      var dur = 0.014, n = Math.ceil(ctx.sampleRate * dur);
+      var buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
+      for (var i = 0; i < n; i++){ var e = 1 - i / n; d[i] = (Math.random()*2-1) * e * e; }
+      var src = ctx.createBufferSource(); src.buffer = buf;
+      var bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 1900; bp.Q.value = 0.7;
+      var g2 = ctx.createGain(); g2.gain.value = 0.13;
+      src.connect(bp); bp.connect(g2); g2.connect(ctx.destination);
+      src.start(t0);
     }
 
     function renderCol(listEl, values){
