@@ -6241,6 +6241,7 @@ if ("serviceWorker" in navigator){
   };
 
   goHome();
+  if (typeof init === "function"){ try{ init().catch(function(){}); }catch(e){} }
   window.__goHome = goHome;
   window.__goChat = goChat;
   }
