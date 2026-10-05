@@ -2813,16 +2813,21 @@ function closeMenu(){
 refreshDays();
 if (backBtn) backBtn.addEventListener("click", openMenu);
 if (menuPanel){
-  // v4.1: this handler is disabled when body.has-home is set,
-  // so v4's own listener (registered later) owns all menu-item clicks.
+  // v4.2: normal handler, but Chat routes to goChat() in v4 home architecture.
   menuPanel.addEventListener("click", (e) => {
-    if (document.body.classList.contains("has-home") || document.body.classList.contains("chat-active")) return;
     const item = e.target.closest(".menu-item");
     if (!item) return;
-    if (item.dataset.menu === "chat") closeMenu();       // back to chat
-    else if (item.dataset.menu === "album") location.assign("album.html");  // album shell (wire your own backend)
+    if (item.dataset.menu === "chat"){
+      if (typeof window.__goChat === "function"){
+        e.stopImmediatePropagation();
+        window.__goChat();
+      } else {
+        closeMenu();
+      }
+    }
+    else if (item.dataset.menu === "album") location.assign("album.html");
     else if (item.dataset.menu === "room") openRoom();
-    else showToast("即将开放");                           // placeholder items
+    else showToast("即将开放");
   });
 }
 document.addEventListener("keydown", (e) => {
@@ -6212,22 +6217,6 @@ if ("serviceWorker" in navigator){
     });
   });
 
-  if (menuPanel){
-    menuPanel.addEventListener("click", (e) => {
-      const item = e.target.closest(".menu-item");
-      if (!item) return;
-      const m = item.dataset.menu;
-      if (m === "chat"){
-        e.stopImmediatePropagation();
-        goChat();
-      } else if (m === "album"){
-        location.assign("album.html");
-      } else if (m === "room"){
-        if (typeof openRoom === "function") openRoom();
-      }
-    }, true);
-  }
-
   const backBtn = document.getElementById("backBtn");
   if (backBtn){
     backBtn.addEventListener("click", (e) => {
@@ -6304,7 +6293,7 @@ if ("serviceWorker" in navigator){
     <span class="tab-lab">Home</span>
   </button>
   <button class="tab-btn" type="button" data-tab="diary">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     <span class="tab-lab">Diary</span>
   </button>
   <button class="tab-btn" type="button" data-tab="settings">
