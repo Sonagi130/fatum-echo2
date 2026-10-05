@@ -2154,9 +2154,9 @@ body.chat-active .login{ display: none !important; }
 .diary-page.open{ display: flex; }
 .diary-page::before{ content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none; }
 
-.diary-top{ position: relative; z-index: 2; padding: calc(24px + env(safe-area-inset-top)) 22px 6px; text-align: center; }
-.diary-title{ font-family:"Pinyon Script", var(--font-en), cursive; font-size: 40px; line-height: 1; color: var(--text); }
-.diary-sub{ font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint); margin-top: 6px; }
+.diary-top{ position: relative; z-index: 2; padding: calc(58px + env(safe-area-inset-top)) 22px 12px; text-align: center; }
+.diary-title{ font-family:"Pinyon Script", var(--font-en), cursive; font-size: 54px; line-height: 1; color: var(--text); }
+.diary-sub{ font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-faint); margin-top: 10px; }
 
 .picker{ position: relative; z-index: 2; flex: 1; display: flex; justify-content: center; align-items: center; gap: 4px; padding: 0 18px; min-height: 0; }
 .picker-col{
@@ -6436,6 +6436,29 @@ if ("serviceWorker" in navigator){
     var YEARS = []; for (var yy = now.getFullYear()-3; yy <= now.getFullYear()+7; yy++) YEARS.push(yy);
     var building = false;
 
+    /* ---- 咔哒音（Web Audio 合成） ---- */
+    var actx = null;
+    function audioCtx(){
+      try {
+        if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+        if (actx.state === "suspended") actx.resume();
+        return actx;
+      } catch(e){ return null; }
+    }
+    function tick(){
+      var ctx = audioCtx(); if (!ctx) return;
+      var t0 = ctx.currentTime;
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(2200, t0);
+      o.frequency.exponentialRampToValueAtTime(780, t0 + 0.022);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.085, t0 + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.032);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0 + 0.042);
+    }
+
     function renderCol(listEl, values){
       var h = "";
       for (var i=0;i<values.length;i++) h += '<div class="picker-item">' + values[i] + '</div>';
@@ -6472,7 +6495,10 @@ if ("serviceWorker" in navigator){
     }
     function settleCol(col, apply){
       var t = null;
+      col._last = -1;
       col.addEventListener("scroll", function(){
+        var i = Math.round(col.scrollTop / ITEM);
+        if (!building && col._last !== i){ col._last = i; tick(); }
         highlight(col);
         if (building) return;
         if (t) clearTimeout(t);
@@ -6510,6 +6536,7 @@ if ("serviceWorker" in navigator){
       detail.classList.remove("open");
       if (window.__setTab) window.__setTab("diary");
       updateBtn();
+      audioCtx();
       requestAnimationFrame(function(){ requestAnimationFrame(syncScroll); });
     }
     function closeDiary(){
