@@ -2326,6 +2326,16 @@ body.diary-l2 .tab-bar{ display: none !important; }
   background: var(--accent, #2F6F8F); opacity: .75;
 }
 
+
+.diary-deco{
+  position: absolute; left: 50%; top: 50%;
+  width: 120%; max-width: 580px;
+  transform: translate(-50%, -52%);
+  pointer-events: none; z-index: 1; opacity: .30;
+}
+.diary-deco img{ display: block; width: 100%; height: auto; }
+[data-theme="harbor"] .diary-deco{ opacity: .20; filter: brightness(0) invert(1); }
+
 </style>
 </head>
 <body>
@@ -6706,6 +6716,7 @@ if ("serviceWorker" in navigator){
 
 <!-- ═══════════════ Diary ═══════════════ -->
 <section class="diary-page" id="diaryPage" aria-label="Diary">
+  <div class="diary-deco" aria-hidden="true"><img src="diary-compass.png" alt=""></div>
   <div class="diary-top">
     <div class="diary-title">Diary</div>
     <div class="diary-sub">Days we kept</div>
