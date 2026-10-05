@@ -2140,6 +2140,161 @@ body.chat-active .login{ display: none !important; }
   max-width: 260px; margin: 0 auto;
 }
 
+
+/* ═══════════════ Diary ═══════════════ */
+:root{ --pick-item: 44px; }
+
+.diary-page{
+  position: fixed; inset: 0; z-index: 175;
+  display: none; flex-direction: column;
+  background: var(--bg); background-image: var(--wall-default);
+  background-size: cover; background-position: center;
+  overflow: hidden; color: var(--text);
+}
+.diary-page.open{ display: flex; }
+.diary-page::before{ content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none; }
+
+.diary-top{ position: relative; z-index: 2; padding: calc(24px + env(safe-area-inset-top)) 22px 6px; text-align: center; }
+.diary-title{ font-family:"Pinyon Script", var(--font-en), cursive; font-size: 40px; line-height: 1; color: var(--text); }
+.diary-sub{ font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint); margin-top: 6px; }
+
+.picker{ position: relative; z-index: 2; flex: 1; display: flex; justify-content: center; align-items: center; gap: 4px; padding: 0 18px; min-height: 0; }
+.picker-col{
+  flex: 1; max-width: 104px;
+  height: calc(var(--pick-item) * 5);
+  overflow-y: scroll; scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  position: relative; z-index: 1;
+}
+.picker-col::-webkit-scrollbar{ display: none; }
+.picker-list{ padding: calc(var(--pick-item) * 2) 0; }
+.picker-item{
+  height: var(--pick-item);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px; color: var(--text-faint);
+  scroll-snap-align: center;
+  transition: color .18s ease, font-size .18s ease, opacity .18s ease;
+  opacity: .5;
+}
+.picker-item.on{ color: var(--text); font-size: 25px; font-weight: 600; opacity: 1; }
+.picker-mask{
+  position: absolute; left: 18px; right: 18px; top: 50%;
+  transform: translateY(-50%); height: var(--pick-item);
+  border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline);
+  pointer-events: none; z-index: 3;
+}
+.sep{ position: relative; z-index: 2; font-size: 20px; color: var(--text-faint); opacity:.35; }
+
+.diary-actions{ position: relative; z-index: 2; padding: 8px 22px calc(74px + env(safe-area-inset-bottom)); }
+.diary-open-btn{
+  width: 100%; height: 50px; border: none; border-radius: 16px;
+  font: inherit; font-size: 15px; font-weight: 600;
+  background: var(--accent, #2F6F8F); color: #fff;
+  cursor: pointer; transition: opacity .18s ease, transform .12s ease;
+}
+.diary-open-btn:active{ transform: scale(.98); }
+.diary-open-btn:disabled{ opacity: .28; background: var(--text-faint); }
+
+/* Diary 二级页 */
+.diary-detail{
+  position: fixed; inset: 0; z-index: 176;
+  display: none; flex-direction: column;
+  background: var(--bg); background-image: var(--wall-default);
+  background-size: cover; background-position: center;
+  overflow: hidden; color: var(--text);
+}
+.diary-detail.open{ display: flex; }
+.diary-detail::before{ content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none; }
+.dd-top{
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 10px;
+  padding: calc(14px + env(safe-area-inset-top)) 16px 10px;
+}
+.dd-back{
+  width: 38px; height: 38px; flex-shrink: 0;
+  border: none; border-radius: 12px; background: var(--row-press);
+  color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.dd-back svg{ width: 19px; height: 19px; }
+.dd-date{ flex: 1; font-size: 16px; font-weight: 600; letter-spacing: .04em; }
+.dd-export{
+  height: 34px; padding: 0 14px; border: none; border-radius: 11px;
+  background: var(--row-press); color: var(--text-faint);
+  font: inherit; font-size: 12px; cursor: pointer;
+}
+.dd-scroll{ position: relative; z-index: 2; flex: 1; overflow-y: auto; padding: 6px 18px calc(96px + env(safe-area-inset-bottom)); }
+.dd-add{
+  position: fixed; right: 20px; bottom: calc(22px + env(safe-area-inset-bottom));
+  width: 54px; height: 54px; border-radius: 50%; border: none;
+  background: var(--accent, #2F6F8F); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 22px rgba(0,0,0,.28); z-index: 3; cursor: pointer;
+}
+.dd-add svg{ width: 24px; height: 24px; }
+
+/* 时间轴 */
+.timeline{ position: relative; padding-left: 22px; }
+.timeline::before{
+  content:""; position: absolute; left: 4px; top: 6px; bottom: 6px;
+  width: 1px; background: var(--hairline);
+}
+.tl-node{ position: relative; margin-bottom: 20px; }
+.tl-node::before{
+  content:""; position: absolute; left: -22px; top: 7px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent, #2F6F8F); box-shadow: 0 0 0 3px var(--bg);
+}
+.tl-node[data-by="human"]::before{ background: var(--text-faint); }
+.tl-time{ font-size: 11px; letter-spacing: .06em; color: var(--text-faint); margin-bottom: 6px; }
+.tl-card{
+  background: var(--card, rgba(255,255,255,.06));
+  border: 1px solid var(--hairline);
+  border-radius: 14px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.65; color: var(--text);
+  white-space: pre-wrap; word-break: break-word;
+}
+.tl-empty{ text-align: center; color: var(--text-faint); font-size: 13px; padding: 60px 0; }
+
+/* 写入面板 */
+.diary-editor{
+  position: fixed; inset: 0; z-index: 200;
+  display: none; align-items: flex-end; justify-content: center;
+  background: rgba(0,0,0,.42); backdrop-filter: blur(3px);
+}
+.diary-editor.open{ display: flex; }
+.de-sheet{
+  width: 100%; max-width: 520px;
+  background: var(--bg); border-radius: 22px 22px 0 0;
+  padding: 16px 18px calc(20px + env(safe-area-inset-bottom));
+  color: var(--text);
+}
+.de-top{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.de-title{ font-size: 14px; font-weight: 600; }
+.de-close{ width: 30px; height: 30px; border: none; border-radius: 9px; background: var(--row-press); color: var(--text); font-size: 17px; cursor: pointer; }
+.de-time{
+  width: 100%; box-sizing: border-box; height: 44px; padding: 0 14px;
+  border: 1px solid var(--hairline); border-radius: 12px;
+  background: transparent; color: var(--text); font: inherit; font-size: 15px; margin-bottom: 10px;
+}
+.de-text{
+  width: 100%; box-sizing: border-box; min-height: 130px; padding: 12px 14px;
+  border: 1px solid var(--hairline); border-radius: 12px;
+  background: transparent; color: var(--text); font: inherit; font-size: 14px; line-height: 1.6;
+  resize: none; margin-bottom: 12px;
+}
+.de-save{
+  width: 100%; height: 48px; border: none; border-radius: 14px;
+  background: var(--accent, #2F6F8F); color: #fff;
+  font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+
+/* 状态类 */
+body.diary-l1 .menu-panel{ display: none !important; }
+body.diary-l1 .app{ display: none !important; }
+body.diary-l2 .menu-panel{ display: none !important; }
+body.diary-l2 .app{ display: none !important; }
+body.diary-l2 .tab-bar{ display: none !important; }
+
 </style>
 </head>
 <body>
@@ -2434,11 +2589,6 @@ body.chat-active .login{ display: none !important; }
     <div class="room-scroll">
       <div class="room-home" id="roomHome">
         <div class="room-grid">
-          <button class="room-card" type="button" data-room-card="diary">
-            <span class="room-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-            <span class="room-card-name">日记</span>
-            <span class="room-card-sub">Write what matters.</span>
-          </button>
           <button class="room-card" type="button" data-room-card="tools">
             <span class="room-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.1 2.1-2.4-2.4z"/></svg></span>
             <span class="room-card-name">MCP工具箱</span>
@@ -2454,14 +2604,6 @@ body.chat-active .login{ display: none !important; }
             <span class="room-card-name">留言板</span>
             <span class="room-card-sub">Words that stay.</span>
           </button>
-        </div>
-      </div>
-      <div class="room-subpage" id="roomDiary">
-        <div class="room-subhead">日记</div>
-        <textarea class="diary-input" id="diaryInput" placeholder="写点什么……"></textarea>
-        <button class="diary-submit" id="diarySubmit" type="button">保存</button>
-        <div class="diary-list" id="diaryList">
-          <div class="room-empty">还没有日记，写第一条吧。</div>
         </div>
       </div>
       <div class="room-subpage" id="roomTools">
@@ -2881,47 +3023,6 @@ if(roomPanel){
     }
   });
 }
-/* diary: localStorage persistence */
-(function(){
-  var DKEY = "fatum_diary";
-  var diInput = document.getElementById("diaryInput");
-  var diList = document.getElementById("diaryList");
-  var diBtn = document.getElementById("diarySubmit");
-  function loadDiary(){
-    try { return JSON.parse(localStorage.getItem(DKEY) || "[]"); } catch(_) { return []; }
-  }
-  function saveDiary(arr){
-    try { localStorage.setItem(DKEY, JSON.stringify(arr)); } catch(_){}
-  }
-  function escHtml(s){
-    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
-  function renderDiary(){
-    var entries = loadDiary();
-    if(!entries.length){
-      if(diList) diList.innerHTML = '<div class="room-empty">还没有日记，写第一条吧。</div>';
-      return;
-    }
-    if(diList) diList.innerHTML = entries.map(function(e){
-      return '<div class="diary-entry"><div class="diary-date">' + e.ts + '</div><div class="diary-body">' + escHtml(e.text) + '</div></div>';
-    }).join("");
-  }
-  if(diBtn){
-    diBtn.addEventListener("click", function(){
-      var t = diInput.value.trim();
-      if(!t) return;
-      var now = new Date();
-      var ts = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0") + " " + String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0");
-      var entries = loadDiary();
-      entries.unshift({ ts: ts, text: t });
-      saveDiary(entries);
-      diInput.value = "";
-      renderDiary();
-      showToast("已保存");
-    });
-  }
-  if(diList) renderDiary();
-})();
 /* tool toggles */
 document.querySelectorAll(".tool-toggle").forEach(function(btn){
   btn.addEventListener("click", function(){ btn.classList.toggle("on"); });
@@ -6187,6 +6288,7 @@ if ("serviceWorker" in navigator){
     setTab(name);
   }
   function goHome(){
+    if (window.__closeDiary) window.__closeDiary();
     closePh();
     body.classList.remove("chat-active");
     body.classList.add("has-home");
@@ -6200,6 +6302,7 @@ if ("serviceWorker" in navigator){
     setTab("home");
   }
   function goChat(){
+    if (window.__closeDiary) window.__closeDiary();
     closePh();
     body.classList.add("chat-active");
     body.classList.remove("has-home");
@@ -6215,6 +6318,7 @@ if ("serviceWorker" in navigator){
     btn.addEventListener("click", () => {
       const t = btn.dataset.tab;
       if (t === "home") goHome();
+      else if (t === "diary" && window.__openDiary) window.__openDiary();
       else openPh(t);
     });
   });
@@ -6243,6 +6347,7 @@ if ("serviceWorker" in navigator){
 
   goHome();
   if (typeof init === "function"){ try{ init().catch(function(){}); }catch(e){} }
+  window.__setTab = setTab;
   window.__goHome = goHome;
   window.__goChat = goChat;
   }
@@ -6251,6 +6356,214 @@ if ("serviceWorker" in navigator){
   } else {
     __v4init();
   }
+})();
+
+
+/* ═══════════════════ Diary ═══════════════════ */
+(function(){
+  function boot(){
+    var DKEY = "fatum_diary_v1";
+    var ITEM = 44;
+    var remote = {};
+    var local = {};
+    try { local = JSON.parse(localStorage.getItem(DKEY) || "{}") || {}; } catch(e){ local = {}; }
+
+    function saveLocal(){ try { localStorage.setItem(DKEY, JSON.stringify(local)); } catch(e){} }
+    function pad(n){ return String(n).padStart(2, "0"); }
+    function key(y,m,d){ return y + "-" + pad(m) + "-" + pad(d); }
+    function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
+    function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    function entriesOf(y,m,d){
+      var k = key(y,m,d);
+      var a = [].concat(remote[k] || [], local[k] || []);
+      a.sort(function(x,y2){ return String(x.t||"").localeCompare(String(y2.t||"")); });
+      return a.reverse();
+    }
+    function hasDate(y,m,d){ var k = key(y,m,d); return !!(remote[k] || local[k]); }
+    function mergedAll(){
+      var out = {};
+      Object.keys(remote).forEach(function(k){ out[k] = (out[k]||[]).concat(remote[k]); });
+      Object.keys(local).forEach(function(k){ out[k] = (out[k]||[]).concat(local[k]); });
+      Object.keys(out).forEach(function(k){ out[k].sort(function(a,b){ return String(a.t||"").localeCompare(String(b.t||"")); }); });
+      return out;
+    }
+
+    var page = document.getElementById("diaryPage");
+    var detail = document.getElementById("diaryDetail");
+    var editor = document.getElementById("diaryEditor");
+    var openBtn = document.getElementById("diaryOpenBtn");
+    var listY = document.getElementById("pickY");
+    var listM = document.getElementById("pickM");
+    var listD = document.getElementById("pickD");
+    var colY = document.querySelector('.picker-col[data-col="y"]');
+    var colM = document.querySelector('.picker-col[data-col="m"]');
+    var colD = document.querySelector('.picker-col[data-col="d"]');
+    if (!page || !colY) return;
+
+    var now = new Date();
+    var selY = now.getFullYear(), selM = now.getMonth()+1, selD = now.getDate();
+    var YEARS = []; for (var yy = now.getFullYear()-3; yy <= now.getFullYear()+7; yy++) YEARS.push(yy);
+    var building = false;
+
+    function renderCol(listEl, values){
+      var h = "";
+      for (var i=0;i<values.length;i++) h += '<div class="picker-item">' + values[i] + '</div>';
+      listEl.innerHTML = h;
+    }
+    function setIdx(col, i, smooth){
+      building = true;
+      col.scrollTo({ top: i*ITEM, behavior: smooth ? "smooth" : "auto" });
+      setTimeout(function(){ highlight(col); building = false; }, smooth ? 260 : 0);
+    }
+    function highlight(col){
+      var items = col.querySelectorAll(".picker-item");
+      var idx = Math.round(col.scrollTop / ITEM);
+      if (idx < 0) idx = 0;
+      if (idx > items.length-1) idx = items.length-1;
+      for (var i=0;i<items.length;i++) items[i].classList.toggle("on", i === idx);
+    }
+    function idxOf(col){
+      var items = col.querySelectorAll(".picker-item");
+      var i = Math.round(col.scrollTop / ITEM);
+      if (i < 0) i = 0; if (i > items.length-1) i = items.length-1;
+      return i;
+    }
+
+    function buildDays(keepDay){
+      var n = daysInMonth(selY, selM);
+      var vals = []; for (var i=1;i<=n;i++) vals.push(i);
+      renderCol(listD, vals);
+      if (selD > n) selD = n;
+      setIdx(colD, selD-1, false);
+    }
+    function updateBtn(){
+      openBtn.disabled = !hasDate(selY, selM, selD);
+    }
+    function settleCol(col, apply){
+      var t = null;
+      col.addEventListener("scroll", function(){
+        highlight(col);
+        if (building) return;
+        if (t) clearTimeout(t);
+        t = setTimeout(function(){ apply(idxOf(col)); }, 130);
+      }, { passive: true });
+    }
+
+    renderCol(listY, YEARS);
+    renderCol(listM, [1,2,3,4,5,6,7,8,9,10,11,12]);
+    buildDays();
+    setIdx(colY, YEARS.indexOf(selY), false);
+    setIdx(colM, selM-1, false);
+    highlight(colY); highlight(colM); highlight(colD);
+    updateBtn();
+
+    settleCol(colY, function(i){ if (building) return; selY = YEARS[i]; buildDays(); updateBtn(); });
+    settleCol(colM, function(i){ if (building) return; selM = i+1; buildDays(); updateBtn(); });
+    settleCol(colD, function(i){ if (building) return; selD = i+1; updateBtn(); });
+
+    /* ---- open / close ---- */
+    function openDiary(){
+      document.body.classList.remove("has-home","chat-active","diary-l2");
+      document.body.classList.add("diary-l1");
+      page.classList.add("open");
+      detail.classList.remove("open");
+      if (window.__setTab) window.__setTab("diary");
+      updateBtn();
+    }
+    function closeDiary(){
+      page.classList.remove("open");
+      detail.classList.remove("open");
+      document.body.classList.remove("diary-l1","diary-l2");
+    }
+    window.__openDiary = openDiary;
+    window.__closeDiary = closeDiary;
+
+    /* ---- detail ---- */
+    var ddDate = document.getElementById("ddDate");
+    var ddTimeline = document.getElementById("ddTimeline");
+    var selKey = "";
+
+    function renderTimeline(){
+      var list = entriesOf(selY, selM, selD);
+      ddDate.textContent = selY + "/" + pad(selM) + "/" + pad(selD);
+      if (!list.length){
+        ddTimeline.innerHTML = '<div class="tl-empty">这天还是空的。</div>';
+        return;
+      }
+      ddTimeline.innerHTML = list.map(function(e){
+        return '<div class="tl-node" data-by="' + (e.by === "ai" ? "ai" : "human") + '">'
+          + '<div class="tl-time">' + esc(e.t || "") + (e.by === "ai" ? " · 顾淮" : "") + '</div>'
+          + '<div class="tl-card">' + esc(e.text || "") + '</div>'
+          + '</div>';
+      }).join("");
+    }
+    function openDetail(){
+      selKey = key(selY, selM, selD);
+      renderTimeline();
+      detail.classList.add("open");
+      document.body.classList.add("diary-l2");
+      var sc = document.querySelector(".dd-scroll");
+      if (sc) sc.scrollTop = 0;
+    }
+    document.getElementById("diaryOpenBtn").addEventListener("click", function(){
+      if (openBtn.disabled) return;
+      openDetail();
+    });
+    document.getElementById("ddBack").addEventListener("click", function(){
+      detail.classList.remove("open");
+      document.body.classList.remove("diary-l2");
+      updateBtn();
+    });
+
+    /* ---- editor ---- */
+    var deTime = document.getElementById("deTime");
+    var deText = document.getElementById("deText");
+    function openEditor(){
+      var n2 = new Date();
+      deTime.value = pad(n2.getHours()) + ":" + pad(n2.getMinutes());
+      deText.value = "";
+      editor.classList.add("open");
+      setTimeout(function(){ deText.focus(); }, 120);
+    }
+    document.getElementById("ddAdd").addEventListener("click", openEditor);
+    document.getElementById("deClose").addEventListener("click", function(){ editor.classList.remove("open"); });
+    editor.addEventListener("click", function(e){ if (e.target === editor) editor.classList.remove("open"); });
+    document.getElementById("deSave").addEventListener("click", function(){
+      var txt = deText.value.trim();
+      if (!txt) return;
+      var k = key(selY, selM, selD);
+      if (!local[k]) local[k] = [];
+      local[k].push({ t: deTime.value || "00:00", by: "human", text: txt });
+      saveLocal();
+      editor.classList.remove("open");
+      renderTimeline();
+      updateBtn();
+      if (window.showToast) window.showToast("已保存");
+    });
+
+    /* ---- export ---- */
+    document.getElementById("ddExport").addEventListener("click", function(){
+      var data = mergedAll();
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      var d2 = new Date();
+      a.download = "fatum-diary-" + d2.getFullYear() + pad(d2.getMonth()+1) + pad(d2.getDate()) + "-" + pad(d2.getHours()) + pad(d2.getMinutes()) + ".json";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function(){ a.remove(); }, 500);
+      if (window.showToast) window.showToast("已导出到下载");
+    });
+
+    /* ---- load remote diary.json ---- */
+    fetch("./diary.json", { cache: "no-store" })
+      .then(function(r){ return r.ok ? r.json() : {}; })
+      .then(function(j){ remote = j || {}; updateBtn(); if (detail.classList.contains("open")) renderTimeline(); })
+      .catch(function(){});
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
 })();
 
 </script>
@@ -6310,6 +6623,54 @@ if ("serviceWorker" in navigator){
     <span class="tab-lab">Settings</span>
   </button>
 </nav>
+
+
+<!-- ═══════════════ Diary ═══════════════ -->
+<section class="diary-page" id="diaryPage" aria-label="Diary">
+  <div class="diary-top">
+    <div class="diary-title">Diary</div>
+    <div class="diary-sub">Days we kept</div>
+  </div>
+  <div class="picker" id="diaryPicker">
+    <div class="picker-col" data-col="y"><div class="picker-list" id="pickY"></div></div>
+    <div class="sep">丨</div>
+    <div class="picker-col" data-col="m"><div class="picker-list" id="pickM"></div></div>
+    <div class="sep">丨</div>
+    <div class="picker-col" data-col="d"><div class="picker-list" id="pickD"></div></div>
+    <div class="picker-mask"></div>
+  </div>
+  <div class="diary-actions">
+    <button class="diary-open-btn" id="diaryOpenBtn" type="button" disabled>阅览日记</button>
+  </div>
+</section>
+
+<section class="diary-detail" id="diaryDetail" aria-label="Diary timeline">
+  <div class="dd-top">
+    <button class="dd-back" id="ddBack" type="button" aria-label="返回">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="dd-date" id="ddDate">—</div>
+    <button class="dd-export" id="ddExport" type="button">导出</button>
+  </div>
+  <div class="dd-scroll">
+    <div class="timeline" id="ddTimeline"></div>
+  </div>
+  <button class="dd-add" id="ddAdd" type="button" aria-label="写日记">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+</section>
+
+<div class="diary-editor" id="diaryEditor">
+  <div class="de-sheet">
+    <div class="de-top">
+      <span class="de-title" id="deTitle">写日记</span>
+      <button class="de-close" id="deClose" type="button">&times;</button>
+    </div>
+    <input type="time" class="de-time" id="deTime">
+    <textarea class="de-text" id="deText" placeholder="写点什么……"></textarea>
+    <button class="de-save" id="deSave" type="button">保存</button>
+  </div>
+</div>
 
 </body>
 </html>
