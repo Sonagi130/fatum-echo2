@@ -6462,6 +6462,16 @@ if ("serviceWorker" in navigator){
     settleCol(colD, function(i){ if (building) return; selD = i+1; updateBtn(); });
 
     /* ---- open / close ---- */
+    function syncScroll(){
+      building = true;
+      var n = daysInMonth(selY, selM);
+      if (selD > n) selD = n;
+      colY.scrollTop = YEARS.indexOf(selY) * ITEM;
+      colM.scrollTop = (selM-1) * ITEM;
+      colD.scrollTop = (selD-1) * ITEM;
+      highlight(colY); highlight(colM); highlight(colD);
+      setTimeout(function(){ building = false; }, 90);
+    }
     function openDiary(){
       document.body.classList.remove("has-home","chat-active","diary-l2");
       document.body.classList.add("diary-l1");
@@ -6469,6 +6479,7 @@ if ("serviceWorker" in navigator){
       detail.classList.remove("open");
       if (window.__setTab) window.__setTab("diary");
       updateBtn();
+      requestAnimationFrame(function(){ requestAnimationFrame(syncScroll); });
     }
     function closeDiary(){
       page.classList.remove("open");
