@@ -1179,6 +1179,190 @@
     .profile-scroll{ gap:22px; }
   }
 
+  /* ── Room panel ── */
+  .room-panel{
+    position: fixed; inset: 0; z-index: 195;
+    pointer-events: none; opacity: 0;
+    transition: opacity .28s ease;
+  }
+  .room-panel.open{ opacity: 1; pointer-events: auto; }
+  .room-page{
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    background-color: var(--bg);
+    background-image: var(--wall-default);
+    background-size: cover; background-position: center;
+    overflow: hidden;
+  }
+  .room-page::before{
+    content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none;
+  }
+  .room-topbar{
+    position: relative; z-index:1;
+    flex: 0 0 auto;
+    display:flex; align-items:center; gap:10px;
+    height: calc(56px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) var(--side-pad) 0;
+  }
+  .room-back{
+    width:40px; height:40px; flex:none;
+    border:0; border-radius:50%; padding:0; margin-left:-6px;
+    background: transparent; color: var(--text);
+    display:grid; place-items:center; cursor:pointer;
+    transition: transform .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .room-back:active{ transform: scale(.9); }
+  .room-back svg{ width:24px; height:24px; display:block; }
+  .room-title{
+    font-family: var(--font-cn);
+    font-size: clamp(16px, 4vw, 20px);
+    color: var(--text);
+    letter-spacing: .02em;
+  }
+  .room-scroll{
+    position: relative; z-index:1;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 20px var(--side-pad) calc(30px + env(safe-area-inset-bottom));
+  }
+  .room-scroll::-webkit-scrollbar{ width:0; height:0; }
+  .room-home{ display: flex; flex-direction: column; gap: 4px; }
+  .room-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(10px, 3vw, 16px);
+  }
+  .room-card{
+    background: var(--card-bg);
+    border: 1px solid var(--card-line);
+    border-radius: clamp(14px, 2.5vw, 20px);
+    box-shadow: var(--card-shadow);
+    padding: clamp(16px, 4vw, 24px) clamp(14px, 3.5vw, 20px);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    gap: clamp(8px, 2vw, 12px);
+    transition: transform .18s var(--ease-soft);
+    min-height: clamp(90px, 22vw, 130px);
+    text-align: left;
+    width: 100%;
+    font: inherit;
+    color: var(--text);
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .room-card:active{ transform: scale(.97); }
+  .room-card-ic{
+    width: clamp(28px, 7vw, 36px); height: clamp(28px, 7vw, 36px);
+    color: var(--accent);
+  }
+  .room-card-ic svg{ width:100%; height:100%; }
+  .room-card-name{
+    font-family: var(--font-cn);
+    font-size: clamp(14px, 3.5vw, 17px);
+    font-weight: 600;
+  }
+  .room-card-sub{
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: var(--text-faint);
+    line-height: 1.5;
+    font-family: var(--font-en);
+  }
+  .room-subpage{ display: none; flex-direction: column; gap: 16px; }
+  .room-subpage.active{ display: flex; }
+  .room-subhead{
+    font-family: var(--font-cn);
+    font-size: clamp(15px, 3.5vw, 18px);
+    font-weight: 600;
+    color: var(--text);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--card-line);
+  }
+  .room-empty{
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 13px;
+    padding: 40px 0;
+    line-height: 1.6;
+  }
+  .diary-list{ display: flex; flex-direction: column; gap: 12px; }
+  .diary-entry{
+    background: var(--card-bg);
+    border: 1px solid var(--card-line);
+    border-radius: clamp(12px, 2vw, 16px);
+    padding: 14px 16px;
+  }
+  .diary-date{
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+    font-family: var(--font-en);
+  }
+  .diary-body{
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.65;
+    white-space: pre-wrap;
+  }
+  .diary-input{
+    width: 100%;
+    min-height: 100px;
+    background: var(--field-bg);
+    border: 1px solid var(--field-line);
+    border-radius: clamp(12px, 2vw, 16px);
+    padding: 12px 14px;
+    font: inherit;
+    font-size: 13px;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+  }
+  .diary-input:focus{ border-color: var(--accent); }
+  .diary-submit{
+    align-self: flex-end;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 20px;
+    background: var(--accent);
+    color: var(--accent-fg);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .diary-submit:active{ transform: scale(.95); }
+  .tool-row{
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--card-line);
+  }
+  .tool-row:last-child{ border-bottom: none; }
+  .tool-info{ display: flex; flex-direction: column; gap: 3px; }
+  .tool-name{ font-size: 14px; color: var(--text); }
+  .tool-desc{ font-size: 11px; color: var(--text-faint); }
+  .tool-toggle{
+    width: 44px; height: 26px;
+    border: none; border-radius: 13px;
+    background: var(--slider-track);
+    position: relative;
+    cursor: pointer;
+    transition: background .2s ease;
+    flex: none;
+  }
+  .tool-toggle.on{ background: var(--accent); }
+  .tool-toggle::after{
+    content: "";
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--seg-thumb);
+    box-shadow: var(--seg-thumb-shadow);
+    transition: transform .2s var(--ease-soft);
+  }
+  .tool-toggle.on::after{ transform: translateX(18px); }
+
   /* ── Menu (hub / home page · 从聊天页左箭头进入) ── */
   .menu-panel{
     position: fixed; inset: 0; z-index: 190;
@@ -2106,6 +2290,80 @@
   </div>
 </div>
 
+<!-- ── Room panel (Our quiet place) ── -->
+<div class="room-panel hidden" id="roomPanel" role="dialog" aria-modal="true" aria-label="Room">
+  <div class="room-page">
+    <div class="room-topbar">
+      <button class="room-back" id="roomBack" type="button" aria-label="返回">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <span class="room-title" id="roomTitle">Room</span>
+    </div>
+    <div class="room-scroll">
+      <div class="room-home" id="roomHome">
+        <div class="room-grid">
+          <button class="room-card" type="button" data-room-card="diary">
+            <span class="room-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+            <span class="room-card-name">日记</span>
+            <span class="room-card-sub">Write what matters.</span>
+          </button>
+          <button class="room-card" type="button" data-room-card="tools">
+            <span class="room-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.1 2.1-2.4-2.4z"/></svg></span>
+            <span class="room-card-name">MCP工具箱</span>
+            <span class="room-card-sub">Tools at hand.</span>
+          </button>
+          <button class="room-card" type="button" data-room-card="music">
+            <span class="room-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+            <span class="room-card-name">一起听</span>
+            <span class="room-card-sub">Listen together.</span>
+          </button>
+          <button class="room-card" type="button" data-room-card="board">
+            <span class="room-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="room-card-name">留言板</span>
+            <span class="room-card-sub">Words that stay.</span>
+          </button>
+        </div>
+      </div>
+      <div class="room-subpage" id="roomDiary">
+        <div class="room-subhead">日记</div>
+        <textarea class="diary-input" id="diaryInput" placeholder="写点什么……"></textarea>
+        <button class="diary-submit" id="diarySubmit" type="button">保存</button>
+        <div class="diary-list" id="diaryList">
+          <div class="room-empty">还没有日记，写第一条吧。</div>
+        </div>
+      </div>
+      <div class="room-subpage" id="roomTools">
+        <div class="room-subhead">MCP工具箱</div>
+        <div class="tool-row">
+          <div class="tool-info"><span class="tool-name">天气</span><span class="tool-desc">输入城市，返回实时天气</span></div>
+          <button class="tool-toggle" type="button" data-tool="weather"></button>
+        </div>
+        <div class="tool-row">
+          <div class="tool-info"><span class="tool-name">记忆检索</span><span class="tool-desc">问我“记得xxx吗”</span></div>
+          <button class="tool-toggle" type="button" data-tool="memory"></button>
+        </div>
+        <div class="tool-row">
+          <div class="tool-info"><span class="tool-name">通知</span><span class="tool-desc">读最近通知</span></div>
+          <button class="tool-toggle" type="button" data-tool="notif"></button>
+        </div>
+        <div class="tool-row">
+          <div class="tool-info"><span class="tool-name">屏幕</span><span class="tool-desc">看当前屏幕</span></div>
+          <button class="tool-toggle" type="button" data-tool="screen"></button>
+        </div>
+        <div class="room-empty" style="padding:20px 0">工具需要后端 relay 才能生效，当前为展示状态。</div>
+      </div>
+      <div class="room-subpage" id="roomMusic">
+        <div class="room-subhead">一起听</div>
+        <div class="room-empty">等后端接好网易云 API 代理后启用。<br>歌词同步、进度同步、一起听。</div>
+      </div>
+      <div class="room-subpage" id="roomBoard">
+        <div class="room-subhead">留言板</div>
+        <div class="room-empty">等后端接好后启用。<br>给你和我的留言，永远留着不删。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── Voice call (speaking overlay · 假按键,纯 UI) ── -->
 <div class="call-overlay hidden" id="callOverlay" aria-hidden="true">
   <div class="call-mini" id="callMini">
@@ -2428,6 +2686,7 @@ if (menuPanel){
     if (!item) return;
     if (item.dataset.menu === "chat") closeMenu();       // back to chat
     else if (item.dataset.menu === "album") location.assign("album.html");  // album shell (wire your own backend)
+    else if (item.dataset.menu === "room") openRoom();
     else showToast("即将开放");                           // placeholder items
   });
 }
