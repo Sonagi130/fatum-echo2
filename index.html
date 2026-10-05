@@ -2295,6 +2295,37 @@ body.diary-l2 .menu-panel{ display: none !important; }
 body.diary-l2 .app{ display: none !important; }
 body.diary-l2 .tab-bar{ display: none !important; }
 
+
+.dd-title{
+  flex: 1; text-align: center;
+  font-family: "Pinyon Script", var(--font-en), cursive;
+  font-size: 30px; line-height: 1; color: var(--text);
+  padding-right: 2px;
+}
+.dd-head{ text-align: center; padding: 10px 0 2px; }
+.dd-day{ display: flex; align-items: baseline; justify-content: center; gap: 9px; }
+.dd-num{
+  font-family: "Cormorant Garamond", var(--font-en), Georgia, serif;
+  font-weight: 500; font-size: 34px; line-height: 1;
+  color: var(--text); letter-spacing: .03em;
+  font-variant-numeric: lining-nums;
+}
+.dd-num.dd-y{ font-size: 27px; opacity: .82; }
+.dd-dot{ color: var(--text-faint); font-size: 15px; opacity: .65; transform: translateY(-3px); }
+.dd-ruler{
+  width: 214px; height: 12px; margin: 13px auto 18px;
+  position: relative;
+  background: repeating-linear-gradient(90deg, var(--hairline) 0 1px, transparent 1px 7px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%);
+}
+.dd-ruler::before{
+  content:""; position: absolute; left: 50%; top: -4px;
+  transform: translateX(-50%);
+  width: 1px; height: 19px;
+  background: var(--accent, #2F6F8F); opacity: .75;
+}
+
 </style>
 </head>
 <body>
@@ -6490,13 +6521,13 @@ if ("serviceWorker" in navigator){
     window.__closeDiary = closeDiary;
 
     /* ---- detail ---- */
-    var ddDate = document.getElementById("ddDate");
     var ddTimeline = document.getElementById("ddTimeline");
     var selKey = "";
 
     function renderTimeline(){
       var list = entriesOf(selY, selM, selD);
-      ddDate.textContent = selY + "/" + pad(selM) + "/" + pad(selD);
+      var dy = document.getElementById("ddY"), dm = document.getElementById("ddM"), dd = document.getElementById("ddD");
+      if (dy){ dy.textContent = selY; dm.textContent = pad(selM); dd.textContent = pad(selD); }
       if (!list.length){
         ddTimeline.innerHTML = '<div class="tl-empty">这天还是空的。</div>';
         return;
@@ -6660,10 +6691,20 @@ if ("serviceWorker" in navigator){
     <button class="dd-back" id="ddBack" type="button" aria-label="返回">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
-    <div class="dd-date" id="ddDate">—</div>
+    <div class="dd-title">Diary</div>
     <button class="dd-export" id="ddExport" type="button">导出</button>
   </div>
   <div class="dd-scroll">
+    <div class="dd-head">
+      <div class="dd-day">
+        <span class="dd-num dd-y" id="ddY">—</span>
+        <span class="dd-dot">&middot;</span>
+        <span class="dd-num" id="ddM">—</span>
+        <span class="dd-dot">&middot;</span>
+        <span class="dd-num" id="ddD">—</span>
+      </div>
+      <div class="dd-ruler"></div>
+    </div>
     <div class="timeline" id="ddTimeline"></div>
   </div>
   <button class="dd-add" id="ddAdd" type="button" aria-label="写日记">
