@@ -1,4 +1,4 @@
-package io.github.sonagi130.anima;
+package io.github.sonagi130.echo;
 
 import android.Manifest;
 import android.app.Activity;
@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
 
     /* 本地资源域名：跟网页版同源，localStorage 无缝继承，数据不用迁移 */
     private static final String HOST = "sonagi130.github.io";
-    private static final String BASE = "/anima/";
+    private static final String BASE = "/echo/";
 
     @Override
     protected void onCreate(Bundle b) {
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
         // 原生桥：暴露给网页调用的接口
         web.addJavascriptInterface(new Bridge(), "HearthBridge");
 
-        /* 本地化：sonagi130.github.io/anima/* → assets/anima/*，秒开 + 离线可用 + 数据同源 */
+        /* 本地化：sonagi130.github.io/echo/* → assets/echo/*，秒开 + 离线可用 + 数据同源 */
         web.setWebViewClient(new WebViewClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -136,7 +136,7 @@ public class MainActivity extends Activity {
         super.onActivityResult(req, res, data);
     }
 
-    /** 从更新目录或 assets/anima 读文件，返回响应 */
+    /** 从更新目录或 assets/echo 读文件，返回响应 */
     private WebResourceResponse asset(String file) {
         // 优先读热更新目录
         if (updater != null) {
@@ -146,7 +146,7 @@ public class MainActivity extends Activity {
             }
         }
         try {
-            InputStream in = getAssets().open("anima/" + file);
+            InputStream in = getAssets().open("echo/" + file);
             return new WebResourceResponse(mimeOf(file), "utf-8", in);
         } catch (IOException e) {
             return null;

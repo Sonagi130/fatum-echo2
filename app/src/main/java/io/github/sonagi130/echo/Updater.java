@@ -1,4 +1,4 @@
-package io.github.sonagi130.anima;
+package io.github.sonagi130.echo;
 
 import android.content.Context;
 import android.os.Environment;
@@ -18,12 +18,12 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Fatum Echo 热更新器
- * 启动时检查远程 version.json，版本号比本地大 → 下载 web.zip 解压到 filesDir/anima_www/
- * WebView 优先读 anima_www/，缺失回退 assets/anima/
+ * 启动时检查远程 version.json，版本号比本地大 → 下载 web.zip 解压到 filesDir/echo_www/
+ * WebView 优先读 echo_www/，缺失回退 assets/echo/
  */
 public class Updater {
-    public static final String REMOTE_VERSION_URL = "https://sonagi130.github.io/anima/version.json";
-    public static final String REMOTE_ZIP_URL = "https://sonagi130.github.io/anima/web.zip";
+    public static final String REMOTE_VERSION_URL = "https://sonagi130.github.io/echo/version.json";
+    public static final String REMOTE_ZIP_URL = "https://sonagi130.github.io/echo/web.zip";
 
     private final Context ctx;
 
@@ -34,7 +34,7 @@ public class Updater {
     /** 返回本地当前版本号 */
     public int localVersion() {
         try {
-            InputStream in = ctx.getAssets().open("anima/version.json");
+            InputStream in = ctx.getAssets().open("echo/version.json");
             byte[] buf = new byte[512];
             int n = in.read(buf);
             String s = new String(buf, 0, n, "UTF-8");
@@ -117,9 +117,9 @@ public class Updater {
         }
     }
 
-    /** WebView 读取资源的根目录：更新过用 filesDir/anima_www，否则 null 表示用 assets */
+    /** WebView 读取资源的根目录：更新过用 filesDir/echo_www，否则 null 表示用 assets */
     public File webDir() {
-        File dir = new File(ctx.getFilesDir(), "anima_www");
+        File dir = new File(ctx.getFilesDir(), "echo_www");
         if (dir.exists() && new File(dir, "index.html").exists()) return dir;
         return null;
     }

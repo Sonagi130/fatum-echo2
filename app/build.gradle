@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'io.github.sonagi130.anima'
+    namespace 'io.github.sonagi130.echo'
     compileSdk 34
 
     defaultConfig {
-        applicationId "io.github.sonagi130.anima"
+        applicationId "io.github.sonagi130.echo"
         minSdk 23
         targetSdk 34
         versionCode 3

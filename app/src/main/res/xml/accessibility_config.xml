@@ -7,4 +7,4 @@
     android:canRetrieveWindowContent="true"
     android:description="@string/accessibility_desc"
     android:notificationTimeout="200"
-    android:settingsActivity="io.github.sonagi130.anima.MainActivity" />
+    android:settingsActivity="io.github.sonagi130.echo.MainActivity" />

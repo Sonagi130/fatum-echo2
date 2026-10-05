@@ -1,4 +1,4 @@
-package io.github.sonagi130.anima;
+package io.github.sonagi130.echo;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

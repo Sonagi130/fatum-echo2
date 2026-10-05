@@ -1,4 +1,4 @@
-package io.github.sonagi130.anima;
+package io.github.sonagi130.echo;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
