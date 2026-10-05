@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'io.github.sonagi130.anima'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "io.github.sonagi130.anima"
+        minSdk 23
+        targetSdk 34
+        versionCode 3
+        versionName "1.2.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../../twa/signing.keystore")
+            storePassword "ZYeP0hkkIeIJ"
+            keyAlias "android"
+            keyPassword "ZYeP0hkkIeIJ"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.10.0'
+}
