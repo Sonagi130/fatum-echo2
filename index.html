@@ -6052,6 +6052,7 @@ function startChat(initialMsgs, { connect = true, fromCache = false } = {}){
 }
 
 async function init(){
+  let showedCache = false;
   if (!secret){ secret = "demo"; }
   await loadSessions();
   const cached = await readCachedMessages();
