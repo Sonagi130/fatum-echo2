@@ -2695,6 +2695,98 @@ document.addEventListener("keydown", (e) => {
 });
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshDays(); });
 
+/* ── Room panel ── */
+const roomPanel = document.getElementById("roomPanel");
+const roomHome = document.getElementById("roomHome");
+const roomTitleEl = document.getElementById("roomTitle");
+const roomBackBtn = document.getElementById("roomBack");
+function openRoom(){
+  if(!roomPanel) return;
+  roomPanel.classList.remove("hidden");
+  roomPanel.classList.add("open");
+  showRoomHome();
+}
+function closeRoom(){
+  if(!roomPanel) return;
+  roomPanel.classList.remove("open");
+  setTimeout(() => roomPanel.classList.add("hidden"), 300);
+}
+function showRoomHome(){
+  if(roomHome) roomHome.style.display = "";
+  if(roomTitleEl) roomTitleEl.textContent = "Room";
+  if(roomBackBtn) roomBackBtn.onclick = closeRoom;
+  document.querySelectorAll(".room-subpage").forEach(el => el.classList.remove("active"));
+}
+function showRoomSub(id, title){
+  if(roomHome) roomHome.style.display = "none";
+  if(roomTitleEl) roomTitleEl.textContent = title;
+  if(roomBackBtn) roomBackBtn.onclick = showRoomHome;
+  document.querySelectorAll(".room-subpage").forEach(el => el.classList.remove("active"));
+  const sub = document.getElementById(id);
+  if(sub) sub.classList.add("active");
+}
+if(roomPanel){
+  roomPanel.addEventListener("click", (e) => {
+    const card = e.target.closest("[data-room-card]");
+    if(!card) return;
+    const sub = card.dataset.roomCard;
+    const title = card.querySelector(".room-card-name") ? card.querySelector(".room-card-name").textContent : "Room";
+    const id = "room" + sub.charAt(0).toUpperCase() + sub.slice(1);
+    showRoomSub(id, title);
+  });
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape" && roomPanel && !roomPanel.classList.contains("hidden")){
+      if(roomHome && roomHome.style.display === "none") showRoomHome();
+      else closeRoom();
+    }
+  });
+}
+/* diary: localStorage persistence */
+(function(){
+  var DKEY = "fatum_diary";
+  var diInput = document.getElementById("diaryInput");
+  var diList = document.getElementById("diaryList");
+  var diBtn = document.getElementById("diarySubmit");
+  function loadDiary(){
+    try { return JSON.parse(localStorage.getItem(DKEY) || "[]"); } catch(_) { return []; }
+  }
+  function saveDiary(arr){
+    try { localStorage.setItem(DKEY, JSON.stringify(arr)); } catch(_){}
+  }
+  function escHtml(s){
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function renderDiary(){
+    var entries = loadDiary();
+    if(!entries.length){
+      if(diList) diList.innerHTML = '<div class="room-empty">还没有日记，写第一条吧。</div>';
+      return;
+    }
+    if(diList) diList.innerHTML = entries.map(function(e){
+      return '<div class="diary-entry"><div class="diary-date">' + e.ts + '</div><div class="diary-body">' + escHtml(e.text) + '</div></div>';
+    }).join("");
+  }
+  if(diBtn){
+    diBtn.addEventListener("click", function(){
+      var t = diInput.value.trim();
+      if(!t) return;
+      var now = new Date();
+      var ts = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0") + " " + String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0");
+      var entries = loadDiary();
+      entries.unshift({ ts: ts, text: t });
+      saveDiary(entries);
+      diInput.value = "";
+      renderDiary();
+      showToast("已保存");
+    });
+  }
+  if(diList) renderDiary();
+})();
+/* tool toggles */
+document.querySelectorAll(".tool-toggle").forEach(function(btn){
+  btn.addEventListener("click", function(){ btn.classList.toggle("on"); });
+});
+
 /* 设置页 #themeSeg 分段控件 — 手动切 5 套主题,持久化,联动壁纸/theme-color */
 const THEME_KEY = "companion_theme";
 const themeSeg = $("#themeSeg");
