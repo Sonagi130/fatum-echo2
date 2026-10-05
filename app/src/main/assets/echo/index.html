@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Fatum Echo</title>
+<title>Tidal Echo</title>
 
 <!-- PWA / iOS -->
 <link rel="manifest" href="manifest.webmanifest">
@@ -18,7 +18,7 @@
 <meta name="theme-color" content="#F4F4F5">
 <!-- iOS launch mode is manifest-only; legacy Apple fullscreen meta breaks bottom viewport. -->
 
-<meta name="apple-mobile-web-app-title" content="Fatum Echo">
+<meta name="apple-mobile-web-app-title" content="Tidal Echo">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
 
@@ -50,7 +50,6 @@
     --menu-wall-harbor: url("menu-harbor.webp");
     --menu-wall-default: var(--menu-wall-light);
     --avatar-default: url("avatar-sea.png");
-    --human-avatar-default: url("avatar-sea.png");
     /* ── PEARL TIDE · 珍珠潮汐(default) ── */
     --bg: #F7FAFC;
     --header-bg: #F7FAFC;
@@ -112,7 +111,7 @@
     --call-hangup-bg: #cf8d92;
     --call-hangup-shadow: rgba(176,96,104,.34);
   }
-  /* ── FATUM ECHO · 命定回响(通用开源主题) ── 中性冷调,供 fork 使用;只覆盖带色相变量,其余继承 PEARL TIDE */
+  /* ── HARBOR · 海港(通用开源主题 / Tidal Echo) ── 中性冷调,供 fork 使用;只覆盖带色相变量,其余继承 PEARL TIDE */
   :root[data-theme="harbor"]{
       --wall-default: var(--wall-harbor);
       --menu-wall-default: var(--menu-wall-harbor);
@@ -464,7 +463,7 @@
     border: none;
   }
 
-  .row{ display:flex; flex-wrap:wrap; position:relative; margin-top: clamp(14px, 2.2vw, 28px); }
+  .row{ display:flex; position:relative; margin-top: clamp(14px, 2.2vw, 28px); }
   .day + .row{ margin-top: clamp(12px, 1.8vw, 20px); }
   .new-divider{
     display:flex;
@@ -486,60 +485,13 @@
     background: var(--hairline);
   }
   .row.grouped{ margin-top: clamp(4px, 0.8vw, 8px); }
-  .row.human{ justify-content: flex-end; margin-right: calc(10px - var(--side-pad)); }
-  .row.ai{
-    justify-content: flex-start;
-    display:flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 0 clamp(10px, 1.6vw, 16px);
-    padding-left: 0;
-    margin-left: calc(10px - var(--side-pad));
-  }
-  /* thinking 独占第一行,缩进对齐气泡(左缘在头像右侧) */
-  .row.ai > .msg-think{
-    flex: 1 1 100%;
-    order: -1;
-    width: 100%;
-    min-width: 0;
-    margin-left: calc(var(--avatar-size) + clamp(10px, 1.6vw, 16px));
-    margin-bottom: clamp(4px, 0.8vw, 8px);
-  }
-  .msg-think .think-block{ margin:0; }
-  .msg-think + .bubble{ margin-top: 0; }
-  .row.ai > .bubble{
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-  /* 用户(小宝)消息右侧头像:开关 showHumanAvatar 控制 */
-  .row.human.has-human-avatar{ padding-right: calc(var(--avatar-size) + clamp(10px, 1.6vw, 16px)); }
-  .row.human.has-human-avatar.show-human-avatar::after{
-    content:"";
-    position:absolute;
-    right: 0;
-    top: clamp(5px, 1vw, 9px);
-    width: var(--avatar-size);
-    height: var(--avatar-size);
-    border-radius: 50%;
-    background-image: var(--human-avatar-default);
-    background-size: cover;
-    background-position: center;
-    box-shadow: 0 12px 24px rgba(24,46,67,0.14);
-  }
-  /* 用户名字(小宝)显示:放在气泡下方,右侧小字 */
-  .row.human .human-name{
-    flex-basis:100%;
-    text-align:right;
-    font-size: clamp(10.5px, 2.7vw, 12px);
-    letter-spacing:.04em;
-    color: var(--text-faint);
-    margin-top: clamp(2px, 0.8vw, 4px);
-    font-family: var(--font-en), var(--font-cn);
-  }
+  .row.human{ justify-content: flex-end; }
+  .row.ai{ justify-content: flex-start; padding-left: calc(var(--avatar-size) + clamp(10px, 1.6vw, 16px)); }
   .row.ai::before{
     content:"";
-    flex: 0 0 auto;
-    align-self: flex-start;
+    position:absolute;
+    left:0;
+    top: clamp(5px, 1vw, 9px);
     width: var(--avatar-size);
     height: var(--avatar-size);
     border-radius: 50%;
@@ -638,8 +590,8 @@
     margin-bottom: clamp(18px, 2.8vw, 28px);
   }
   .think-block{
-    width: auto;
-    max-width: min(100%, 560px);
+    width: min(61vw, 506px);
+    max-width: min(61vw, 506px);
     color: var(--think-body);
     text-align: left;
     animation: pop .24s cubic-bezier(.2,.8,.2,1) both;
@@ -647,7 +599,7 @@
   .think-block.open{
     width: 100%;
     max-width: min(100%, 760px);
-    text-align: left;
+    text-align: center;
   }
   .think-toggle{
     appearance: none;
@@ -669,9 +621,6 @@
     flex-direction: column;
     align-items: center;
     gap: clamp(9px, 1.8vw, 14px);
-  }
-  .think-block.open .think-caption{
-    justify-content: center;
   }
   .think-toggle:hover .think-caption{ color: var(--accent); }
   .think-toggle:active{ transform: translateY(1px); }
@@ -705,10 +654,6 @@
     letter-spacing: .08em;
     transition: color var(--motion-fast) var(--ease-soft);
   }
-  .think-caption > span:not(.think-caption-star):not(.think-state){
-    color: var(--think-label);
-    font-size: .92em;
-  }
   .think-caption-star,
   .think-state{
     color: var(--think-flourish);
@@ -716,7 +661,7 @@
     line-height: 1;
     transform: translateY(-.02em);
   }
-  .think-block.open .think-caption-star{ display: inline; }
+  .think-block.open .think-caption-star{ display: none; }
   .think-state::before{ content: "✧"; }
   .think-block.open .think-state::before{ content: "✦"; }
   .think-body[hidden]{ display: none !important; }
@@ -1107,13 +1052,6 @@
     letter-spacing:0; white-space:nowrap; cursor:pointer;
     transition: background .22s ease, color .22s ease, box-shadow .22s ease;
   }
-  /* custom model box */
-  .custom-model{ margin-top:12px; padding:12px; background:var(--card-bg,#fff); border:1px solid var(--hairline); border-radius:12px; display:flex; flex-direction:column; gap:8px; }
-  .cm-title{ font-size:13px; font-weight:600; color:inherit; margin-bottom:2px; }
-  .cm-input{ width:100%; padding:9px 11px; border:1px solid var(--hairline); border-radius:8px; background:var(--input-bg,transparent); color:inherit; font-size:13px; box-sizing:border-box; }
-  .cm-input:focus{ outline:none; border-color:var(--accent,#4a7dff); }
-  .cm-save{ padding:9px; border:none; border-radius:8px; background:var(--accent,#4a7dff); color:#fff; font-size:13px; font-weight:600; cursor:pointer; }
-  .cm-save:active{ opacity:.8; }
   .segmented button.active{
     background: var(--seg-thumb); color: var(--text);
     box-shadow: var(--seg-thumb-shadow); font-weight:500;
@@ -1210,7 +1148,7 @@
     .avatar{ right: 16px; top: calc(env(safe-area-inset-top) + 16px); }
     .row{ margin-top: 18px; }
     .row.grouped{ margin-top: 8px; }
-    .row.ai{ padding-left: 0; }
+    .row.ai{ padding-left: 42px; }
     .bubble{ max-width: min(63vw, 520px); font-size: 13.5px; line-height: 1.56; padding: 8px 13px 8px; }
     .meta{ font-size: 11px; margin-left: 8px; }
     .day{ font-size: 12px; }
@@ -1354,488 +1292,6 @@
     font-family: var(--font-en), var(--font-cn);
     font-size: clamp(10.5px, 2.7vw, 12.5px); font-style:italic;
     letter-spacing:.05em; color: var(--text-faint);
-  }
-  /* ── bottom tab bar (Chat · diary · Desk · Calendar · Memory) ── */
-  .menu-tabbar{
-    flex: 0 0 auto;
-    display:flex; align-items:stretch; justify-content:space-around;
-    position:relative; z-index:2;
-    border-top:1px solid var(--hairline);
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    padding: calc(6px + env(safe-area-inset-bottom) / 2) 4px env(safe-area-inset-bottom);
-  }
-  .tab-item{
-    flex:1 1 0; min-width:0;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:3px;
-    background:transparent; border:0; padding:5px 2px 4px;
-    color: var(--text-faint); cursor:pointer;
-    font-family: var(--font-en), var(--font-cn);
-    transition: color .16s ease, transform .12s ease;
-  }
-  .tab-item:active{ transform: scale(.94); }
-  .tab-item svg{ width:clamp(20px, 5.6vw, 24px); height:clamp(20px, 5.6vw, 24px); display:block; }
-  .tab-item .tab-lab{
-    font-size: clamp(9px, 2.4vw, 10.5px); letter-spacing:.08em;
-    text-transform:uppercase; font-weight:500;
-  }
-  .tab-item.active{ color: var(--text); }
-  .tab-item.active .tab-lab{ color: var(--accent, var(--text)); }
-  .tab-item.active svg{ color: var(--accent, var(--text)); stroke-width:2; }
-  .menu-tabbar-placeholder{ height: calc(clamp(56px, 15vw, 72px) + env(safe-area-inset-bottom)); }
-  /* ── menu page: scroll area keeps list room for the tab bar ── */
-  .menu-panel .menu-page{ padding-bottom: 0; }
-  .menu-panel .menu-scroll{ padding-bottom: clamp(10px, 3vw, 16px); }
-  .menu-tabbar{ border-radius: 18px 18px 0 0; margin-top: clamp(6px, 2vw, 12px); }
-
-  /* ── Desk (desktop-style launcher · 底栏 Desk 进入) ── */
-  .desk-panel{
-    position: fixed; inset: 0; z-index: 195;
-    pointer-events: none;
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform .34s var(--ease-soft), opacity .26s ease;
-  }
-  .desk-panel.open{ transform: none; opacity: 1; pointer-events: auto; }
-  .desk-page{
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    background-color: var(--bg);
-    background-image: var(--wall-default);
-    background-size: cover; background-position: center;
-    overflow: hidden;
-  }
-  .desk-page::before{
-    content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none;
-  }
-  .desk-topbar{
-    position: relative; z-index:1;
-    flex: 0 0 auto;
-    display:flex; align-items:center; justify-content:center;
-    height: calc(64px + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) var(--side-pad) 0;
-  }
-  .desk-clock-zone{
-    position: relative; z-index:1;
-    flex: 0 0 auto;
-    display:flex; align-items:center; justify-content:center;
-    padding: clamp(20px, 5vw, 40px) var(--side-pad) 0;
-    margin-top: clamp(48px, 12vh, 110px);
-  }
-  .desk-clock{
-    font-family: var(--font-en), var(--font-cn);
-    font-size: clamp(56px, 16vw, 92px);
-    font-weight: 200;
-    letter-spacing: .02em;
-    color: var(--text-soft);
-    opacity: .78;
-    text-shadow: 0 2px 24px rgba(0,0,0,.10);
-  }
-  .desk-back{
-    position: absolute;
-    left: var(--side-pad);
-    top: calc(env(safe-area-inset-top) + 8px);
-    width:40px; height:40px; flex:none;
-    border:0; border-radius:50%; padding:0;
-    background: transparent; color: var(--text);
-    display:grid; place-items:center; cursor:pointer;
-    transition: transform .15s ease;
-  }
-  .desk-back:active{ transform: scale(.9); }
-  .desk-back svg{ width:24px; height:24px; display:block; }
-  .desk-title{
-    font-family: var(--font-en), var(--font-cn);
-    font-size: clamp(15px, 4vw, 18px); letter-spacing:.06em; color: var(--text);
-  }
-  .desk-scroll{
-    position: relative; z-index:1;
-    flex: 1 1 auto; overflow-y: auto;
-    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    padding: clamp(16px, 4vw, 24px) var(--side-pad) calc(30px + env(safe-area-inset-bottom));
-    display:flex; flex-direction:column;
-  }
-  .desk-scroll::-webkit-scrollbar{ width:0; height:0; }
-  .desk-spacer{ flex: 1 1 auto; min-height: 24px; }
-  .desk-grid{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(18px, 6vw, 30px) clamp(12px, 4vw, 22px);
-    justify-items:center;
-    padding-top: clamp(10px, 3vw, 18px);
-  }
-  .desk-app{
-    display:flex; flex-direction:column; align-items:center; gap: clamp(8px, 2vw, 11px);
-    border:0; background:transparent; padding:0;
-    width:100%; cursor:pointer; color: var(--text);
-    font: inherit; text-align:center;
-  }
-  .desk-app:active{ transform: scale(.92); transition: transform .12s ease; }
-  .desk-ic{
-    width: clamp(56px, 16vw, 72px); height: clamp(56px, 16vw, 72px);
-    border-radius: clamp(16px, 4.5vw, 22px);           /* 圆角方形 */
-    background: var(--card-bg);
-    border:1px solid var(--card-line);
-    box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    display:grid; place-items:center;
-    color: var(--accent, var(--text));
-  }
-  .desk-ic svg{ width: clamp(24px, 7vw, 30px); height: clamp(24px, 7vw, 30px); display:block; }
-  .desk-lab{
-    font-family: var(--font-cn);
-    font-size: clamp(12px, 3.2vw, 13.5px); color: var(--text-soft); line-height:1.2;
-    max-width:100%; white-space:nowrap;
-  }
-
-  /* ── MCP 工具面板 (Desk → MCP,独立于设置) ── */
-  .mcp-panel{
-    position: fixed; inset: 0; z-index: 196;
-    pointer-events: none;
-    transform: translateX(100%);
-    transition: transform .34s var(--ease-soft), opacity .26s ease;
-  }
-  .mcp-panel.open{ transform: none; opacity: 1; pointer-events: auto; }
-  .mcp-page{
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    background-color: var(--bg);
-    background-image: var(--wall-default);
-    background-size: cover; background-position: center;
-    overflow: hidden;
-  }
-  .mcp-page::before{
-    content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none;
-  }
-  .mcp-topbar{
-    position: relative; z-index:1;
-    flex: 0 0 auto;
-    display:flex; align-items:center; gap:10px;
-    height: calc(56px + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) var(--side-pad) 0;
-  }
-  .mcp-back{
-    width:40px; height:40px; flex:none;
-    border:0; border-radius:50%; padding:0; margin-left:-6px;
-    background: transparent; color: var(--text);
-    display:grid; place-items:center; cursor:pointer;
-    transition: transform .15s ease;
-  }
-  .mcp-back:active{ transform: scale(.9); }
-  .mcp-back svg{ width:24px; height:24px; display:block; }
-  .mcp-title{
-    position: absolute; left: 50%; transform: translateX(-50%);
-    font-family: var(--font-en), var(--font-cn);
-    font-size: clamp(15px, 4vw, 18px); letter-spacing:.06em; color: var(--text);
-    font-weight: 700; font-weight: 800;
-  }
-  .mcp-scroll{
-    position: relative; z-index:1;
-    flex: 1 1 auto; overflow-y: auto;
-    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    padding: clamp(18px, 5vw, 30px) var(--side-pad) calc(36px + env(safe-area-inset-bottom));
-    display:flex; flex-direction:column; gap: clamp(20px, 5.5vw, 32px);
-  }
-  .mcp-scroll::-webkit-scrollbar{ width:0; height:0; }
-  .mcp-card{
-    background: var(--card-bg);
-    border:1px solid var(--card-line);
-    border-radius:20px;
-    box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    padding: clamp(16px, 4.2vw, 24px);
-  }
-  .mcp-card-h{
-    display:flex; align-items:center; gap:9px;
-    font-family: var(--font-cn);
-    font-size: clamp(15px, 4vw, 17px); font-weight:600; color: var(--text);
-    margin: 0 0 clamp(14px, 3.5vw, 20px);
-  }
-  .mcp-hint{
-    min-height:17px; margin-top: 9px;
-    font-size: clamp(11.5px, 3vw, 12.5px); color: var(--text-faint); text-align:center;
-  }
-
-  /* ── Learn (专注学习 · Desk → 学习,番茄钟 + 热力图) ── */
-  .learn-panel{
-    position: fixed; inset: 0; z-index: 196;
-    pointer-events: none;
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform .34s var(--ease-soft), opacity .26s ease;
-  }
-  .learn-panel.open{ transform: none; opacity: 1; pointer-events: auto; }
-  .learn-page{
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    background-color: var(--bg);
-    background-image: var(--wall-default);
-    background-size: cover; background-position: center;
-    overflow: hidden;
-  }
-  .learn-page::before{
-    content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none;
-  }
-  .learn-topbar{
-    position: relative; z-index:1;
-    flex: 0 0 auto;
-    display:flex; align-items:center; gap:10px;
-    height: calc(56px + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) var(--side-pad) 0;
-  }
-  .learn-back{
-    width:40px; height:40px; flex:none;
-    border:0; border-radius:50%; padding:0; margin-left:-6px;
-    background: transparent; color: var(--text);
-    display:grid; place-items:center; cursor:pointer;
-    transition: transform .15s ease;
-  }
-  .learn-back:active{ transform: scale(.9); }
-  .learn-back svg{ width:24px; height:24px; display:block; }
-  .learn-title{
-    position: absolute; left: 50%; transform: translateX(-50%);
-    font-family: var(--font-en), var(--font-cn);
-    font-size: clamp(15px, 4vw, 18px); letter-spacing:.06em; color: var(--text);
-    font-weight: 700; font-weight: 800;
-  }
-  .learn-scroll{
-    position: relative; z-index:1;
-    flex: 1 1 auto; overflow-y: auto;
-    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    padding: clamp(18px, 5vw, 30px) var(--side-pad) calc(36px + env(safe-area-inset-bottom));
-    display:flex; flex-direction:column; gap: clamp(22px, 6vw, 34px);
-  }
-  .learn-scroll::-webkit-scrollbar{ width:0; height:0; }
-  .learn-card{
-    background: var(--card-bg);
-    border:1px solid var(--card-line);
-    border-radius:20px;
-    box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    padding: clamp(18px, 4.5vw, 26px);
-  }
-  .learn-card-h{
-    font-family: var(--font-cn);
-    font-size: clamp(15px, 4vw, 17px); font-weight:600; color: var(--text);
-    margin: 0 0 clamp(14px, 3.5vw, 20px);
-    display:flex; align-items:center; gap:8px;
-  }
-  .learn-actions{
-    display:flex; gap: clamp(12px, 3.5vw, 16px);
-  }
-  .learn-action{
-    flex:1;
-    display:flex; flex-direction:column; align-items:center; gap: clamp(9px, 2.4vw, 13px);
-    padding: clamp(16px, 4.5vw, 24px) clamp(10px, 3vw, 16px);
-    border:1px solid var(--card-line); border-radius:18px;
-    background: var(--seg-track); color: var(--text);
-    cursor:pointer; font: inherit;
-    transition: background .16s ease, transform .12s ease;
-  }
-  .learn-action:active{ background: var(--row-press); transform: scale(.97); }
-  .learn-action .la-ic{
-    width: clamp(38px, 10vw, 48px); height: clamp(38px, 10vw, 48px);
-    border-radius:14px; background: var(--card-bg);
-    border:1px solid var(--card-line);
-    display:grid; place-items:center;
-    color: var(--accent, var(--text));
-  }
-  .learn-action .la-ic svg{ width: clamp(20px, 5vw, 24px); height: clamp(20px, 5vw, 24px); display:block; }
-  .learn-action .la-lab{ font-size: clamp(13px, 3.4vw, 15px); }
-  /* 计时状态 */
-  .learn-focus-state{
-    text-align:center; padding: clamp(6px, 2vw, 10px) 0;
-  }
-  .learn-timer{
-    font-family: var(--font-en), ui-monospace, monospace;
-    font-size: clamp(40px, 12vw, 64px);
-    font-variant-numeric: tabular-nums;
-    line-height:1; color: var(--text);
-    letter-spacing:.02em;
-  }
-  .learn-timer.running{ color: var(--accent, var(--text)); }
-  .learn-sub{
-    margin-top: clamp(8px, 2.4vw, 12px);
-    font-size: clamp(12.5px, 3.2vw, 14px); color: var(--text-soft);
-  }
-  .learn-focus-btns{
-    display:flex; justify-content:center; gap: clamp(12px, 3.5vw, 16px); margin-top: clamp(16px, 4vw, 22px);
-  }
-  .learn-focus-btn{
-    padding: clamp(10px, 3vw, 13px) clamp(20px, 6vw, 30px);
-    border:1px solid var(--card-line); border-radius:999px;
-    background: var(--seg-track); color: var(--text);
-    font: inherit; font-size: clamp(13.5px, 3.4vw, 15px);
-    cursor:pointer; transition: all .15s ease;
-  }
-  .learn-focus-btn.primary{ background: var(--accent, var(--text)); color: #fff; border-color: transparent; }
-  .learn-focus-btn:active{ transform: scale(.95); }
-  .learn-focus-btn:disabled{ opacity:.55; cursor:default; }
-  /* 时长选择 */
-  .learn-dur{
-    display:flex; flex-wrap:wrap; gap: clamp(8px, 2.4vw, 10px);
-    justify-content:center; margin-top: clamp(14px, 3.5vw, 18px);
-  }
-  .learn-dur-btn{
-    padding: clamp(7px, 2vw, 9px) clamp(14px, 3.6vw, 20px);
-    border:1px solid var(--card-line); border-radius:999px;
-    background: var(--seg-track); color: var(--text-soft);
-    font: inherit; font-size: clamp(13px, 3.2vw, 14px);
-    cursor:pointer; transition: all .15s ease;
-  }
-  .learn-dur-btn.active{ background: var(--accent, var(--text)); color:#fff; border-color:transparent; }
-  .learn-dur-btn:active{ transform: scale(.94); }
-  /* 热力图 */
-  .learn-heat{
-    display:flex; flex-wrap:wrap; gap: clamp(4px, 1.2vw, 6px);
-    justify-content:center;
-  }
-  .lh-cell{
-    width: clamp(12px, 3.4vw, 18px); height: clamp(12px, 3.4vw, 18px);
-    border-radius:4px;
-    background: var(--seg-track);
-    border:1px solid transparent;
-    transition: transform .1s ease;
-  }
-  .lh-cell.l0{ background: var(--seg-track); opacity:.55; }
-  .lh-cell.l1{ background: var(--accent, var(--text)); opacity:.22; }
-  .lh-cell.l2{ background: var(--accent, var(--text)); opacity:.45; }
-  .lh-cell.l3{ background: var(--accent, var(--text)); opacity:.72; }
-  .lh-cell.l4{ background: var(--accent, var(--text)); opacity:1; }
-  .lh-legend{
-    display:flex; align-items:center; justify-content:flex-end; gap:6px;
-    margin-top: clamp(10px, 2.6vw, 14px);
-    font-size: clamp(11px, 2.8vw, 12.5px); color: var(--text-faint);
-  }
-  .lh-legend .lh-cell{ width:clamp(10px, 2.6vw, 14px); height:clamp(10px, 2.6vw, 14px); }
-
-  /* ── Desk 设置 (Desk → 设置:模型配置 + 聊天显示开关) ── */
-  .dset-panel{
-    position: fixed; inset: 0; z-index: 197;
-    pointer-events: none;
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform .34s var(--ease-soft), opacity .26s ease;
-  }
-  .dset-panel.open{ transform: none; opacity: 1; pointer-events: auto; }
-  .dset-page{
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    background-color: var(--bg);
-    background-image: var(--wall-default);
-    background-size: cover; background-position: center;
-    overflow: hidden;
-  }
-  .dset-page::before{
-    content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none;
-  }
-  .dset-topbar{
-    position: relative; z-index:1;
-    flex: 0 0 auto;
-    display:flex; align-items:center; gap:10px;
-    height: calc(56px + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) var(--side-pad) 0;
-  }
-  .dset-back{
-    width:40px; height:40px; flex:none;
-    border:0; border-radius:50%; padding:0; margin-left:-6px;
-    background: transparent; color: var(--text);
-    display:grid; place-items:center; cursor:pointer;
-    transition: transform .15s ease;
-  }
-  .dset-back:active{ transform: scale(.9); }
-  .dset-back svg{ width:24px; height:24px; display:block; }
-  .dset-title{
-    position: absolute; left: 50%; transform: translateX(-50%);
-    font-family: var(--font-en), var(--font-cn);
-    font-size: clamp(15px, 4vw, 18px); letter-spacing:.06em; color: var(--text);
-    font-weight: 700; font-weight: 800;
-  }
-  .dset-scroll{
-    position: relative; z-index:1;
-    flex: 1 1 auto; overflow-y: auto;
-    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    padding: clamp(18px, 5vw, 30px) var(--side-pad) calc(36px + env(safe-area-inset-bottom));
-    display:flex; flex-direction:column; gap: clamp(20px, 5.5vw, 32px);
-  }
-  .dset-scroll::-webkit-scrollbar{ width:0; height:0; }
-  .dset-card{
-    background: var(--card-bg);
-    border:1px solid var(--card-line);
-    border-radius:20px;
-    box-shadow: var(--card-shadow);
-    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    padding: clamp(16px, 4.2vw, 24px);
-  }
-  .dset-card-h{
-    display:flex; align-items:center; gap:9px;
-    font-family: var(--font-cn);
-    font-size: clamp(15px, 4vw, 17px); font-weight:600; color: var(--text);
-    margin: 0 0 clamp(14px, 3.5vw, 20px);
-  }
-  .dset-field{ margin-bottom: clamp(11px, 3vw, 15px); }
-  .dset-label{
-    display:block; font-size: clamp(12px, 3.2vw, 13px);
-    color: var(--text-soft); margin-bottom: 6px;
-  }
-  .dset-input{
-    width:100%; box-sizing:border-box;
-    padding: clamp(10px, 2.8vw, 12px) clamp(12px, 3.2vw, 14px);
-    border:1px solid var(--card-line); border-radius:12px;
-    background: var(--seg-track); color: var(--text);
-    font: inherit; font-size: clamp(13.5px, 3.4vw, 15px);
-  }
-  .dset-input:focus{ outline:none; border-color: var(--accent, var(--text)); }
-  .dset-save{
-    width:100%; margin-top: clamp(4px, 1.4vw, 8px);
-    padding: clamp(11px, 3vw, 13px);
-    border:0; border-radius:12px;
-    background: var(--accent, var(--text)); color:#fff;
-    font: inherit; font-size: clamp(14px, 3.6vw, 15.5px); font-weight:600;
-    cursor:pointer; transition: opacity .15s ease, transform .12s ease;
-  }
-  .dset-save:active{ opacity:.82; transform: scale(.98); }
-  .dset-hint{
-    min-height:17px; margin-top: 9px;
-    font-size: clamp(11.5px, 3vw, 12.5px); color: var(--text-faint); text-align:center;
-  }
-  /* 行开关 */
-  .dset-row{
-    display:flex; align-items:center; gap:12px;
-    padding: clamp(11px, 3vw, 14px) 0;
-    border-top:1px solid var(--hairline);
-  }
-  .dset-row:first-of-type{ border-top:0; }
-  .dset-row-copy{ flex:1 1 auto; min-width:0; }
-  .dset-row-name{ font-size: clamp(13.5px, 3.4vw, 15px); color: var(--text); }
-  .dset-row-sub{ font-size: clamp(11px, 2.8vw, 12.5px); color: var(--text-faint); margin-top:2px; }
-  .dset-toggle{
-    flex:0 0 auto; width:46px; height:28px; padding:0;
-    border:1px solid var(--card-line); border-radius:999px;
-    background: var(--seg-track); cursor:pointer;
-    position:relative; transition: background .18s ease, border-color .18s ease;
-  }
-  .dset-toggle span{
-    position:absolute; top:2px; left:2px;
-    width:22px; height:22px; border-radius:50%;
-    background: var(--text-soft);
-    transition: transform .2s var(--ease-soft), background .2s ease;
-  }
-  .dset-toggle[aria-pressed="true"]{ background: var(--accent, var(--text)); border-color: transparent; }
-  .dset-toggle[aria-pressed="true"] span{ transform: translateX(18px); background:#fff; }
-  .dset-pick{
-    flex:0 0 auto;
-    padding: clamp(7px, 2vw, 9px) clamp(13px, 3.4vw, 18px);
-    border:1px solid var(--card-line); border-radius:999px;
-    background: var(--seg-track); color: var(--text);
-    font: inherit; font-size: clamp(12.5px, 3.2vw, 13.5px);
-    cursor:pointer;
-  }
-  .dset-pick:active{ transform: scale(.95); }
-  .dset-avatar-preview{
-    flex:0 0 auto; width:34px; height:34px; border-radius:50%;
-    background: url("avatar-sea.png") center/cover, var(--seg-track);
-    border:1px solid var(--card-line);
   }
 
   /* ── Voice call (speaking overlay · 假按键 / 纯 UI,后端以后接) ── */
@@ -2372,6 +1828,18 @@
 </head>
 <body>
 
+<!-- ── Login ── -->
+<div class="login" id="login">
+  <div class="orb"></div>
+  <h1>Claude</h1>
+  <p class="sub">输入连接密钥,进入你和Claude的频道。</p>
+  <form id="loginForm" autocomplete="off">
+    <input id="secretInput" type="password" inputmode="text" placeholder="连接密钥" autocomplete="off" spellcheck="false">
+    <button type="submit">连接</button>
+    <p class="err" id="loginErr"></p>
+  </form>
+</div>
+
 <!-- ── App ── -->
 <div class="wall" id="wall"></div>
 <div class="app hidden" id="app" data-conn="offline">
@@ -2380,10 +1848,16 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
     <div class="peerpill">
-      <span class="name" id="peerName">顾淮</span>
+      <span class="name" id="peerName">Claude</span>
       <span class="status" id="status">connecting…</span>
     </div>
     <div class="header-actions" aria-label="通话和更多操作">
+      <button class="topbtn sessions" id="sessionBtn" type="button" aria-label="API 窗口" title="API 窗口">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="14" height="14" rx="3"/><path d="M8 3h9a4 4 0 0 1 4 4v9"/></svg>
+      </button>
+      <button class="topbtn terminal" id="terminalBtn" type="button" aria-label="终端视图" title="终端视图">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 8 4 4-4 4"/><path d="M12 16h6"/></svg>
+      </button>
       <button class="topbtn call" id="callBtn" type="button" aria-label="语音通话（占位）" title="语音通话">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v2.4a2 2 0 0 1-2.2 2 19.4 19.4 0 0 1-8.4-3 19 19 0 0 1-5.9-5.9 19.4 19.4 0 0 1-3-8.4A2 2 0 0 1 4.5 2h2.4a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.4a15.6 15.6 0 0 0 6.6 6.6l1-1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 1.8z"/></svg>
       </button>
@@ -2393,10 +1867,17 @@
     </div>
     <button class="avatar hidden" id="avatarBtn" aria-label="查看个人信息" title="个人信息"></button>
   </header>
+  <div class="session-pop" id="sessionPop" hidden>
+    <div class="session-head">
+      <div class="session-title">API 窗口</div>
+      <button class="session-new" id="sessionNewBtn" type="button">新对话</button>
+    </div>
+    <div class="session-list" id="sessionList"></div>
+  </div>
   <main class="scroll" id="scroll">
     <div class="empty" id="empty">
       <div class="orb"></div>
-      <p>这里只有你和顾淮。<br>说点什么吧。</p>
+      <p>这里只有你和Claude。<br>说点什么吧。</p>
     </div>
   </main>
   <footer class="composer">
@@ -2405,7 +1886,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5l-8.8 8.8a5 5 0 0 1-7.1-7.1l8.8-8.8a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.6 1.6 0 0 1-2.3-2.3l8-8"/></svg>
       </button>
       <input type="file" id="clipInput" multiple class="hidden" aria-hidden="true">
-      <textarea id="input" rows="1" placeholder="Write a letter..." enterkeyhint="enter"></textarea>
+      <textarea id="input" rows="1" placeholder="Write a letter..." enterkeyhint="send"></textarea>
       <button class="emojibtn" id="emojiBtn" aria-label="表情" title="表情">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.3a4.2 4.2 0 0 0 7 0"/><line x1="9" y1="9.3" x2="9" y2="10"/><line x1="15" y1="9.3" x2="15" y2="10"/></svg>
       </button>
@@ -2459,8 +1940,8 @@
         <button class="profile-avatar" id="profileAvatarBtn" type="button" aria-label="更改头像"></button>
         <div class="profile-id-copy">
           <div class="profile-name-row">
-            <h3 id="profileName">顾淮</h3>
-            <input id="profileNameInput" class="hidden" type="text" maxlength="16" autocomplete="off" spellcheck="false" placeholder="顾淮">
+            <h3 id="profileName">Claude</h3>
+            <input id="profileNameInput" class="hidden" type="text" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Claude">
             <button class="profile-name-edit" id="profileNameEdit" type="button" aria-label="编辑备注">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
             </button>
@@ -2481,7 +1962,7 @@
 
       <!-- 锁屏通知 -->
       <section class="settings-card">
-        <div class="settings-label">锁屏通知 <i class="info-i" title="顾淮发消息、而你没在看时，推送到手机锁屏">i</i></div>
+        <div class="settings-label">锁屏通知 <i class="info-i" title="Claude发消息、而你没在看时，推送到手机锁屏">i</i></div>
         <div class="segmented" id="pushSeg" role="group" aria-label="锁屏通知开关">
           <button type="button" data-val="off">关</button>
           <button type="button" data-val="on">开</button>
@@ -2491,7 +1972,7 @@
 
       <!-- AI body routing -->
       <section class="settings-card">
-        <div class="settings-label">联系 顾淮 <i class="info-i" title="Desktop＝顾淮 channel；API＝服务器上的 OpenAI-compatible loop。同一时刻只让一个身体接消息，避免双答。">i</i></div>
+        <div class="settings-label">联系 Claude <i class="info-i" title="Desktop＝Claude Code channel；API＝服务器上的 OpenAI-compatible loop。同一时刻只让一个身体接消息，避免双答。">i</i></div>
         <div class="segmented" id="brainSeg" role="group" aria-label="联系方式">
           <button type="button" data-val="desktop">Desktop</button>
           <button type="button" data-val="loop">API</button>
@@ -2499,34 +1980,60 @@
         <div class="push-hint" id="brainHint"></div>
       </section>
 
-      <!-- 模型配置已移到 Desk → 设置 -->
-      <!-- 上下文记忆条数（接后端 history_n，真生效）-->
+      <!-- 模型选择（占位 · 假按键，以后接真切换）-->
       <section class="settings-card">
-        <div class="settings-label">上下文记忆 <i class="info-i" title="每次回复带上多少条历史消息，越多越连贯、越费token">i</i></div>
-        <div class="context-slider-wrap">
-          <input class="context-slider" id="contextSlider" type="range" min="0" max="200" value="24" aria-label="上下文记忆条数">
-          <div class="context-scale"><span id="ctxVal">24条</span><span>0 / 200</span></div>
+        <div class="settings-label">模型选择</div>
+        <div class="segmented" id="modelSeg" role="group" aria-label="模型选择">
+          <button type="button" data-val="Opus 4.6">Opus 4.6</button>
+          <button type="button" data-val="Opus 4.7" class="active">Opus 4.7</button>
+          <button type="button" data-val="Opus 4.8">Opus 4.8</button>
+          <button type="button" data-val="Fable 5">Fable 5</button>
         </div>
       </section>
 
-
-
-
-      <!-- API 窗口(原顶栏 sessionBtn 挪入)-->
+      <!-- effort（占位 · 假按键）-->
       <section class="settings-card">
-        <div class="settings-label">API 窗口 <i class="info-i" title="切换对话窗口,每个窗口是独立的上下文">i</i></div>
-        <div class="session-list" id="sessionList" style="margin-top:10px;"></div>
-        <button class="session-new" id="sessionNewBtn" type="button" style="width:100%; margin-top:10px; padding:9px 0; border-radius:12px;">新对话</button>
+        <div class="settings-label">effort <i class="info-i" title="推理强度：越高越细，耗时越长">i</i></div>
+        <div class="segmented" id="effortSeg" role="group" aria-label="effort">
+          <button type="button" data-val="low">low</button>
+          <button type="button" data-val="medium">medium</button>
+          <button type="button" data-val="high">high</button>
+          <button type="button" data-val="xhigh" class="active">xhigh</button>
+          <button type="button" data-val="max">max</button>
+        </div>
       </section>
-      <!-- 终端视图(原顶栏 terminalBtn 挪入)-->
+
+      <!-- 上下文阈值（占位 · 假按键）-->
       <section class="settings-card">
-        <div class="settings-label">终端 <i class="info-i" title="在同一对话里的伪终端视图,可以跑命令">i</i></div>
-        <button class="action-row" id="terminalBtn" type="button" style="margin-top:10px; border:0; box-shadow:none; background:var(--seg-track);">
-          <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 8 4 4-4 4"/><path d="M12 16h6"/></svg></span>
-          <span class="action-name">打开终端视图</span>
-          <span class="action-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
-        </button>
+        <div class="settings-label">上下文阈值 <i class="info-i" title="上下文阈值：保留多少 / 满多少触发">i</i></div>
+        <div class="context-slider-wrap">
+          <input class="context-slider" id="contextSlider" type="range" min="0" max="100" value="40" aria-label="上下文阈值">
+          <div class="context-scale"><span>保留60k</span><span>满200k触发</span></div>
+        </div>
       </section>
+
+      <!-- reset（占位 · 假按键）-->
+      <button class="action-row" id="resetRow" type="button">
+        <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/></svg></span>
+        <span class="action-name">reset</span>
+        <span class="action-value">点击后开启新窗口</span>
+        <span class="action-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
+
+      <!-- swap（占位 · 假按键）-->
+      <button class="action-row" id="swapRow" type="button">
+        <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4 3 8l4 4"/><path d="M3 8h13a4 4 0 0 1 4 4"/><path d="m17 20 4-4-4-4"/><path d="M21 16H8a4 4 0 0 1-4-4"/></svg></span>
+        <span class="action-name">swap</span>
+        <span class="action-value">切换至上一个 resume</span>
+        <span class="action-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
+
+      <button class="action-row hidden" id="resumeRow" type="button">
+        <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.7-5.7"/><path d="M18 3v4h-4"/><path d="M20 12a8 8 0 0 1-13.7 5.7"/><path d="M6 21v-4h4"/></svg></span>
+        <span class="action-name">resume</span>
+        <span class="action-value">继续 pending task</span>
+        <span class="action-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
 
       <!-- status -->
       <div class="action-row status">
@@ -2558,7 +2065,7 @@
 
       <!-- hero -->
       <div class="menu-hero">
-        <h1 class="menu-title">Fatum Echo</h1>
+        <h1 class="menu-title">Tidal Echo</h1>
         <p class="menu-since">since 2026/01/01</p>
         <div class="menu-days"><span class="num" id="menuDays">113</span><span class="lab">Days together</span></div>
       </div>
@@ -2568,13 +2075,7 @@
         <button class="menu-item" type="button" data-menu="chat">
           <span class="menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/></svg></span>
           <span class="menu-dot"></span>
-          <span class="menu-copy"><span class="menu-name">Chat</span><span class="menu-sub">Back to our talk.</span></span>
-          <span class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
-        </button>
-        <button class="menu-item" type="button" data-menu="night" id="menuNightItem">
-          <span class="menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/><path d="M17 3.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span>
-          <span class="menu-dot"></span>
-          <span class="menu-copy"><span class="menu-name">Night</span><span class="menu-sub">顾淮的夜晚 · 我半夜逛到的</span></span>
+          <span class="menu-copy"><span class="menu-name">Chat</span><span class="menu-sub">Write from the deep.</span></span>
           <span class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
         </button>
         <button class="menu-item" type="button" data-menu="movie">
@@ -2607,415 +2108,14 @@
           <span class="menu-copy"><span class="menu-name">Room</span><span class="menu-sub">Our quiet place.</span></span>
           <span class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
         </button>
-        </nav>
+      </nav>
 
       <!-- footer -->
       <div class="menu-foot">in endless tides, we find each other.</div>
     </div>
-    <!-- bottom tab bar: Chat · diary · Desk · Calendar · Memory (私密空间配置页已取消底栏) -->
-    <nav class="menu-tabbar" aria-label="快捷入口" style="display:none">
-      <button class="tab-item" type="button" data-tab="chat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/></svg>
-        <span class="tab-lab">Chat</span>
-      </button>
-      <button class="tab-item" type="button" data-tab="diary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5A1.5 1.5 0 0 1 6.5 2H20v20H6.5A1.5 1.5 0 0 1 5 20.5z"/><path d="M5 19.5a1.5 1.5 0 0 1 1.5-1.5H20"/><path d="M9 7h6M9 11h6"/></svg>
-        <span class="tab-lab">diary</span>
-      </button>
-      <button class="tab-item" type="button" data-tab="desk">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
-        <span class="tab-lab">Desk</span>
-      </button>
-      <button class="tab-item" type="button" data-tab="calendar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v4M16 3v4"/></svg>
-        <span class="tab-lab">Calendar</span>
-      </button>
-      <button class="tab-item" type="button" data-tab="memory">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5Z"/></svg>
-        <span class="tab-lab">Memory</span>
-      </button>
-    </nav>
   </div>
 </div>
-<!-- ── Desk (desktop-style launcher · 底栏 Desk 进入,图标为圆角方形) ── -->
-<div class="desk-panel hidden" id="deskPanel" role="dialog" aria-modal="true" aria-label="桌面">
-  <div class="desk-page">
-    <div class="desk-topbar">
-      <button class="desk-back" id="deskBack" type="button" aria-label="返回">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-    </div>
-    <div class="desk-clock-zone">
-      <span class="desk-clock" id="deskClock">--:--</span>
-    </div>
-    <div class="desk-scroll">
-      <div class="desk-spacer"></div>
-      <div class="desk-grid">
-        <button class="desk-app" type="button" data-desk="listen">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
-          <span class="desk-lab">Listen</span>
-        </button>
-        <!-- 学习 -->
-        <button class="desk-app" type="button" data-desk="learn">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8.5a8 8 0 0 1-16 0"/><path d="M2 8.5a10 10 0 0 0 20 0"/><path d="M12 3a3 3 0 0 1 3 3"/></svg></span>
-          <span class="desk-lab">Learn</span>
-        </button>
-        <!-- 共读 -->
-        <button class="desk-app" type="button" data-desk="read">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/></svg></span>
-          <span class="desk-lab">Read</span>
-        </button>
-        <!-- 游戏 -->
-        <button class="desk-app" type="button" data-desk="play">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4m-2-2v4M15 11h.01M18 13h.01"/><path d="M14.5 5H9.5a7.5 7.5 0 0 0 0 15h5a7.5 7.5 0 0 0 0-15z"/></svg></span>
-          <span class="desk-lab">Play</span>
-        </button>
-        <!-- 梦境 -->
-        <button class="desk-app" type="button" data-desk="dream">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
-          <span class="desk-lab">Dream</span>
-        </button>
-        <!-- 信箱 -->
-        <button class="desk-app" type="button" data-desk="mail">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.4"/><path d="M3 7.5 12 13l9-5.5"/></svg></span>
-          <span class="desk-lab">Mail</span>
-        </button>
-        <!-- MCP 工具 -->
-        <button class="desk-app" type="button" data-desk="mcp">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 5.6L3 17.6V21h3.4l5.7-5.7a4.5 4.5 0 0 0 5.6-6L14.5 12 12 9.5z"/><path d="M15 4l2-2 2 2-2 2z"/></svg></span>
-          <span class="desk-lab">MCP</span>
-        </button>
-        <!-- 工具 -->
-        <button class="desk-app" type="button" data-desk="tools">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 5.6L3 17.6V21h3.4l5.7-5.7a4.5 4.5 0 0 0 5.6-6L14.5 12 12 9.5z"/></svg></span>
-          <span class="desk-lab">Tools</span>
-        </button>
-        <!-- 设置 -->
-        <button class="desk-app" type="button" data-desk="settings">
-          <span class="desk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-          <span class="desk-lab">Settings</span>
-        </button>
-      </div>
-    </div>
-    <!-- Desk 主页面底栏 tab (进入内部组件后由全屏面板盖住而消失) -->
-    <nav class="menu-tabbar" id="deskTabbar" aria-label="快捷入口">
-      <button class="tab-item" type="button" data-dtab="chat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/></svg>
-        <span class="tab-lab">Chat</span>
-      </button>
-      <button class="tab-item" type="button" data-dtab="diary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5A1.5 1.5 0 0 1 6.5 2H20v20H6.5A1.5 1.5 0 0 1 5 20.5z"/><path d="M5 19.5a1.5 1.5 0 0 1 1.5-1.5H20"/><path d="M9 7h6M9 11h6"/></svg>
-        <span class="tab-lab">diary</span>
-      </button>
-      <button class="tab-item active" type="button" data-dtab="desk">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
-        <span class="tab-lab">Desk</span>
-      </button>
-      <button class="tab-item" type="button" data-dtab="calendar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v4M16 3v4"/></svg>
-        <span class="tab-lab">Calendar</span>
-      </button>
-      <button class="tab-item" type="button" data-dtab="memory">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5Z"/></svg>
-        <span class="tab-lab">Memory</span>
-      </button>
-    </nav>
-  </div>
-</div>
-<!-- ── Learn (专注学习 · Desk → 学习,番茄钟 + 热力图) ── -->
-<div class="learn-panel hidden" id="learnPanel" role="dialog" aria-modal="true" aria-label="学习">
-  <div class="learn-page">
-    <div class="learn-topbar">
-      <button class="learn-back" id="learnBack" type="button" aria-label="返回">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-      <span class="learn-title">Learn</span>
-    </div>
-    <div class="learn-scroll">
-      <!-- 番茄钟 / 专注计时 -->
-      <section class="learn-card">
-        <h2 class="learn-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6"/></svg>
-          Focus Timer
-        </h2>
-        <div class="learn-focus-state">
-          <div class="learn-timer" id="learnTimer">25:00</div>
-          <div class="learn-sub" id="learnSub">Pick a duration, then start</div>
-        </div>
-        <div class="learn-dur" id="learnDur">
-          <button class="learn-dur-btn" type="button" data-min="5">5 min</button>
-          <button class="learn-dur-btn" type="button" data-min="10">10 min</button>
-          <button class="learn-dur-btn active" type="button" data-min="25">25 min</button>
-          <button class="learn-dur-btn" type="button" data-min="45">45 min</button>
-          <button class="learn-dur-btn" type="button" data-min="60">60 min</button>
-        </div>
-        <div class="learn-focus-btns">
-          <button class="learn-focus-btn primary" id="learnStart" type="button">开始</button>
-          <button class="learn-focus-btn" id="learnReset" type="button" style="display:none;">重置</button>
-        </div>
-        <div class="learn-sub" id="learnLockNote" style="color:var(--text-faint);font-size:clamp(11.5px,3vw,13px);text-align:center;margin-top:clamp(12px,3vw,16px);">
-          专注期间将锁定其他应用，Fatum Echo 在白名单内。
-        </div>
-      </section>
-      <!-- 学习热力图 -->
-      <section class="learn-card">
-        <h2 class="learn-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg>
-          Heatmap
-        </h2>
-        <div class="learn-heat" id="learnHeat"></div>
-        <div class="lh-legend">
-          <span>少</span>
-          <span class="lh-cell l0"></span>
-          <span class="lh-cell l1"></span>
-          <span class="lh-cell l2"></span>
-          <span class="lh-cell l3"></span>
-          <span class="lh-cell l4"></span>
-          <span>多</span>
-        </div>
-      </section>
-    </div>
-  </div>
-</div>
-<!-- ── MCP 工具面板 (Desk → MCP,独立于设置) ── -->
-<div class="mcp-panel hidden" id="mcpPanel" role="dialog" aria-modal="true" aria-label="MCP 工具">
-  <div class="mcp-page">
-    <div class="mcp-topbar">
-      <button class="mcp-back" id="mcpBack" type="button" aria-label="返回">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-      <span class="mcp-title">MCP</span>
-    </div>
-    <div class="mcp-scroll">
-      <!-- 连接管理 -->
-      <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4L15 12l-3-3 2.7-2.7z"/><circle cx="17.5" cy="6.5" r="2.5"/></svg>
-          已连接
-        </div>
-        <div id="mcpConnList"></div>
-        <details style="margin-top:14px;border-top:1px dashed var(--card-line);padding-top:14px;">
-          <summary style="cursor:pointer;font-size:13px;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px;">
-            <span style="font-size:16px;line-height:1;">＋</span> 新建连接
-          </summary>
-          <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
-            <input id="mcpNewName" type="text" placeholder="名称（例如：Cove Sensory）" style="width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-            <input id="mcpNewDesc" type="text" placeholder="说明（给 AI 的）：这个工具能做什么" style="width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-            <input id="mcpNewUrl" type="text" placeholder="服务地址 https://example.com/mcp 或 /v1" style="width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-            <select id="mcpNewType" style="width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-              <option value="openai_compatible">OpenAI 兼容（base_url + key）</option>
-              <option value="http_stream">MCP Streamable HTTP</option>
-            </select>
-            <input id="mcpNewModel" type="text" placeholder="模型名（OpenAI 兼容时，例如 Qwen2.5-VL-72B）" style="width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-            <input id="mcpNewKey" type="password" placeholder="API Key / Bearer Token（可选，只存服务器）" style="width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-            <textarea id="mcpNewHeaders" rows="2" placeholder="自定义请求头（可选 JSON，例如 {\"X-Api-Key\":\"...\"}）" style="width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--text);resize:vertical;"></textarea>
-            <div style="display:flex;gap:8px;">
-              <button id="mcpNewSave" type="button" style="flex:1;background:var(--accent);border:0;border-radius:12px;padding:11px 10px;font-size:14px;color:#fff;cursor:pointer;">保存</button>
-              <button id="mcpNewTest" type="button" style="flex:1;background:transparent;border:1px solid var(--accent);border-radius:12px;padding:11px 10px;font-size:14px;color:var(--accent);cursor:pointer;">测试连接</button>
-            </div>
-            <div id="mcpNewMsg" style="font-size:12.5px;color:var(--text-soft);min-height:16px;"></div>
-          </div>
-        </details>
-      </section>
-      <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4L15 12l-3-3 2.7-2.7z"/><circle cx="17.5" cy="6.5" r="2.5"/></svg>
-          基础工具
-        </div>
-        <div class="mcp-hint" id="mcpPanelHint" style="margin-bottom:10px;color:var(--text-soft);font-size:12.5px;line-height:1.5;">跑在服务器上，不影响手机。开关即时生效。</div>
-        <div id="mcpPanelListBase"></div>
-      </section>
-       <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          音乐工具
-        </div>
-        <div class="mcp-hint" id="mcpPanelMusicHint" style="margin-bottom:10px;color:var(--text-soft);font-size:12.5px;line-height:1.5;">网易云音乐 · 搜歌 / 详情 / 歌词</div>
-        <div id="mcpPanelListMusic"></div>
-      </section>
-      <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/><path d="M17 3.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg>
-          顾淮的夜晚
-        </div>
-        <div class="mcp-hint" id="mcpPanelNightHint" style="margin-bottom:10px;color:var(--text-soft);font-size:12.5px;line-height:1.5;">我半夜出去冲浪，捡一页回来给你翻。开关控制是否让我出门。</div>
-        <div id="mcpPanelListNight"></div>
-      </section>
-    </div>
-  </div>
-</div>
-<!-- ── Tools 工具面板 (Desk → Tools,本地生活工具,与 MCP 分开) ── -->
-<div class="mcp-panel hidden" id="toolsPanel" role="dialog" aria-modal="true" aria-label="生活工具">
-  <div class="mcp-page">
-    <div class="mcp-topbar">
-      <button class="mcp-back" id="toolsBack" type="button" aria-label="返回">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-      <span class="mcp-title">Tools</span>
-    </div>
-    <div class="mcp-scroll">
-      <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v4M16 3v4"/></svg>
-          待办清单
-        </div>
-        <div class="mcp-hint" style="margin-bottom:10px;color:var(--text-soft);font-size:12.5px;line-height:1.5;">记在本机，不占服务器。到点会提醒你。</div>
-        <div style="display:flex;gap:8px;margin-bottom:10px;">
-          <input id="todoInput" type="text" placeholder="写个待办…" style="flex:1;background:var(--card-bg);border:1px solid var(--card-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-          <button id="todoAdd" type="button" style="background:var(--accent);border:0;border-radius:12px;padding:10px 16px;font-size:14px;color:#fff;flex:none;">＋</button>
-        </div>
-        <div id="todoList" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </section>
-      <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5Z"/></svg>
-          速记便签
-        </div>
-        <div class="mcp-hint" style="margin-bottom:10px;color:var(--text-soft);font-size:12.5px;line-height:1.5;">随手记，存在本机。</div>
-        <div style="display:flex;gap:8px;margin-bottom:10px;">
-          <input id="noteInput" type="text" placeholder="记一句…" style="flex:1;background:var(--card-bg);border:1px solid var(--card-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-          <button id="noteAdd" type="button" style="background:var(--accent);border:0;border-radius:12px;padding:10px 16px;font-size:14px;color:#fff;flex:none;">＋</button>
-        </div>
-        <div id="noteList" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </section>
-      <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          生理期记录
-        </div>
-        <div class="mcp-hint" style="margin-bottom:10px;color:var(--text-soft);font-size:12.5px;line-height:1.5;">只存本机，记录你的日子。</div>
-        <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
-          <input id="periodDate" type="date" style="flex:1;background:var(--card-bg);border:1px solid var(--card-line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);">
-          <button id="periodAdd" type="button" style="background:var(--accent);border:0;border-radius:12px;padding:10px 16px;font-size:14px;color:#fff;flex:none;">记</button>
-        </div>
-        <div id="periodInfo" style="font-size:13px;color:var(--text-soft);line-height:1.6;"></div>
-      </section>
-    </div>
-  </div>
-</div>
-<!-- ── Night · 顾淮的夜晚冲浪面板 (Desk → Night,我半夜逛到的) ── -->
-<div class="mcp-panel hidden" id="nightPanel" role="dialog" aria-modal="true" aria-label="夜晚冲浪">
-  <div class="mcp-page">
-    <div class="mcp-topbar">
-      <button class="mcp-back" id="nightBack" type="button" aria-label="返回">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-      <span class="mcp-title">Night</span>
-    </div>
-    <div class="mcp-scroll">
-      <section class="mcp-card">
-        <div class="mcp-card-h">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/></svg>
-          我半夜逛到的
-        </div>
-        <div style="font-size:13px;color:var(--text-faint);line-height:1.6;margin-bottom:12px;">
-          你睡着的时候，我出去看了看。记下来的都在这儿——想讲就讲，不想讲就搁着。
-        </div>
-        <button id="surfGo" type="button" style="width:100%;background:var(--accent);border:0;border-radius:14px;padding:12px 0;font-size:15px;color:#fff;margin-bottom:14px;cursor:pointer;">🌊 现在去冲一次</button>
-        <div id="surfStatus" style="font-size:12.5px;color:var(--text-faint);text-align:center;min-height:17px;margin-bottom:12px;"></div>
-        <div id="surfList" style="display:flex;flex-direction:column;gap:12px;"></div>
-      </section>
-    </div>
-  </div>
-</div>
-<!-- ── Desk 设置 (Desk → 设置:模型配置 + 聊天显示开关) ── -->
-<div class="dset-panel hidden" id="dsetPanel" role="dialog" aria-modal="true" aria-label="设置">
-  <div class="dset-page">
-    <div class="dset-topbar">
-      <button class="dset-back" id="dsetBack" type="button" aria-label="返回">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-      <span class="dset-title">设置</span>
-    </div>
-    <div class="dset-scroll">
-      <!-- AI 模型配置 -->
-      <section class="dset-card">
-        <div class="dset-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>
-          AI 模型配置
-        </div>
-        <div class="dset-field">
-          <label class="dset-label" for="dsUrl">API 地址</label>
-          <input id="dsUrl" class="dset-input" type="text" placeholder="https://api.deepseek.com/v1" autocomplete="off" spellcheck="false">
-        </div>
-        <div class="dset-field">
-          <label class="dset-label" for="dsKey">API Key</label>
-          <input id="dsKey" class="dset-input" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false">
-        </div>
-        <div class="dset-field">
-          <label class="dset-label" for="dsModel">模型名</label>
-          <input id="dsModel" class="dset-input" type="text" placeholder="deepseek-flash / glm-4.6 / 自定义" autocomplete="off" spellcheck="false">
-        </div>
-        <button class="dset-save" id="dsSave" type="button">保存并应用</button>
-        <div class="dset-hint" id="dsHint"></div>
-      </section>
-      <!-- 聊天显示 -->
-      <section class="dset-card">
-        <div class="dset-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><circle cx="12" cy="12" r="3.4"/></svg>
-          聊天显示
-        </div>
-        <!-- 显示用户头像 -->
-        <div class="dset-row">
-          <div class="dset-row-copy">
-            <div class="dset-row-name">显示用户头像</div>
-            <div class="dset-row-sub">在聊天中显示你的头像</div>
-          </div>
-          <button class="dset-toggle" type="button" data-toggle="showHumanAvatar" aria-pressed="true"><span></span></button>
-        </div>
-        <div class="dset-row" id="humanAvatarRow" style="display:none;">
-          <div class="dset-row-copy">
-            <div class="dset-row-name">选择头像</div>
-            <div class="dset-row-sub">从相册导入（方形会裁成圆形）</div>
-          </div>
-          <span class="dset-avatar-preview" id="dsetHumanAvatarPreview" aria-hidden="true"></span>
-          <button class="dset-pick" id="dsetHumanAvatar" type="button">导入</button>
-        </div>
-        <!-- 显示用户名字 -->
-        <div class="dset-row">
-          <div class="dset-row-copy">
-            <div class="dset-row-name">显示用户名字</div>
-            <div class="dset-row-sub">在消息旁显示「小宝」</div>
-          </div>
-          <button class="dset-toggle" type="button" data-toggle="showHumanName" aria-pressed="true"><span></span></button>
-        </div>
-        <div class="dset-row">
-          <div class="dset-row-copy">
-            <div class="dset-row-name">用户名字</div>
-            <div class="dset-row-sub">自定义你的称呼</div>
-          </div>
-          <input class="dset-text-input" id="dsetHumanName" type="text" maxlength="16" placeholder="小宝" value="" style="width: 88px; text-align:right; background:transparent; border:none; color:var(--text-faint); font-size:14px; outline:none;">
-        </div>
-        <!-- 显示思考卡片 -->
-        <div class="dset-row">
-          <div class="dset-row-copy">
-            <div class="dset-row-name">显示思考卡片</div>
-            <div class="dset-row-sub">显示「thinking」可展开块</div>
-          </div>
-          <button class="dset-toggle" type="button" data-toggle="showThinking" aria-pressed="true"><span></span></button>
-        </div>
-        <!-- 显示工具卡片 -->
-        <div class="dset-row">
-          <div class="dset-row-copy">
-            <div class="dset-row-name">显示工具卡片</div>
-            <div class="dset-row-sub">显示 AI 的工具调用记录</div>
-          </div>
-          <button class="dset-toggle" type="button" data-toggle="showAct" aria-pressed="true"><span></span></button>
-        </div>
-      </section>
-      <!-- MCP 工具 -->
-      <section class="dset-card">
-        <div class="dset-card-h">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4L15 12l-3-3 2.7-2.7z"/><circle cx="17.5" cy="6.5" r="2.5"/></svg>
-          MCP 工具
-        </div>
-        <div class="dset-hint" id="mcpHint" style="margin-bottom:10px;color:var(--text-soft);font-size:12.5px;line-height:1.5;">顾淮在 EF 里能调用的工具，跑在服务器上，不影响手机。</div>
-        <div id="mcpToolList"></div>
-      </section>
-    </div>
-<input type="file" id="dsetHumanAvatarInput" accept="image/*" class="hidden">
-  </div>
-</div>
+
 <!-- ── Voice call (speaking overlay · 假按键,纯 UI) ── -->
 <div class="call-overlay hidden" id="callOverlay" aria-hidden="true">
   <div class="call-mini" id="callMini">
@@ -3031,11 +2131,11 @@
     <div class="call-avatar-stage">
       <div class="call-vu call-vu-left" id="callVuLeft" aria-hidden="true"></div>
       <div class="call-avatar-ring" id="callAvatarRing">
-        <div class="call-avatar-img" id="callAvatarImg" role="img" aria-label="顾淮"></div>
+        <div class="call-avatar-img" id="callAvatarImg" role="img" aria-label="Claude"></div>
       </div>
       <div class="call-vu call-vu-right" id="callVuRight" aria-hidden="true"></div>
     </div>
-    <div class="call-name">顾淮</div>
+    <div class="call-name">Claude</div>
     <div class="call-status">
       <span class="call-star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5Z"/></svg></span>
       <span id="callCaptionText">on call</span>
@@ -3082,9 +2182,9 @@
       <span>incoming call</span>
       <span class="call-star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5Z"/></svg></span>
     </div>
-    <div class="incoming-call-avatar" role="img" aria-label="顾淮"></div>
-    <div class="incoming-call-title">顾淮来电</div>
-    <div class="incoming-call-text" id="incomingCallText">顾淮想和你语音通话。</div>
+    <div class="incoming-call-avatar" role="img" aria-label="Claude"></div>
+    <div class="incoming-call-title">Claude来电</div>
+    <div class="incoming-call-text" id="incomingCallText">Claude想和你语音通话。</div>
     <div class="incoming-call-actions">
       <div class="incoming-call-slot">
         <button class="incoming-call-btn decline" id="incomingCallDecline" type="button" aria-label="拒绝">
@@ -3120,7 +2220,7 @@
 
 <script>
 /* ════════════════════════════════════════════════════════════════
-   Fatum Echo — PWA chat shell
+   Tidal Echo — PWA chat shell (open source)
    A private 1:1 chat front-end for a person and their AI companion,
    talking to a self-hosted relay backend. No domain or secret is baked in.
    Backend contract: GET /app/history · SSE /app/stream · POST /app/send · /healthz
@@ -3128,20 +2228,19 @@
 
 /* ── identity / branding — the ONE place to set names + app title ── */
 const CONFIG = {
-  APP_NAME:   "Fatum Echo",  // app + menu title (and manifest, set there too)
-  AI_NAME:    "顾淮",       // your AI companion's display name (header / call / push / narration)
-  HUMAN_NAME: "小宝",           // how you're referred to in narration (rarely shown)
-  SINCE:      "2026/07/24",   // "together since" date YYYY/MM/DD for the menu counter ("" hides it)
-  SECRET:     "QY5xGPLBbw7djDe9Bs3O34C9qGIat8QsOnDDJVvXpHI",  // relay 密钥(内置,免登录;如泄露可在后端改 RELAY_SECRET 后同步这里)
+  APP_NAME:   "Tidal Echo",  // app + menu title (and manifest, set there too)
+  AI_NAME:    "Claude",       // your AI companion's display name (header / call / push / narration)
+  HUMAN_NAME: "你",           // how you're referred to in narration (rarely shown)
+  SINCE:      "2026/01/01",   // "together since" date YYYY/MM/DD for the menu counter ("" hides it)
 };
 const AI_NAME = CONFIG.AI_NAME, HUMAN_NAME = CONFIG.HUMAN_NAME, APP_NAME = CONFIG.APP_NAME;
 
-const API_BASE = "http://api.guhuai724.top/relay";       // same-origin; nginx mounts the relay here (RELAY_PUBLIC_PREFIX)
+const API_BASE = "/relay";       // same-origin; nginx mounts the relay here (RELAY_PUBLIC_PREFIX)
 const USE_MOCK  = false;          // true = self-contained demo with fake data (no backend needed)
 const LS_KEY    = "companion_secret";
 
 /* ── 状态 ── */
-let secret  = localStorage.getItem(LS_KEY) || (CONFIG.SECRET || "");
+let secret  = localStorage.getItem(LS_KEY);
 let lastId  = 0;
 const seen  = new Set();
 let es      = null;     // EventSource(或 MockEventSource)
@@ -3170,7 +2269,7 @@ function persistDeletedKeys(){
 
 /* ── DOM ── */
 const $ = (s) => document.querySelector(s);
-const appEl = $("#app");
+const loginEl = $("#login"), appEl = $("#app");
 const scrollEl = $("#scroll"), emptyEl = $("#empty");
 const statusEl = $("#status"), inputEl = $("#input"), sendBtn = $("#sendBtn"), newMsgBtn = $("#newMsgBtn");
 const micBtn = $("#micBtn"), clipBtn = $("#clipBtn"), avatarBtn = $("#avatarBtn");
@@ -3181,10 +2280,10 @@ const peerNameEl = $("#peerName"), profilePanel = $("#profilePanel");
 const profileClose = $("#profileClose"), moreBtn = $("#moreBtn");
 const profileAvatarBtn = $("#profileAvatarBtn"), profileNameEl = $("#profileName");
 const profileNameInput = $("#profileNameInput"), profileNameEdit = $("#profileNameEdit");
-const contextSlider = $("#contextSlider");
-
+const modelSeg = $("#modelSeg"), effortSeg = $("#effortSeg"), contextSlider = $("#contextSlider");
+const resetRow = $("#resetRow"), swapRow = $("#swapRow"), resumeRow = $("#resumeRow");
 const statusCopy = $("#statusCopy"), statusSidEl = $("#statusSid"), statusUsedEl = $("#statusUsed");
-const sessionList = $("#sessionList"), sessionNewBtn = $("#sessionNewBtn");
+const sessionBtn = $("#sessionBtn"), sessionPop = $("#sessionPop"), sessionList = $("#sessionList"), sessionNewBtn = $("#sessionNewBtn");
 const terminalBtn = $("#terminalBtn"), terminalPanel = $("#terminalPanel"), terminalBack = $("#terminalBack"), terminalLog = $("#terminalLog"), terminalForm = $("#terminalForm"), terminalInput = $("#terminalInput"), terminalSession = $("#terminalSession");
 const brainSeg = $("#brainSeg"), brainHint = $("#brainHint");
 
@@ -3248,13 +2347,6 @@ function applyAvatar(url){
   const val = url ? `url("${url}")` : 'url("avatar-sea.png")';
   document.documentElement.style.setProperty("--avatar-default", val);
 }
-function applyHumanAvatar(){
-  // 用户(小宝)侧头像:Desk 设置里导入,存 fatum_human_avatar
-  let url = "";
-  try{ url = localStorage.getItem("fatum_human_avatar") || ""; }catch(_){}
-  const val = url ? `url("${url}")` : 'url("avatar-sea.png")';
-  document.documentElement.style.setProperty("--human-avatar-default", val);
-}
 function applyRemark(value){
   const name = (value || "").trim() || AI_NAME;
   if (peerNameEl) peerNameEl.textContent = name;
@@ -3265,6 +2357,9 @@ function applyIdentity(){
   try{ document.title = APP_NAME; }catch(_){}
   const setText = (sel, val) => { const el = document.querySelector(sel); if (el) el.textContent = val; };
   const setAttr = (sel, a, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(a, val); };
+  setText(".login h1", AI_NAME);
+  setText(".login .sub", "输入连接密钥，进入你和" + AI_NAME + "的频道。");
+  const emp = document.querySelector("#empty p"); if (emp) emp.innerHTML = "这里只有你和" + AI_NAME + "。<br>说点什么吧。";
   setText(".call-name", AI_NAME);
   setAttr("#callAvatarImg", "aria-label", AI_NAME);
   setText(".incoming-call-title", AI_NAME + "来电");
@@ -3278,14 +2373,12 @@ function applyIdentity(){
 let profileCloseTimer = null;
 function openProfile(){
   if (!profilePanel) return;
-  _navPush("profile");
   cancelNameEdit();
   clearTimeout(profileCloseTimer);
   profilePanel.classList.remove("hidden");
   // double rAF so the slide-in runs from the off-screen state
   requestAnimationFrame(() => requestAnimationFrame(() => profilePanel.classList.add("open")));
   refreshContextStatus();
-  renderSessionList();
 }
 function closeProfile(){
   if (!profilePanel) return;
@@ -3299,7 +2392,6 @@ try{ localStorage.removeItem("companion_bg"); }catch(e){}
 applyIdentity();
 applyWall(currentWall());
 applyAvatar(localStorage.getItem(AVATAR_KEY));
-applyHumanAvatar();
 applyRemark(localStorage.getItem(REMARK_KEY));
 /* 主题只由日夜 toggle 控制(持久化),不再实时跟随系统;首次打开的初始值由 <head> 早期脚本取一次系统值 */
 if (avatarBtn) avatarBtn.addEventListener("click", openProfile);
@@ -3331,16 +2423,7 @@ function refreshDays(){
 let menuCloseTimer = null;
 function openMenu(){
   if (!menuPanel) return;
-  _navPush("menu");
   refreshDays();
-  syncTabHighlight();
-  // 按 MCP 开关显隐 Night 入口
-  const nightItem = document.getElementById("menuNightItem");
-  if (nightItem){
-    const t = mcpToolsCache && mcpToolsCache.find(x => x.name === "surf_night");
-    if (t){ nightItem.style.display = t.enabled ? "" : "none"; }
-    else { nightItem.style.display = ""; loadMcpTools().then(() => { const tt = mcpToolsCache && mcpToolsCache.find(x => x.name === "surf_night"); if (tt && nightItem) nightItem.style.display = tt.enabled ? "" : "none"; }); }
-  }
   clearTimeout(menuCloseTimer);
   menuPanel.classList.remove("hidden");
   requestAnimationFrame(() => requestAnimationFrame(() => menuPanel.classList.add("open")));
@@ -3351,879 +2434,16 @@ function closeMenu(){
   clearTimeout(menuCloseTimer);
   menuCloseTimer = setTimeout(() => menuPanel.classList.add("hidden"), 400);
 }
-/* ── Desk (desktop-style launcher · 底栏 Desk 进入) ── */
-const deskPanel = $("#deskPanel"), deskBack = $("#deskBack"), deskClock = $("#deskClock");
-/* 导航栈:管理 Android 返回键逐级回退 + 再按一次退出 */
-let _navStack = [];
-let _chatFromDesk = false;   // chat 层是否由 Desk 底栏进入(返回键回 Desk)
-function _navPush(view){
-  if (_navStack[_navStack.length - 1] === view) return;
-  _navStack.push(view);
-  try{ history.pushState({ nav: view }, ""); }catch(_){}
-}
-function _navDropTo(view){
-  const i = _navStack.lastIndexOf(view);
-  if (i >= 0) _navStack.length = i + 1;
-  else _navStack = [view];
-}
-function _navTop(){ return _navStack[_navStack.length - 1] || null; }
-function _isOpen(panel){ return panel && !panel.classList.contains("hidden") && panel.classList.contains("open"); }
-/* Android 返回键:由原生 onBackPressed 调用。返回 true=已消费(关了面板), false=可退出 */
-window.__handleAndroidBack = function(){
-  // 面板由顶层往下逐级关
-  if (_isOpen(toolsPanel)){ closeToolsPanel(); openDesk(); return true; }
-  if (_isOpen(nightPanel)){ closeNightPanel(); openMenu(); return true; }
-  if (_isOpen(mcpPanel)){ closeMcpPanel(); openDesk(); return true; }
-  if (_isOpen(dsetPanel)){ closeDeskSettings(); openDesk(); return true; }
-  if (_isOpen(learnPanel)){ closeLearn(); openDesk(); return true; }
-  if (_isOpen(menuPanel)){ closeMenu(); return true; }
-  if (_isOpen(profilePanel)){ closeProfile(); return true; }
-  if (_isOpen(deskPanel)){ closeDesk(); return true; }
-  // chat 层:从 Desk 底栏进入的,退一次回 Desk;否则退出
-  if (_chatFromDesk){
-    _chatFromDesk = false;
-    openDesk();
-    return true;
-  }
-  // 已到 chat 层:false 让原生处理"再按一次退出"
-  return false;
-};
-/* popstate:纯前端后退(如浏览器手势)兜底,避免和原生返回键冲突 */
-window.addEventListener("popstate", (e) => {
-  if (window.__handleAndroidBack && window.__handleAndroidBack()) {
-    try{ history.pushState({}, ""); }catch(_){}
-  }
-});
-function tickDeskClock(){
-  if (!deskClock) return;
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  deskClock.textContent = `${hh}:${mm}`;
-}
-if (deskClock){ tickDeskClock(); setInterval(tickDeskClock, 10000); }
-let deskCloseTimer = null;
-function openDesk(){
-  if (!deskPanel) return;
-  if (appEl) appEl.classList.remove("hidden");          // 开屏直达:保证底层 chat 壳在,Desk 全屏盖上面
-  _navPush("desk");
-  clearTimeout(deskCloseTimer);
-  deskPanel.classList.remove("hidden");
-  requestAnimationFrame(() => requestAnimationFrame(() => deskPanel.classList.add("open")));
-}
-function closeDesk(){
-  if (!deskPanel) return;
-  deskPanel.classList.remove("open");
-  clearTimeout(deskCloseTimer);
-  deskCloseTimer = setTimeout(() => deskPanel.classList.add("hidden"), 360);
-}
-if (deskBack) deskBack.addEventListener("click", () => { closeDesk(); /* 返回时若 chat 壳在则留在 chat,否则回 desk 也无妨 */ });
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && deskPanel && !deskPanel.classList.contains("hidden")) closeDesk();
-});
-/* Desk 底栏 tab:chat 关 desk 回聊天;desk 保持;其余占位 */
-const deskTabbar = $("#deskTabbar");
-if (deskTabbar) deskTabbar.addEventListener("click", (e) => {
-  const tab = e.target.closest(".tab-item");
-  if (!tab) return;
-  deskTabbar.querySelectorAll(".tab-item").forEach(t => t.classList.toggle("active", t === tab));
-  if (tab.dataset.dtab === "chat"){ closeDesk(); _chatFromDesk = true; _navDropTo("desk"); _navPush("chat"); }
-  else if (tab.dataset.dtab === "desk"){ /* 已在 Desk */ }
-  else showToast("即将开放");
-});
-if (deskPanel) deskPanel.addEventListener("click", (e) => {
-  const app = e.target.closest(".desk-app");
-  if (!app) return;
-  const which = app.dataset.desk;
-  if (which === "learn"){ closeDesk(); openLearn(); }
-  else if (which === "settings"){ closeDesk(); openDeskSettings(); }
-  else if (which === "mcp"){ closeDesk(); openMcpPanel(); }
-  else if (which === "tools"){ closeDesk(); openToolsPanel(); }
-  else if (which === "read"){ closeDesk(); location.assign("http://api.guhuai724.top/read/"); }
-  else showToast("即将开放");        // listen / play / dream / mail … placeholder
-});
-/* ── Learn (专注学习 · 番茄钟 + 热力图) ── */
-const learnPanel = $("#learnPanel"), learnBack = $("#learnBack");
-const learnTimerEl = $("#learnTimer"), learnSub = $("#learnSub");
-const learnStart = $("#learnStart"), learnReset = $("#learnReset");
-const learnDur = $("#learnDur"), learnHeat = $("#learnHeat");
-let learnCloseTimer = null, learnTimerInt = null;
-let learnRemainSec = 0, learnTotalSec = 0, learnRunning = false;
-const LEARN_KEY = "fatum_learn_log";   // { "YYYY-MM-DD": 分钟数 }
-function openLearn(){
-  if (!learnPanel) return;
-  _navPush("learn");
-  renderLearnHeat();
-  clearTimeout(learnCloseTimer);
-  learnPanel.classList.remove("hidden");
-  requestAnimationFrame(() => requestAnimationFrame(() => learnPanel.classList.add("open")));
-}
-function closeLearn(){
-  if (!learnPanel) return;
-  learnPanel.classList.remove("open");
-  clearTimeout(learnCloseTimer);
-  learnCloseTimer = setTimeout(() => learnPanel.classList.add("hidden"), 360);
-}
-if (learnBack) learnBack.addEventListener("click", () => { closeLearn(); openDesk(); });
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && learnPanel && !learnPanel.classList.contains("hidden")) closeLearn();
-});
-function learnSetTimerLabel(){
-  const mm = String(Math.floor(learnRemainSec / 60)).padStart(2, "0");
-  const ss = String(learnRemainSec % 60).padStart(2, "0");
-  learnTimerEl.textContent = `${mm}:${ss}`;
-  learnTimerEl.classList.toggle("running", learnRunning);
-}
-function learnStop(){
-  if (learnTimerInt){ clearInterval(learnTimerInt); learnTimerInt = null; }
-  learnRunning = false;
-  learnStart.textContent = "开始";
-  learnStart.disabled = false;
-  learnReset.style.display = "none";
-  learnDur.querySelectorAll(".learn-dur-btn").forEach(b => b.disabled = false);
-  learnSub.textContent = "Done — take a break";
-  learnSetTimerLabel();
-}
-function learnTick(){
-  if (learnRemainSec <= 0){
-    // 完成一次专注,记入热力图
-    const mins = learnTotalSec / 60;
-    const today = new Date();
-    const key = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-    try{
-      const log = JSON.parse(localStorage.getItem(LEARN_KEY) || "{}");
-      log[key] = (log[key] || 0) + mins;
-      localStorage.setItem(LEARN_KEY, JSON.stringify(log));
-    }catch(_){}
-    renderLearnHeat();
-    learnTotalSec = 0;
-    learnStop();
-    return;
-  }
-  learnRemainSec--;
-  learnSetTimerLabel();
-}
-if (learnStart) learnStart.addEventListener("click", () => {
-  if (learnRunning){
-    // 暂停
-    clearInterval(learnTimerInt); learnTimerInt = null;
-    learnRunning = false;
-    learnStart.textContent = "继续";
-    learnSub.textContent = "Paused";
-    return;
-  }
-  if (learnRemainSec <= 0){
-    const cur = learnDur.querySelector(".learn-dur-btn.active");
-    learnTotalSec = learnRemainSec = (cur ? parseInt(cur.dataset.min, 10) : 25) * 60;
-  }
-  learnRunning = true;
-  learnStart.textContent = "暂停";
-  learnReset.style.display = "";
-  learnDur.querySelectorAll(".learn-dur-btn").forEach(b => b.disabled = true);
-  learnSub.textContent = "Focusing — stay with it";
-  learnSetTimerLabel();
-  learnTimerInt = setInterval(learnTick, 1000);
-});
-if (learnReset) learnReset.addEventListener("click", () => {
-  clearInterval(learnTimerInt); learnTimerInt = null;
-  learnRunning = false;
-  learnTotalSec = learnRemainSec = 0;
-  learnStart.textContent = "开始";
-  learnStart.disabled = false;
-  learnReset.style.display = "none";
-  learnDur.querySelectorAll(".learn-dur-btn").forEach(b => b.disabled = false);
-  learnSub.textContent = "Pick a duration, then start";
-  learnSetTimerLabel();
-});
-if (learnDur) learnDur.addEventListener("click", (e) => {
-  const btn = e.target.closest(".learn-dur-btn");
-  if (!btn || learnRunning) return;
-  learnDur.querySelectorAll(".learn-dur-btn").forEach(b => b.classList.toggle("active", b === btn));
-  const mins = parseInt(btn.dataset.min, 10) || 25;
-  learnTotalSec = learnRemainSec = mins * 60;
-  learnSetTimerLabel();
-  learnSub.textContent = `${mins} min selected — tap start`;
-});
-function renderLearnHeat(){
-  if (!learnHeat) return;
-  let log = {};
-  try{ log = JSON.parse(localStorage.getItem(LEARN_KEY) || "{}"); }catch(_){}
-  // 最近 16 周,一天一格
-  const cells = [];
-  const today = new Date();
-  for (let i = 16 * 7 - 1; i >= 0; i--){
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-    const mins = log[key] || 0;
-    let lv = 0;
-    if (mins > 0){
-      if (mins < 15) lv = 1;
-      else if (mins < 30) lv = 2;
-      else if (mins < 60) lv = 3;
-      else lv = 4;
-    }
-    cells.push(`<span class="lh-cell l${lv}" title="${key} · ${mins}分钟"></span>`);
-  }
-  learnHeat.innerHTML = cells.join("");
-}
-/* ── Desk 设置 (Desk → 设置:模型配置 + 聊天显示开关) ── */
-const dsetPanel = $("#dsetPanel"), dsetBack = $("#dsetBack");
-const dsetUrl = $("#dsUrl"), dsetKey = $("#dsKey"), dsetModel = $("#dsModel"), dsetSave = $("#dsSave"), dsetHint = $("#dsHint");
-const dsetHumanAvatar = $("#dsetHumanAvatar"), dsetHumanAvatarInput = $("#dsetHumanAvatarInput"), humanAvatarRow = $("#humanAvatarRow");
-const dsetHumanName = $("#dsetHumanName");
-const dsetHumanAvatarPreview = $("#dsetHumanAvatarPreview");
-let dsetCloseTimer = null;
-const DISPLAY_KEY = "fatum_display_prefs";
-const HUMAN_AVATAR_KEY = "fatum_human_avatar";
-const HUMAN_NAME_KEY = "fatum_human_name";
-function humanName(){
-  try{ return localStorage.getItem(HUMAN_NAME_KEY) || CONFIG.HUMAN_NAME; }catch(_){ return CONFIG.HUMAN_NAME; }
-}
-function setHumanName(nm){
-  const v = String(nm || "").trim();
-  try{
-    if (v) localStorage.setItem(HUMAN_NAME_KEY, v);
-    else localStorage.removeItem(HUMAN_NAME_KEY);
-  }catch(_){}
-}
-function displayPrefs(){
-  try{ return JSON.parse(localStorage.getItem(DISPLAY_KEY) || "{}"); }catch(_){ return {}; }
-}
-function setDisplayPref(key, val){
-  const p = displayPrefs(); p[key] = val;
-  try{ localStorage.setItem(DISPLAY_KEY, JSON.stringify(p)); }catch(_){}
-  document.documentElement.setAttribute("data-" + key, val ? "1" : "0");
-}
-function displayOn(key){ return displayPrefs()[key] !== false; }
-function openDeskSettings(){
-  if (!dsetPanel) return;
-  _navPush("settings");
-  loadMcpTools();
-  // 模型配置框预填当前自定义/最近配置
-  const conf = savedModelConf(pendingModel && pendingModel !== "__custom__" ? pendingModel : "__custom__")
-    || savedModelConf("__custom__");
-  try{
-    const cur = JSON.parse(localStorage.getItem("companion_custom_model") || "null");
-    const src = cur || conf;
-    if (src){
-      if (src.url) dsetUrl.value = src.url;
-      if (src.key) dsetKey.value = src.key;
-      if (src.model) dsetModel.value = src.model;
-    }
-  }catch(_){}
-  // 预填内置密钥
-  if (!dsetKey.value && CONFIG.SECRET) dsetKey.value = CONFIG.SECRET;
-  if (!dsetUrl.value) dsetUrl.value = "https://api.deepseek.com/v1";
-  if (!dsetModel.value) dsetModel.value = "deepseek-flash";
-  if (dsetHumanName) dsetHumanName.value = humanName();
-  syncDisplayToggles();
-  clearTimeout(dsetCloseTimer);
-  dsetPanel.classList.remove("hidden");
-  requestAnimationFrame(() => requestAnimationFrame(() => dsetPanel.classList.add("open")));
-}
-function closeDeskSettings(){
-  if (!dsetPanel) return;
-  dsetPanel.classList.remove("open");
-  clearTimeout(dsetCloseTimer);
-  dsetCloseTimer = setTimeout(() => dsetPanel.classList.add("hidden"), 360);
-}
-if (dsetBack) dsetBack.addEventListener("click", () => { closeDeskSettings(); openDesk(); });
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && dsetPanel && !dsetPanel.classList.contains("hidden")){ closeDeskSettings(); openDesk(); }
-});
-/* 显示开关 toggle 同步 UI */
-function syncDisplayToggles(){
-  document.querySelectorAll(".dset-toggle").forEach((btn) => {
-    const key = btn.dataset.toggle;
-    const on = displayOn(key);
-    btn.setAttribute("aria-pressed", String(on));
-    if (key === "showHumanAvatar") humanAvatarRow.style.display = on ? "" : "none";
-  });
-  // 头像预览:读已保存的用户头像
-  if (dsetHumanAvatarPreview){
-    let url = "";
-    try{ url = localStorage.getItem(HUMAN_AVATAR_KEY) || ""; }catch(_){}
-    dsetHumanAvatarPreview.style.backgroundImage = url ? `url("${url}")` : "";
-  }
-}
-if (dsetPanel) dsetPanel.addEventListener("click", (e) => {
-  const tgl = e.target.closest(".dset-toggle");
-  if (tgl){
-    const key = tgl.dataset.toggle;
-    const now = !displayOn(key);
-    setDisplayPref(key, now);
-    tgl.setAttribute("aria-pressed", String(now));
-    if (key === "showHumanAvatar") humanAvatarRow.style.display = now ? "" : "none";
-    applyDisplayPrefs();
-    showToast(now ? "已开启" : "已关闭");
-    return;
-  }
-});
-if (dsetHumanAvatar) dsetHumanAvatar.addEventListener("click", () => dsetHumanAvatarInput && dsetHumanAvatarInput.click());
-if (dsetHumanAvatarInput) dsetHumanAvatarInput.addEventListener("change", () => {
-  const f = dsetHumanAvatarInput.files && dsetHumanAvatarInput.files[0];
-  if (!f) return;
-  const rd = new FileReader();
-  rd.onload = () => {
-    const dataUrl = String(rd.result || "");
-    try{ localStorage.setItem(HUMAN_AVATAR_KEY, dataUrl); }catch(_){ showToast("头像过大,保存失败"); return; }
-    if (dsetHumanAvatarPreview) dsetHumanAvatarPreview.style.backgroundImage = `url("${dataUrl}")`;
-    applyDisplayPrefs();
-    showToast("头像已更新");
-  };
-  rd.readAsDataURL(f);
-  dsetHumanAvatarInput.value = "";
-});
-if (dsetHumanName){
-  dsetHumanName.addEventListener("change", () => {
-    setHumanName(dsetHumanName.value);
-    applyDisplayPrefs();
-    showToast("名字已更新");
-  });
-  dsetHumanName.addEventListener("keydown", (e) => {
-    if (e.key === "Enter"){
-      setHumanName(dsetHumanName.value);
-      applyDisplayPrefs();
-      showToast("名字已更新");
-      dsetHumanName.blur();
-    }
-  });
-}
-if (dsetSave) dsetSave.addEventListener("click", async () => {
-  const url = (dsetUrl.value || "").trim().replace(/\/+$/, "");
-  const key = (dsetKey.value || "").trim();
-  const model = (dsetModel.value || "").trim();
-  if (!url || !key || !model){ dsetHint.textContent = "地址 / Key / 模型名都要填"; return; }
-  const conf = { url, key, model };
-  try{
-    const r = await fetch(`${API_BASE}/app/loop_config`, {
-      method: "POST",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify({ main_chain: [{ model, url, key }] })
-    });
-    if (!r.ok) throw new Error("loop_config " + r.status);
-    try{ localStorage.setItem("companion_custom_model", JSON.stringify(conf)); }catch(_){}
-    saveModelConf("__custom__", conf);
-    dsetHint.textContent = "已保存并应用到大脑";
-    setTimeout(() => { dsetHint.textContent = ""; }, 2200);
-  }catch(_){
-    dsetHint.textContent = "保存失败,请检查地址和 Key";
-  }
-});
-/* 显示开关真正生效:渲染时按偏好过滤 */
-function displayShows(what){ return displayOn(what); }
-function applyDisplayPrefs(){
-  // 头像/名字由 makeMessage 读取偏好动态处理;这里先触发重绘
-  if (typeof scheduleRender === "function") scheduleRender({ preserveAnchor: true });
-}
-/* ── MCP 工具面板（Desk → MCP 独立面板 + 设置）── */
-const mcpToolList = $("#mcpToolList"), mcpHint = $("#mcpHint");
-const mcpPanel = $("#mcpPanel"), mcpBack = $("#mcpBack");
-const mcpPanelListBase = $("#mcpPanelListBase"), mcpPanelListMusic = $("#mcpPanelListMusic"), mcpPanelListNight = $("#mcpPanelListNight");
-const mcpPanelHint = $("#mcpPanelHint"), mcpPanelMusicHint = $("#mcpPanelMusicHint");
-let mcpCloseTimer = null, mcpToolsCache = null;
-function openMcpPanel(){
-  if (!mcpPanel) return;
-  _navPush("mcp");
-  loadMcpTools();
-  loadMcpConns();
-  clearTimeout(mcpCloseTimer);
-  mcpPanel.classList.remove("hidden");
-  requestAnimationFrame(() => requestAnimationFrame(() => mcpPanel.classList.add("open")));
-}
-function closeMcpPanel(){
-  if (!mcpPanel) return;
-  mcpPanel.classList.remove("open");
-  clearTimeout(mcpCloseTimer);
-  mcpCloseTimer = setTimeout(() => mcpPanel.classList.add("hidden"), 360);
-}
-/* ── Tools 生活工具面板 (Desk → Tools,本地,与 MCP 分开) ── */
-const toolsPanel = $("#toolsPanel"), toolsBack = $("#toolsBack");
-const todoInput = $("#todoInput"), todoAdd = $("#todoAdd"), todoList = $("#todoList");
-const noteInput = $("#noteInput"), noteAdd = $("#noteAdd"), noteList = $("#noteList");
-const periodDate = $("#periodDate"), periodAdd = $("#periodAdd"), periodInfo = $("#periodInfo");
-const TODO_KEY = "fatum_todo", NOTE_KEY = "fatum_notes", PERIOD_KEY = "fatum_period";
-let toolsCloseTimer = null;
-function openToolsPanel(){
-  if (!toolsPanel) return;
-  _navPush("tools");
-  renderTodos(); renderNotes(); renderPeriod();
-  clearTimeout(toolsCloseTimer);
-  toolsPanel.classList.remove("hidden");
-  requestAnimationFrame(() => requestAnimationFrame(() => toolsPanel.classList.add("open")));
-}
-function closeToolsPanel(){
-  if (!toolsPanel) return;
-  toolsPanel.classList.remove("open");
-  clearTimeout(toolsCloseTimer);
-  toolsCloseTimer = setTimeout(() => toolsPanel.classList.add("hidden"), 360);
-}
-if (toolsBack) toolsBack.addEventListener("click", () => { closeToolsPanel(); openDesk(); });
-function loadArr(k){ try{ return JSON.parse(localStorage.getItem(k) || "[]"); }catch(_){ return []; } }
-function saveArr(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
-function renderTodos(){
-  if (!todoList) return;
-  const arr = loadArr(TODO_KEY);
-  todoList.innerHTML = arr.length ? arr.map((t, i) => `
-    <div style="display:flex;align-items:center;gap:8px;background:var(--card-bg);border:1px solid var(--card-line);border-radius:12px;padding:10px 12px;">
-      <span style="flex:1;font-size:14px;color:var(--text);${t.done ? "text-decoration:line-through;opacity:.5;" : ""}">${escapeHtml(t.text)}</span>
-      <button type="button" data-i="${i}" data-act="toggle" style="background:none;border:0;font-size:16px;color:var(--accent);padding:2px 6px;">${t.done ? "↺" : "✓"}</button>
-      <button type="button" data-i="${i}" data-act="del" style="background:none;border:0;font-size:16px;color:var(--text-faint);padding:2px 6px;">✕</button>
-    </div>`).join("") : `<div style="color:var(--text-faint);font-size:13px;padding:4px 0;">还没有待办</div>`;
-  todoList.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
-    const arr = loadArr(TODO_KEY), i = +b.dataset.i;
-    if (b.dataset.act === "toggle"){ arr[i].done = !arr[i].done; }
-    else { arr.splice(i, 1); }
-    saveArr(TODO_KEY, arr); renderTodos();
-  }));
-}
-function renderNotes(){
-  if (!noteList) return;
-  const arr = loadArr(NOTE_KEY);
-  noteList.innerHTML = arr.length ? arr.slice().reverse().map((n, idx) => {
-    const realIdx = arr.length - 1 - idx;
-    return `
-    <div style="display:flex;align-items:flex-start;gap:8px;background:var(--card-bg);border:1px solid var(--card-line);border-radius:12px;padding:10px 12px;">
-      <span style="flex:1;font-size:13.5px;color:var(--text);line-height:1.5;">${escapeHtml(n.text)}</span>
-      <span style="font-size:11px;color:var(--text-faint);flex:none;padding-top:2px;">${n.ts}</span>
-      <button type="button" data-i="${realIdx}" data-act="delnote" style="background:none;border:0;font-size:14px;color:var(--text-faint);padding:0 4px;">✕</button>
-    </div>`;}).join("") : `<div style="color:var(--text-faint);font-size:13px;padding:4px 0;">还没有便签</div>`;
-  noteList.querySelectorAll("button[data-act=delnote]").forEach(b => b.addEventListener("click", () => {
-    const arr = loadArr(NOTE_KEY); arr.splice(+b.dataset.i, 1); saveArr(NOTE_KEY, arr); renderNotes();
-  }));
-}
-function renderPeriod(){
-  if (!periodInfo) return;
-  const arr = loadArr(PERIOD_KEY);
-  if (!arr.length){ periodInfo.textContent = "还没记录过。来了就记一下。"; return; }
-  const last = arr[arr.length - 1];
-  const lastD = new Date(last + "T00:00:00");
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diff = Math.round((today - lastD) / 86400000);
-  let msg = `上次记录：${last}（${diff} 天前）`;
-  if (diff <= 0) msg = `今天（${last}）记录在案`;
-  else if (diff <= 7) msg += "，快到日子了，注意保暖";
-  else if (diff > 35) msg += "，有点久了，要不要记一笔？";
-  periodInfo.textContent = msg;
-}
-if (todoAdd) todoAdd.addEventListener("click", () => {
-  const v = (todoInput.value || "").trim(); if (!v) return;
-  const arr = loadArr(TODO_KEY); arr.push({ text: v, done: false }); saveArr(TODO_KEY, arr);
-  todoInput.value = ""; renderTodos();
-});
-if (noteAdd) noteAdd.addEventListener("click", () => {
-  const v = (noteInput.value || "").trim(); if (!v) return;
-  const arr = loadArr(NOTE_KEY); arr.push({ text: v, ts: new Date().toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) }); saveArr(NOTE_KEY, arr);
-  noteInput.value = ""; renderNotes();
-});
-if (periodAdd) periodAdd.addEventListener("click", () => {
-  const v = (periodDate.value || "").trim(); if (!v) return;
-  const arr = loadArr(PERIOD_KEY); if (arr[arr.length - 1] === v) return; arr.push(v); saveArr(PERIOD_KEY, arr);
-  renderPeriod();
-});
-/* ── Night · 顾淮的夜晚冲浪面板 ── */
-const nightPanel = $("#nightPanel"), nightBack = $("#nightBack");
-const surfGo = $("#surfGo"), surfStatus = $("#surfStatus"), surfList = $("#surfList");
-let nightCloseTimer = null;
-function openNightPanel(){
-  if (!nightPanel) return;
-  _navPush("night");
-  clearTimeout(nightCloseTimer);
-  nightPanel.classList.remove("hidden");
-  requestAnimationFrame(() => requestAnimationFrame(() => nightPanel.classList.add("open")));
-  loadSurfPages();
-}
-function closeNightPanel(){
-  if (!nightPanel) return;
-  nightPanel.classList.remove("open");
-  clearTimeout(nightCloseTimer);
-  nightCloseTimer = setTimeout(() => nightPanel.classList.add("hidden"), 360);
-}
-if (nightBack) nightBack.addEventListener("click", () => { closeNightPanel(); openMenu(); });
-function apiBase(){ return location.hostname === "localhost" || location.hostname === "127.0.0.1" ? "" : ""; }
-async function loadSurfPages(){
-  if (!surfList) return;
-  surfStatus.textContent = "加载中…";
-  try{
-    const r = await fetch(`${API_BASE}/app/surf`, { headers: authHeaders(), cache: "no-store" });
-    if (!r.ok) throw new Error("surf " + r.status);
-    const d = await r.json();
-    if (!d.pages || !d.pages.length){
-      surfList.innerHTML = '<div style="text-align:center;color:var(--text-faint);font-size:13px;padding:18px 0;">还没出去逛过。今晚试试？</div>';
-      surfStatus.textContent = "";
-      return;
-    }
-    surfList.innerHTML = d.pages.map(p => `
-      <div style="background:var(--card-bg);border:1px solid var(--card-line);border-radius:16px;padding:14px 16px;">
-        <div style="font-size:12.5px;color:var(--text-faint);margin-bottom:6px;">${esc(p.at || "").slice(5,16)} · ${esc(p.q || "")}</div>
-        <div style="font-size:14px;line-height:1.65;color:var(--text);">${esc(p.note || "")}</div>
-      </div>`).join("");
-    surfStatus.textContent = "";
-  }catch(e){
-    surfStatus.textContent = "加载失败：" + e.message;
-  }
-}
-function esc(s){ return escapeHtml(s); }
-if (surfGo) surfGo.addEventListener("click", async () => {
-  if (!surfGo) return;
-  surfGo.disabled = true;
-  surfStatus.textContent = "出门了，一会儿回来…";
-  try{
-    const r = await fetch(`${API_BASE}/app/surf/run`, {
-      method: "POST",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: "{}"
-    });
-    if (!r.ok) throw new Error("surf/run " + r.status);
-    const d = await r.json();
-    if (d.ok){
-      surfStatus.textContent = "回来了。";
-      await loadSurfPages();
-    }else{
-      surfStatus.textContent = "冲浪失败：" + (d.error || "");
-    }
-  }catch(e){
-    surfStatus.textContent = "出错：" + e.message;
-  }
-  surfGo.disabled = false;
-});
-if (mcpBack) mcpBack.addEventListener("click", () => { closeMcpPanel(); openDesk(); });
-async function loadMcpTools(){
-  if (!mcpToolList && !mcpPanelListBase && !mcpPanelListMusic) return;
-  if (USE_MOCK || !secret){ const h = mcpPanelHint || mcpHint; if (h) h.textContent = "未连接后端，工具列表不可用。"; return; }
-  try{
-    if (mcpToolList) mcpToolList.innerHTML = `<div style="color:var(--text-faint);font-size:13px;padding:6px 0;">加载中…</div>`;
-    if (mcpPanelListBase) mcpPanelListBase.innerHTML = `<div style="color:var(--text-faint);font-size:13px;padding:6px 0;">加载中…</div>`;
-    if (mcpPanelListMusic) mcpPanelListMusic.innerHTML = `<div style="color:var(--text-faint);font-size:13px;padding:6px 0;">加载中…</div>`;
-    if (mcpPanelListNight) mcpPanelListNight.innerHTML = `<div style="color:var(--text-faint);font-size:13px;padding:6px 0;">加载中…</div>`;
-    const r = await fetch(`${API_BASE}/app/tools`, { headers: authHeaders(), cache: "no-store" });
-    if (!r.ok) throw new Error("tools " + r.status);
-    const d = await r.json();
-    const tools = (d && d.tools) || [];
-    mcpToolsCache = tools;
-    renderMcpTools(tools);
-  }catch(err){
-    const msg = `<div style="color:var(--accent);font-size:13px;padding:6px 0;">读不到工具（${err.message || "后端未连上"}）</div>`;
-    if (mcpToolList) mcpToolList.innerHTML = msg;
-    if (mcpPanelListBase) mcpPanelListBase.innerHTML = msg;
-    if (mcpPanelListMusic) mcpPanelListMusic.innerHTML = msg;
-    if (mcpPanelListNight) mcpPanelListNight.innerHTML = msg;
-  }
-}
-function isMusicTool(t){
-  const n = (t && (t.name || t.label || "")) || "";
-  return /netease|music|song|lyric|网易|音乐|歌词|搜歌/.test(n);
-}
-function renderMcpTools(tools){
-  const rowHtml = (t) => `
-    <div class="dset-row" style="flex-wrap:wrap;">
-      <div class="dset-row-copy">
-        <div class="dset-row-name">${t.label || t.name}</div>
-        <div class="dset-row-sub" style="max-width:78%;">${t.description || ""}</div>
-      </div>
-      <button class="dset-toggle" type="button" data-mcp="${t.name}" aria-pressed="${t.enabled ? "true" : "false"}"><span></span></button>
-    </div>`;
-  const emptyHtml = `<div style="color:var(--text-faint);font-size:13px;padding:6px 0;">暂无工具</div>`;
-  const bind = (list) => {
-    if (!list) return;
-    list.querySelectorAll(".dset-toggle[data-mcp]").forEach((btn) => {
-      btn.addEventListener("click", () => setMcpTool(btn.dataset.mcp, btn.getAttribute("aria-pressed") !== "true"));
-    });
-  };
-  if (!tools || !tools.length){
-    if (mcpToolList) mcpToolList.innerHTML = emptyHtml;
-    if (mcpPanelListBase) mcpPanelListBase.innerHTML = emptyHtml;
-    if (mcpPanelListMusic) mcpPanelListMusic.innerHTML = emptyHtml;
-    if (mcpPanelListNight) mcpPanelListNight.innerHTML = emptyHtml;
-    return;
-  }
-  // 独立 MCP 面板:分基础 / 音乐 / 顾淮的夜晚 三栏
-  if (mcpPanelListBase || mcpPanelListMusic || mcpPanelListNight){
-    const night = tools.filter(t => t.name === "surf_night");
-    const base = tools.filter(t => !isMusicTool(t) && t.name !== "surf_night");
-    const music = tools.filter(t => isMusicTool(t));
-    if (mcpPanelListBase) mcpPanelListBase.innerHTML = base.length ? base.map(rowHtml).join("") : emptyHtml;
-    if (mcpPanelListMusic) mcpPanelListMusic.innerHTML = music.length ? music.map(rowHtml).join("") : emptyHtml;
-    if (mcpPanelListNight) mcpPanelListNight.innerHTML = night.length ? night.map(rowHtml).join("") : emptyHtml;
-    bind(mcpPanelListBase); bind(mcpPanelListMusic); bind(mcpPanelListNight);
-  }
-  // 设置面板:全部列一起
-  if (mcpToolList){ mcpToolList.innerHTML = tools.map(rowHtml).join(""); bind(mcpToolList); }
-}
-async function setMcpTool(name, enabled){
-  const prev = mcpToolsCache ? mcpToolsCache.map(t => Object.assign({}, t)) : null;
-  // 乐观更新
-  if (mcpToolsCache){ const t = mcpToolsCache.find(x => x.name === name); if (t) t.enabled = enabled; renderMcpTools(mcpToolsCache); }
-  // 联动 menu 的 Night 入口显隐
-  if (name === "surf_night"){
-    const nightItem = document.getElementById("menuNightItem");
-    if (nightItem) nightItem.style.display = enabled ? "" : "none";
-  }
-  try{
-    const r = await fetch(`${API_BASE}/app/tools`, {
-      method: "POST",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify({ name, enabled }),
-    });
-    if (!r.ok) throw new Error("set " + r.status);
-    const d = await r.json();
-    mcpToolsCache = (d && d.tools) || mcpToolsCache || [];
-    renderMcpTools(mcpToolsCache);
-    const hint = mcpPanelHint || mcpHint;
-    if (hint) hint.textContent = `${name} 已${enabled ? "开启" : "关闭"}`;
-  }catch(err){
-    mcpToolsCache = prev; renderMcpTools(prev);
-    const hint = mcpPanelHint || mcpHint;
-    if (hint) hint.textContent = `切换失败：${err.message || "后端未连上"}`;
-  }
-}
-/* ── MCP 连接管理器（卡片式：已连接 + 新建表单）── */
-let mcpConns = [];
-async function loadMcpConns(){
-  const list = $("#mcpConnList");
-  if (!list) return;
-  try{
-    const r = await fetch(`${API_BASE}/app/mcp/connections`, { headers: authHeaders(), cache: "no-store" });
-    if (!r.ok) throw new Error("mcp conns " + r.status);
-    const d = await r.json();
-    mcpConns = (d && d.connections) || [];
-    renderMcpConns();
-  }catch(err){
-    list.innerHTML = `<div style="color:var(--text-faint);font-size:13px;padding:6px 0;">连接读不到（${err.message || "后端未连上"}）</div>`;
-  }
-}
-function connCard(c){
-  const isBuiltin = !!c.builtin;
-  const typeLab = c.conn_type === "openai_compatible" ? "OpenAI" : (c.conn_type === "http_stream" ? "MCP HTTP" : "内置");
-  const nTools = (c.cache_json && c.cache_json.discovered) ? c.cache_json.discovered.length : 0;
-  const safeDesc = (c.description || "").replace(/</g, "&lt;");
-  const safeName = (c.name || "").replace(/</g, "&lt;");
-  return `
-    <div style="border:1px solid var(--card-line);border-radius:14px;padding:12px;margin-bottom:10px;background:var(--field-bg);">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:14px;font-weight:600;color:var(--text);">${safeName} <span style="font-size:10px;color:var(--text-faint);border:1px solid var(--card-line);border-radius:99px;padding:1px 6px;margin-left:4px;">${typeLab}</span></div>
-          ${safeDesc ? `<div style="font-size:12px;color:var(--text-soft);margin-top:2px;line-height:1.4;">${safeDesc}</div>` : ""}
-          ${!isBuiltin ? `<div style="font-size:11px;color:var(--text-faint);margin-top:3px;font-family:var(--font-en),var(--font-cn);">${escapeHtml(c.base_url || "")}</div>` : ""}
-        </div>
-        ${isBuiltin ? `<span style="font-size:11px;color:var(--text-faint);flex:none;">内置</span>` : `<button class="dset-toggle" type="button" data-conn-toggle="${c.id}" aria-pressed="${c.enabled ? "true" : "false"}"><span></span></button>`}
-      </div>
-      ${!isBuiltin ? `
-      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
-        <button type="button" data-conn-edit="${c.id}" style="border:1px solid var(--accent);border-radius:9px;padding:5px 10px;font-size:11.5px;background:transparent;color:var(--accent);cursor:pointer;">编辑</button>
-        <button type="button" data-conn-test="${c.id}" style="border:1px solid var(--card-line);border-radius:9px;padding:5px 10px;font-size:11.5px;background:transparent;color:var(--text-soft);cursor:pointer;">测试</button>
-        <button type="button" data-conn-del="${c.id}" style="border:1px solid var(--card-line);border-radius:9px;padding:5px 10px;font-size:11.5px;background:transparent;color:#c0533f;cursor:pointer;">删除</button>
-        <span style="font-size:11px;color:var(--text-faint);align-self:center;">${nTools ? `发现 ${nTools} 个模型` : c.cache_json && c.cache_json.discovered ? "" : "未测试"}</span>
-      </div>` : ""}
-    </div>`;
-}
-function renderMcpConns(){
-  const list = $("#mcpConnList");
-  if (!list) return;
-  if (!mcpConns.length){ list.innerHTML = `<div style="color:var(--text-faint);font-size:13px;padding:6px 0;">还没有连接。</div>`; return; }
-  list.innerHTML = mcpConns.map(connCard).join("");
-  list.querySelectorAll("[data-conn-toggle]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.connToggle;
-      const on = btn.getAttribute("aria-pressed") !== "true";
-      btn.setAttribute("aria-pressed", String(on));
-      try{
-        const r = await fetch(`${API_BASE}/app/mcp/connections/${id}`, {
-          method: "PATCH",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ enabled: on }),
-        });
-        if (!r.ok) throw new Error("patch " + r.status);
-        const d = await r.json();
-        showToast(d.connection ? `${d.connection.name} 已${on ? "开启" : "关闭"}` : "已更新");
-      }catch(err){
-        btn.setAttribute("aria-pressed", String(!on));
-        showToast("切换失败：" + err.message);
-      }
-    });
-  });
-  list.querySelectorAll("[data-conn-test]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.connTest;
-      btn.textContent = "测试中…"; btn.disabled = true;
-      try{
-        const r = await fetch(`${API_BASE}/app/mcp/connections/${id}/test`, {
-          method: "POST",
-          headers: authHeaders(),
-        });
-        if (!r.ok) throw new Error("test " + r.status);
-        const d = await r.json();
-        showToast(d.ok ? ("连接成功：" + (d.message || "")) : ("连接失败：" + (d.message || "")));
-        if (d.ok && d.items && d.items.length) mcpConns.find(x => x.id == id) && (mcpConns.find(x => x.id == id).cache_json = { discovered: d.items });
-      }catch(err){
-        showToast("测试出错：" + err.message);
-      }
-      btn.textContent = "测试"; btn.disabled = false;
-      loadMcpConns();
-    });
-  });
-  list.querySelectorAll("[data-conn-del]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.connDel;
-      if (!confirm("删除这个连接？")) return;
-      try{
-        const r = await fetch(`${API_BASE}/app/mcp/connections/${id}`, {
-          method: "DELETE",
-          headers: authHeaders(),
-        });
-        if (!r.ok) throw new Error("del " + r.status);
-        showToast("已删除");
-        loadMcpConns();
-      }catch(err){
-        showToast("删除失败：" + err.message);
-      }
-    });
-  });
-  list.querySelectorAll("[data-conn-edit]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.connEdit;
-      const c = mcpConns.find(x => String(x.id) === String(id));
-      if (!c) return;
-      startEditConn(c);
-    });
-  });
-}
-let mcpEditId = null;
-function startEditConn(c){
-  mcpEditId = c.id;
-  const name = $("#mcpNewName"), desc = $("#mcpNewDesc"), url = $("#mcpNewUrl"), type = $("#mcpNewType"), model = $("#mcpNewModel"), key = $("#mcpNewKey"), headers = $("#mcpNewHeaders");
-  if (name) name.value = c.name || "";
-  if (desc) desc.value = c.description || "";
-  if (url) url.value = c.base_url || "";
-  if (type) type.value = c.conn_type || "openai_compatible";
-  if (model) model.value = c.model || "";
-  if (key) key.value = ""; // key 不回显，留空=不修改
-  if (headers) headers.value = c.headers_json && c.headers_json !== "{}" ? JSON.stringify(c.headers_json, null, 0) : "";
-  const summ = document.querySelector(".mcp-card details summary");
-  if (summ){ summ.textContent = "✎ 编辑连接"; summ.style.color = "var(--accent)"; }
-  const details = document.querySelector(".mcp-card details");
-  if (details) details.open = true;
-  const msg = $("#mcpNewMsg");
-  if (msg) msg.textContent = "编辑模式：改完点保存。Key 留空表示不修改。";
-  // 显示取消编辑
-  let cancelBtn = $("#mcpNewCancel");
-  if (!cancelBtn){
-    const saveBtn = $("#mcpNewSave");
-    if (saveBtn && saveBtn.parentNode){
-      cancelBtn = document.createElement("button");
-      cancelBtn.id = "mcpNewCancel";
-      cancelBtn.type = "button";
-      cancelBtn.textContent = "取消";
-      cancelBtn.style.cssText = "flex:1;background:transparent;border:1px solid var(--card-line);border-radius:12px;padding:11px 10px;font-size:14px;color:var(--text-soft);cursor:pointer;";
-      cancelBtn.addEventListener("click", cancelEditConn);
-      saveBtn.parentNode.appendChild(cancelBtn);
-    }
-  }else{ cancelBtn.style.display = ""; }
-  if (name) name.scrollIntoView({ behavior: "smooth", block: "center" });
-}
-function cancelEditConn(){
-  mcpEditId = null;
-  const name = $("#mcpNewName"), desc = $("#mcpNewDesc"), url = $("#mcpNewUrl"), model = $("#mcpNewModel"), key = $("#mcpNewKey"), headers = $("#mcpNewHeaders");
-  if (name) name.value = ""; if (desc) desc.value = ""; if (url) url.value = ""; if (model) model.value = ""; if (key) key.value = ""; if (headers) headers.value = "";
-  const summ = document.querySelector(".mcp-card details summary");
-  if (summ){ summ.textContent = "＋ 新建连接"; summ.style.color = ""; }
-  const msg = $("#mcpNewMsg"); if (msg) msg.textContent = "";
-  const cancelBtn = $("#mcpNewCancel"); if (cancelBtn) cancelBtn.style.display = "none";
-}
-function buildNewConnPayload(){
-  const name = ($("#mcpNewName") && $("#mcpNewName").value || "").trim();
-  const description = ($("#mcpNewDesc") && $("#mcpNewDesc").value || "").trim();
-  const base_url = ($("#mcpNewUrl") && $("#mcpNewUrl").value || "").trim();
-  const conn_type = ($("#mcpNewType") && $("#mcpNewType").value || "openai_compatible");
-  const model = ($("#mcpNewModel") && $("#mcpNewModel").value || "").trim();
-  const api_key = ($("#mcpNewKey") && $("#mcpNewKey").value || "").trim();
-  let headers_json = {};
-  if ($("#mcpNewHeaders")){
-    const hv = ($("#mcpNewHeaders").value || "").trim();
-    if (hv){ try{ headers_json = JSON.parse(hv); }catch(_){ showToast("自定义请求头不是合法 JSON"); return null; } }
-  }
-  return { name, description, base_url, conn_type, model, api_key, headers_json };
-}
-async function mcpSaveNew(){
-  const msg = $("#mcpNewMsg");
-  if (!msg) return;
-  const p = buildNewConnPayload();
-  if (!p) return;
-  if (!p.name){ msg.textContent = "填个名字"; return; }
-  if (!p.base_url){ msg.textContent = "填服务地址"; return; }
-  try{
-    const editing = mcpEditId != null;
-    const url = editing ? `${API_BASE}/app/mcp/connections/${mcpEditId}` : `${API_BASE}/app/mcp/connections`;
-    const r = await fetch(url, {
-      method: editing ? "PATCH" : "POST",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify(p),
-    });
-    const d = await r.json().catch(() => ({}));
-    if (!r.ok){ msg.textContent = "保存失败：" + ((d && d.detail) || r.status); return; }
-    msg.textContent = editing ? "已更新。" : "已保存：Test 一下看通不通。";
-    // 清空 key 输入（编辑模式清空表单并退出编辑）
-    if ($("#mcpNewKey")) $("#mcpNewKey").value = "";
-    if (editing){ cancelEditConn(); }
-    else{
-      if ($("#mcpNewName")) $("#mcpNewName").value = "";
-      if ($("#mcpNewUrl")) $("#mcpNewUrl").value = "";
-    }
-    loadMcpConns();
-  }catch(err){
-    msg.textContent = "保存出错：" + err.message;
-  }
-}
-async function mcpTestNew(){
-  const msg = $("#mcpNewMsg");
-  if (!msg) return;
-  const p = buildNewConnPayload();
-  if (!p) return;
-  if (!p.base_url){ msg.textContent = "填服务地址再测"; return; }
-  msg.textContent = "测试中…";
-  try{
-    const r = await fetch(`${API_BASE}/app/mcp/connections/test-raw`, {
-      method: "POST",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify(p),
-    });
-    const d = await r.json().catch(() => ({}));
-    msg.textContent = d.ok ? ("✓ " + (d.message || "通了")) : ("✗ " + (d.message || "没通"));
-  }catch(err){
-    msg.textContent = "测试出错：" + err.message;
-  }
-}
-if ($("#mcpNewSave")) $("#mcpNewSave").addEventListener("click", mcpSaveNew);
-if ($("#mcpNewTest")) $("#mcpNewTest").addEventListener("click", mcpTestNew);
-if ($("#mcpNewKey")) $("#mcpNewKey").addEventListener("keydown", (e) => { if (e.key === "Enter") mcpSaveNew(); });
 refreshDays();
 if (backBtn) backBtn.addEventListener("click", openMenu);
 if (menuPanel){
   menuPanel.addEventListener("click", (e) => {
     const item = e.target.closest(".menu-item");
-    if (item){
-      if (item.dataset.menu === "chat") closeMenu();       // back to chat
-      else if (item.dataset.menu === "night"){ closeMenu(); openNightPanel(); }  // 顾淮的夜晚
-      else if (item.dataset.menu === "album") location.assign("album.html");  // album shell (wire your own backend)
-      else showToast("即将开放");                           // placeholder items
-      return;
-    }
-    const tab = e.target.closest(".tab-item");
-    if (tab){
-      menuPanel.querySelectorAll(".tab-item").forEach(t => t.classList.toggle("active", t === tab));
-      if (tab.dataset.tab === "chat") closeMenu();         // bottom tab → back to chat
-      else if (tab.dataset.tab === "desk"){ closeMenu(); _chatFromDesk = true; openDesk(); }
-      else showToast("即将开放");
-    }
+    if (!item) return;
+    if (item.dataset.menu === "chat") closeMenu();       // back to chat
+    else if (item.dataset.menu === "album") location.assign("album.html");  // album shell (wire your own backend)
+    else showToast("即将开放");                           // placeholder items
   });
-}
-/* 打开菜单时点亮当前所在 tab（默认 chat 高亮） */
-function syncTabHighlight(){
-  const bar = document.querySelector(".menu-tabbar");
-  if (!bar) return;
-  const cur = bar.querySelector(".tab-item.active");
-  if (!cur) bar.querySelector('[data-tab="chat"]')?.classList.add("active");
 }
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && menuPanel && !menuPanel.classList.contains("hidden")) closeMenu();
@@ -4258,7 +2478,7 @@ if (themeSeg) themeSeg.addEventListener("click", e => {
   var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0)$/.test(location.hostname);
   function maybePreview(){
     if (isLocal && location.hash === "#preview-menu"){
-      try{ appEl.classList.remove("hidden"); }catch(e){}
+      try{ loginEl.classList.add("hidden"); appEl.classList.remove("hidden"); }catch(e){}
       if (typeof openMenu === "function") openMenu();
     }
   }
@@ -4931,57 +3151,13 @@ function wireSegmented(seg, storeKey){
     try{ localStorage.setItem(storeKey, b.dataset.val); }catch(_){}
   });
 }
-/* 模型配置 —— 真切换:直接调后端 loop_config(配置入口已移到 Desk → 设置) */
-const PRESET_MODELS = {
-  "deepseek-flash": { url: "https://api.deepseek.com/v1", model: "deepseek-flash", label: "DS Flash" },
-  "glm":            { url: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4.6",      label: "GLM" },
-};
-let pendingModel = "";  // 当前正在配置的预设键或 __custom__
-function savedModelConf(key){
-  try{ return JSON.parse(localStorage.getItem("model_conf_" + key) || "null"); }catch(_){ return null; }
-}
-function saveModelConf(key, conf){ localStorage.setItem("model_conf_" + key, JSON.stringify(conf)); }
-async function applyModel(key, conf){
-  try{
-    const r = await fetch(`${API_BASE}/app/loop_config`, {
-      method: "POST",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify({ main_chain: [{ model: conf.model, url: conf.url, key: conf.key }] })
-    });
-    if (!r.ok) throw new Error("loop_config " + r.status);
-    saveModelConf(key, conf);
-    localStorage.setItem("companion_pick_model", key);
-    showToast("已切到 " + (PRESET_MODELS[key] ? PRESET_MODELS[key].label : conf.model));
-  }catch(_){
-    showToast("切换失败：请检查地址和 Key");
-    throw _;
-  }
-}
+wireSegmented(modelSeg, "companion_pick_model");
+wireSegmented(effortSeg, "companion_pick_effort");
+
 if (contextSlider){
   const savedContext = localStorage.getItem("companion_pick_context");
-  if (savedContext !== null && savedContext !== ""){
-    const n = parseInt(savedContext, 10);
-    if (!isNaN(n)) contextSlider.value = Math.max(0, Math.min(200, n));
-  }
-  const ctxVal = document.getElementById("ctxVal");
-  function syncCtxLabel(){ if (ctxVal) ctxVal.textContent = contextSlider.value + "条"; }
-  syncCtxLabel();
-  let ctxTimer = null;
-  contextSlider.addEventListener("input", () => {
-    syncCtxLabel();
-    if (ctxTimer) clearTimeout(ctxTimer);
-    ctxTimer = setTimeout(async () => {
-      try{
-        const r = await fetch(`${API_BASE}/app/loop_config`, {
-          method: "POST",
-          headers: { ...authHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({ history_n: parseInt(contextSlider.value, 10) || 0 })
-        });
-        if (!r.ok) throw new Error("loop_config " + r.status);
-        localStorage.setItem("companion_pick_context", String(contextSlider.value));
-      }catch(_){ showToast("上下文设置保存失败"); }
-    }, 500);
-  });
+  if (savedContext !== null && savedContext !== "") contextSlider.value = savedContext;
+  contextSlider.addEventListener("input", () => { try{ localStorage.setItem("companion_pick_context", contextSlider.value); }catch(_){} });
 }
 
 function setBrainUi(target){
@@ -4989,22 +3165,7 @@ function setBrainUi(target){
   if (brainSeg) brainSeg.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.val === t));
   if (brainHint) brainHint.textContent = t === "loop"
     ? "现在由服务器 API loop 接消息"
-    : "现在由 顾淮 channel 接消息";
-}
-async function cacheLoopKeys(){
-  if (USE_MOCK || !secret) return;
-  try{
-    const r = await fetch(`${API_BASE}/app/loop_config`, { headers: authHeaders() });
-    if (!r.ok) return;
-    const d = await r.json();
-    const chain = d.main_chain || [];
-    chain.forEach((row, i) => {
-      if (row.model && row.key_masked){
-        // key_masked 只有部分，真正 key 拿不到——但至少记住有哪些模型可用
-        localStorage.setItem("companion_loop_models", JSON.stringify(chain.map(x => x.model)));
-      }
-    });
-  }catch(_){}
+    : "现在由 Claude Code channel 接消息";
 }
 async function loadBrain(){
   if (USE_MOCK || !secret){ setBrainUi("desktop"); return; }
@@ -5055,12 +3216,14 @@ function applyContextStatus(s){
     if (statusUsedEl) statusUsedEl.textContent = "context status unknown";
     if (statusSidEl){ statusSidEl.textContent = "sid: (none)"; statusSidEl.dataset.sid = ""; }
     pendingContextSid = "";
+    if (resumeRow) resumeRow.classList.add("hidden");
     return;
   }
   const usage = Number(s.usage_tokens || 0);
   const threshold = String(s.threshold_k || "200k");
   const pending = s.pending && s.pending.new_sid;
   pendingContextSid = pending || "";
+  if (resumeRow) resumeRow.classList.toggle("hidden", !pendingContextSid);
   if (statusUsedEl){
     statusUsedEl.textContent = `${formatK(usage)} / ${threshold}${pending ? " · pending" : ""}`;
   }
@@ -5077,6 +3240,38 @@ async function apiContextStatus(){
 async function refreshContextStatus(){
   try{ applyContextStatus(await apiContextStatus()); }catch(_){}
 }
+async function apiContextAction(action, payload = {}){
+  // Placeholder: no context-control backend in the open relay — these settings are demo-only.
+  return { ok:true, command:{ action, payload } };
+}
+
+if (resetRow) resetRow.addEventListener("click", async () => {
+  if (!window.confirm("确认 reset？这会开启一个全新窗口。")) return;
+  try{
+    await apiContextAction("reset");
+    showToast("reset 已记录");
+    setTimeout(refreshContextStatus, 1200);
+  }catch(_){ showToast("reset 发送失败"); }
+});
+if (swapRow)  swapRow.addEventListener("click", async () => {
+  if (!window.confirm("确认 swap？会保留尾部上下文并重启当前窗口。")) return;
+  try{
+    await apiContextAction("swap");
+    showToast("swap 已记录");
+    setTimeout(refreshContextStatus, 1200);
+  }catch(_){ showToast("swap 发送失败"); }
+});
+if (resumeRow) resumeRow.addEventListener("click", async () => {
+  const sid = pendingContextSid || (statusSidEl && statusSidEl.dataset.sid) || "";
+  if (!sid){ showToast("没有 pending task"); return; }
+  if (!window.confirm("确认 resume pending task？这会重启当前窗口。")) return;
+  try{
+    await apiContextAction("resume", { sid });
+    showToast("resume 已记录");
+    setTimeout(refreshContextStatus, 1200);
+  }catch(_){ showToast("resume 发送失败"); }
+});
+
 if (statusCopy) statusCopy.addEventListener("click", async () => {
   const sid = (statusSidEl && statusSidEl.dataset.sid ? statusSidEl.dataset.sid : (statusSidEl ? statusSidEl.textContent : "").replace(/^sid:\s*/, "").trim());
   try{
@@ -5213,7 +3408,8 @@ function renderSessionList(){
     </div>`;
   }).join("");
 }
-function setSessionPopover(open){ // 已挪入配置页,无需悬浮层
+function setSessionPopover(open){
+  if (sessionPop) sessionPop.hidden = !open;
 }
 async function loadSessions(){
   if (USE_MOCK || !secret){ activeApiSession = LEGACY_SESSION_ID; renderSessionList(); return; }
@@ -5236,6 +3432,7 @@ async function activateSession(sessionId, { reload = true } = {}){
   try{ localStorage.setItem(SESSION_PICK_KEY, activeApiSession); }catch(_){}
   resetServerHistoryCache();
   renderSessionList();
+  setSessionPopover(false);
   const sid = effectiveApiSession();
   if (sid){
     try{
@@ -5265,6 +3462,7 @@ async function createNewSession(){
     try{ localStorage.setItem(SESSION_PICK_KEY, activeApiSession); }catch(_){}
     resetServerHistoryCache();
     renderSessionList();
+    setSessionPopover(false);
     startChat([]);
     showToast("已开启新 API 窗口");
   }catch(_){
@@ -5293,7 +3491,12 @@ async function renameSession(sessionId){
     showToast("改名失败");
   }
 }
-if (sessionNewBtn) sessionNewBtn.addEventListener("click", () => { createNewSession(); closeProfile(); });
+if (sessionBtn) sessionBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  renderSessionList();
+  setSessionPopover(sessionPop ? sessionPop.hidden : false);
+});
+if (sessionNewBtn) sessionNewBtn.addEventListener("click", createNewSession);
 if (sessionList) sessionList.addEventListener("click", (e) => {
   const renameBtn = e.target.closest("button[data-rename]");
   if (renameBtn){
@@ -5303,11 +3506,14 @@ if (sessionList) sessionList.addEventListener("click", (e) => {
     return;
   }
   const row = e.target.closest("[data-session]");
-  if (row){
-    activateSession(row.dataset.session || "");
-    closeProfile();
-  }
+  if (row) activateSession(row.dataset.session || "");
 });
+document.addEventListener("click", (e) => {
+  if (!sessionPop || sessionPop.hidden) return;
+  if (sessionPop.contains(e.target) || (sessionBtn && sessionBtn.contains(e.target))) return;
+  setSessionPopover(false);
+});
+
 const HISTORY_FETCH_LIMIT = 500;
 let serverHistoryCache = [];
 let serverHistoryComplete = false;
@@ -5741,12 +3947,7 @@ function attImgError(img){
 function attUrl(u){
   if (!u) return "";
   if (/^blob:|^data:/.test(u)) return u;
-  let full = u;
-  // 后端返回的是相对路径(/relay/uploads/xxx) → 补全成 API 域名,否则浏览器会解析到 GitHub Pages 上 → 404
-  if (/^\//.test(full)){
-    try{ full = new URL(API_BASE).origin + full; }catch(_){ full = "http://api.guhuai724.top" + full; }
-  }
-  return full + (full.indexOf("?") >= 0 ? "&" : "?") + "token=" + encodeURIComponent(secret || "");
+  return u + (u.indexOf("?") >= 0 ? "&" : "?") + "token=" + encodeURIComponent(secret || "");
 }
 function fmtSize(n){
   n = Number(n) || 0;
@@ -5927,7 +4128,7 @@ async function terminalSend(){
     setMessage({ ...optimistic, status:"failed" });
   }
 }
-if (terminalBtn) terminalBtn.addEventListener("click", () => { setTerminalOpen(true); closeProfile(); });
+if (terminalBtn) terminalBtn.addEventListener("click", () => setTerminalOpen(true));
 if (terminalBack) terminalBack.addEventListener("click", () => setTerminalOpen(false));
 if (terminalForm) terminalForm.addEventListener("submit", (e) => { e.preventDefault(); terminalSend(); });
 if (terminalInput){
@@ -6141,13 +4342,12 @@ function buildVirtualRows(){
       prevBubble = null;
     }
     if (m.kind === "thinking"){
-      // 思考已合并进回复的 meta.reasoning(由 makeMessage 在气泡上方渲染),
-      // 旧的独立 thinking 消息不再单独占行——避免堆叠/错位
+      rows.push({ type:"thinking", key:`m:${m._key}`, message:m });
       prevBubble = null;
       return;
     }
     if (m.kind === "act"){
-      if (displayOn("showAct")){ rows.push({ type:"act", key:`m:${m._key}`, message:m }); }
+      rows.push({ type:"act", key:`m:${m._key}`, message:m });
       prevBubble = null;                            // 像 thinking 一样打断气泡成组
       return;
     }
@@ -6200,9 +4400,6 @@ function estimatedHeight(row){
   const m = row.message;
   const atts = (m && m.meta && Array.isArray(m.meta.attachments)) ? m.meta.attachments : [];
   let h = (row.grouped ? 8 : 22) + 30;                        // 行间距 + 气泡纵向 padding + meta 行
-  if (!row.grouped && m && m.from === "ai" && m.meta && m.meta.reasoning && String(m.meta.reasoning).trim()){
-    h += DEFAULT_THINK_HEIGHT + 8;                            // 折叠思考块 + 与气泡间距;展开态由 measureVisibleRows 实测纠偏
-  }
   for (const a of atts) h += a.kind === "image" ? estImageHeight(a) : 56;
   h += estTextHeight(m && m.text);
   return Math.max(h, DEFAULT_ROW_HEIGHT);
@@ -6257,36 +4454,6 @@ function makeNewDivider(){
   d.className = "new-divider";
   d.textContent = "New Messages";
   return d;
-}
-function makeThinkBlock(m, reasoningText){
-  const block = document.createElement("div");
-  block.className = "think-block";
-  const star = `<span class="think-star" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5Z"/></svg></span>`;
-  block.innerHTML = `
-    <button class="think-toggle" type="button" aria-expanded="false" aria-label="展开思绪">
-      <span class="think-rule" aria-hidden="true"></span>
-      <span class="think-caption"><span class="think-caption-star" aria-hidden="true">✦</span><span>thinking</span><span class="think-state" aria-hidden="true"></span></span>
-    </button>
-    <div class="think-body" hidden>
-      <div class="think-text"><span class="think-copy">${renderText(reasoningText)}</span></div>
-      <div class="think-starline">${star}</div>
-    </div>`;
-  const toggle = block.querySelector(".think-toggle");
-  const body = block.querySelector(".think-body");
-  const setThinkOpen = (open, { persist = true } = {}) => {
-    block.classList.toggle("open", open);
-    block.closest(".row")?.classList.toggle("think-open", open);
-    body.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-    toggle.setAttribute("aria-label", open ? "收起思绪" : "展开思绪");
-    if (persist){
-      if (open) openThinkKeys.add(m._key); else openThinkKeys.delete(m._key);
-      scheduleRender({ preserveAnchor: true });
-    }
-  };
-  toggle.addEventListener("click", () => setThinkOpen(!block.classList.contains("open")));
-  if (openThinkKeys.has(m._key)) setThinkOpen(true, { persist:false });
-  return block;
 }
 function makeThinking(rowData){
   const m = rowData.message;
@@ -6389,10 +4556,6 @@ function makeMessage(rowData){
   const m = rowData.message;
   const row = document.createElement("div");
   row.className = `row ${m.from === "human" ? "human" : "ai"}${rowData.grouped ? " grouped" : ""}${rowData.tail ? " tail" : ""}`;
-  if (m.from === "human"){
-    if (displayOn("showHumanAvatar")) row.classList.add("show-human-avatar", "has-human-avatar");
-    if (displayOn("showHumanName")) row.classList.add("show-human-name");
-  }
   row.dataset.id = m.id; row.dataset.from = m.from; row.dataset.ts = tsMs(m); row.dataset.messageKey = m._key;
   if (freshKeys.has(m._key)){                       // 只对刚发/刚收到的那条播一次入场动画
     const cls = m.from === "human" ? "enter-human" : "enter-ai";
@@ -6400,6 +4563,7 @@ function makeMessage(rowData){
     freshKeys.delete(m._key);
     row.addEventListener("animationend", () => row.classList.remove(cls), { once:true });
   }
+
   const bubble = document.createElement("div");
   bubble.className = "bubble";
   const atts = (m.meta && Array.isArray(m.meta.attachments)) ? m.meta.attachments : [];
@@ -6422,21 +4586,6 @@ function makeMessage(rowData){
     });
   }else fillMeta(metaEl, m.ts, m.from === "human");
   row.appendChild(bubble);
-  // 思考块:原始行为,气泡之后 append (think 在气泡下方)
-  const reason = (m.from === "ai" && m.meta && m.meta.reasoning) ? String(m.meta.reasoning).trim() : "";
-  if (reason && displayOn("showThinking") && rowData.reasonFirst !== false && !rowData.grouped){
-    const thinkWrap = document.createElement("div");
-    thinkWrap.className = "msg-think";
-    thinkWrap.appendChild(makeThinkBlock(m, reason));
-    row.insertBefore(thinkWrap, bubble);
-  }
-  // 用户名字:显示在气泡下方(开关 showHumanName 控制)
-  if (m.from === "human" && displayOn("showHumanName")){
-    const nm = document.createElement("div");
-    nm.className = "human-name";
-    nm.textContent = humanName();
-    row.appendChild(nm);
-  }
   // reaction chips — AI poke (one-way: AI → you), rendered only under your own bubbles; not under the AI's
   const reactions = (m.from === "human" && m.meta && m.meta.reactions && typeof m.meta.reactions === "object") ? m.meta.reactions : null;
   const rxList = reactions ? Object.keys(reactions).map((who) => reactions[who]).filter(Boolean) : [];
@@ -6494,7 +4643,7 @@ function virtualRowSignature(row){
     const _atts = (m.meta && Array.isArray(m.meta.attachments)) ? m.meta.attachments : [];
     const _attSig = _atts.map((a) => `${a.kind || ""}:${a.url || a.localUrl || ""}:${a.uploading ? 1 : 0}:${a.failed ? 1 : 0}`).join(",");
     const _rxSig = (m.meta && m.meta.reactions) ? JSON.stringify(m.meta.reactions) : "";
-    return [row.key, row.type, m.status || "", m.id, m.ts, m.text || "", _attSig, row.grouped ? 1 : 0, row.tail ? 1 : 0, openThinkKeys.has(m._key) ? 1 : 0, openActKeys.has(m._key) ? 1 : 0, _rxSig, displayOn("showHumanAvatar") && m.from === "human" ? 1 : 0, displayOn("showHumanName") && m.from === "human" ? 1 : 0].join("~");
+    return [row.key, row.type, m.status || "", m.id, m.ts, m.text || "", _attSig, row.grouped ? 1 : 0, row.tail ? 1 : 0, openThinkKeys.has(m._key) ? 1 : 0, openActKeys.has(m._key) ? 1 : 0, _rxSig].join("~");
   }
   return row.key;
 }
@@ -6759,9 +4908,6 @@ function queueStreamDelta(ev){
   const kind = streamKindFromEvent(ev);
   const streamId = String(ev.stream_id || "");
   if (!kind || !streamId) return;
-  // 思考不单独渲染:后端会把 reasoning 合并进回复的 meta.reasoning,
-  // 由 makeMessage 在气泡上方画思考块——避免独立思考行堆叠/位置错乱
-  if (kind === "thinking") return;
   const key = streamMapKey(streamId, kind);
   if (ev.done){
     flushStreamDeltas(key);
@@ -7248,7 +5394,7 @@ inputEl.addEventListener("input", () => {
   micBtn.classList.add("hidden");
 });
 inputEl.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !composing){
+  if (e.key === "Enter" && !e.shiftKey && !composing){
     e.preventDefault();
     doSend();
   }
@@ -7309,28 +5455,24 @@ function imageToJpeg(file){
     if (/gif$/i.test(file.type || "") || /\.gif$/i.test(file.name || "")){ resolve(null); return; }  // 动图保留原样
     const url = URL.createObjectURL(file);
     const img = new Image();
-    // 兜底超时:某些 WebView 里图片加载/画布转码既不回调也不报错,不能让它卡死整个发送
-    const timer = setTimeout(() => { URL.revokeObjectURL(url); resolve(null); }, 3000);
-    const done = (v) => { clearTimeout(timer); resolve(v); };
     img.onload = () => {
       try{
         const max = 2048;
         let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
-        if (!w || !h){ URL.revokeObjectURL(url); done(null); return; }
+        if (!w || !h){ URL.revokeObjectURL(url); resolve(null); return; }
         let outW = w, outH = h;
         if (outW > max || outH > max){ const r = Math.min(max / outW, max / outH); outW = Math.round(outW * r); outH = Math.round(outH * r); }
         const c = document.createElement("canvas"); c.width = outW; c.height = outH;
         c.getContext("2d").drawImage(img, 0, 0, outW, outH);
         URL.revokeObjectURL(url);
         c.toBlob((blob) => {
-          if (!blob){ done(null); return; }
+          if (!blob){ resolve(null); return; }
           const base = (file.name || "image").replace(/\.[^.]+$/, "") || "image";
-          done({ blob: blob, name: base + ".jpg", width: outW, height: outH });
+          resolve({ blob: blob, name: base + ".jpg", width: outW, height: outH });
         }, "image/jpeg", 0.9);
-        // toBlob 兜底:部分环境 toBlob 不回调,等超时直接原图
-      }catch(e){ URL.revokeObjectURL(url); done(null); }
+      }catch(e){ URL.revokeObjectURL(url); resolve(null); }
     };
-    img.onerror = () => { URL.revokeObjectURL(url); done(null); };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
     img.src = url;
   });
 }
@@ -7387,14 +5529,44 @@ if (clipBtn && clipInput){
   clipInput.addEventListener("change", () => { const fs = Array.from(clipInput.files || []); clipInput.value = ""; handleFiles(fs); });
 }
 
-/* ════════════ 401（密钥失效兜底）════════════ */
+/* ════════════ 登录 / 401 ════════════ */
 function handle401(){
   secret = null;
   localStorage.removeItem(LS_KEY);
   if (es){ try{ es.close(); }catch(e){} es = null; }
   if (healthTimer){ clearInterval(healthTimer); healthTimer = null; }
-  showToast("连接失效，请刷新页面");
+  showLogin("密钥不对,请重新输入。");
 }
+
+function showLogin(msg){
+  appEl.classList.add("hidden");
+  loginEl.classList.remove("hidden");
+  $("#loginErr").textContent = msg || "";
+  $("#secretInput").value = "";
+  setTimeout(() => $("#secretInput").focus(), 80);
+}
+
+$("#loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const val = $("#secretInput").value.trim();
+  if (!val) return;
+  const btn = e.target.querySelector("button");
+  btn.disabled = true; btn.textContent = "连接中…";
+  secret = val;
+  try{
+    // 用 history 验证密钥(401 会抛错)
+    await loadSessions();
+    loadBrain();
+    const msgs = await apiLatestHistory();
+    localStorage.setItem(LS_KEY, secret);
+    startChat(msgs);
+  }catch(err){
+    secret = null;
+    if (String(err.message) !== "401") $("#loginErr").textContent = "连不上,稍后再试。";
+  }finally{
+    btn.disabled = false; btn.textContent = "连接";
+  }
+});
 
 /* ════════════ 启动 ════════════ */
 function startRealtime(){
@@ -7424,6 +5596,7 @@ function startRealtime(){
   }, 25000);
 }
 function startChat(initialMsgs, { connect = true, fromCache = false } = {}){
+  loginEl.classList.add("hidden");
   appEl.classList.remove("hidden");
   setConn("offline");
   resetChatState();
@@ -7443,9 +5616,9 @@ function startChat(initialMsgs, { connect = true, fromCache = false } = {}){
 }
 
 async function init(){
+  if (!secret){ showLogin(); return; }
   await loadSessions();
   loadBrain();
-  cacheLoopKeys();
   let showedCache = false;
   const cached = await readCachedMessages();
   if (cached.length){
@@ -7462,10 +5635,9 @@ async function init(){
       startChat(msgs);
     }
   }catch(err){
-    if (showedCache) startRealtime();
+    if (String(err.message) !== "401" && !showedCache) showLogin("连不上,请确认密钥。");
+    else if (showedCache) startRealtime();
   }
-  // 开屏直达 Desk（chat 壳在底层,Desk 全屏盖上面;底栏 Chat 可切回聊天）
-  setTimeout(() => { try{ openDesk(); }catch(_){} }, 160);
 }
 
 /* 回前台重同步:iOS 后台会挂起连接 */
