@@ -2008,6 +2008,135 @@
     }
   }
 
+
+
+/* ════════════════════════════════════════════════════════════════
+   Bottom Tab Bar + Menu as Home  (v4 clean)
+   ════════════════════════════════════════════════════════════════ */
+:root{
+  --tab-bg: rgba(255,255,255,.82);
+  --tab-active: var(--accent, #2F6F8F);
+  --tab-inactive: rgba(20,30,40,.42);
+}
+[data-theme="harbor"]{
+  --tab-bg: rgba(10,14,20,.72);
+  --tab-active: #6FC2D8;
+  --tab-inactive: rgba(255,255,255,.42);
+}
+
+/* 底部 Tab 栏 - content-box 让 padding 撑高度 */
+.tab-bar{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  box-sizing: content-box;
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom)) 4px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  background: var(--tab-bg);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  z-index: 210;
+}
+.tab-btn{
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--tab-inactive);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  padding: 4px 2px;
+  border-radius: 10px;
+  transition: color .18s ease;
+  font: inherit;
+  position: relative;
+}
+.tab-btn svg{
+  width: 22px; height: 22px;
+  stroke-width: 1.7;
+  flex-shrink: 0;
+}
+.tab-btn .tab-lab{
+  font-size: 10px;
+  letter-spacing: .03em;
+  font-weight: 500;
+  line-height: 1;
+}
+.tab-btn.active{ color: var(--tab-active); }
+
+/* menu-panel 作为默认 Home */
+body.has-home .menu-panel{
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 150 !important;
+}
+body.has-home .menu-panel.hidden{ display: block !important; }
+body.has-home .menu-scroll{
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+
+/* 强制隐藏 login/app */
+body.has-home .login{ display: none !important; }
+body.has-home .app{ display: none !important; }
+
+/* Chat 二级页 */
+body.chat-active .menu-panel{ display: none !important; }
+body.chat-active .tab-bar{ display: none !important; }
+body.chat-active .login{ display: none !important; }
+
+/* 占位页 */
+.placeholder-page{
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  background-image: var(--wall-default);
+  background-size: cover; background-position: center;
+  z-index: 160;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.placeholder-page::before{
+  content:""; position:absolute; inset:0;
+  background: var(--scrim); pointer-events:none;
+}
+.placeholder-page.open{ display: flex; }
+.ph-body{
+  flex:1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 30px calc(90px + env(safe-area-inset-bottom));
+  text-align: center;
+  color: var(--text-soft);
+  position: relative;
+  z-index: 1;
+}
+.ph-orb{
+  width: 88px; height: 88px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--accent, #2F6F8F), transparent 70%);
+  opacity: .28;
+  filter: blur(2px);
+}
+.ph-caption{
+  font-family: "Pinyon Script", var(--font-en), cursive;
+  font-size: 40px; font-weight: 400;
+  color: var(--text); margin-bottom: 8px;
+  line-height: 1;
+}
+.ph-sub{
+  font-size: 12px; line-height: 1.6;
+  color: var(--text-faint);
+  max-width: 260px; margin: 0 auto;
+}
+
 </style>
 </head>
 <body>
@@ -6008,8 +6137,175 @@ if ("serviceWorker" in navigator){
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
 
-init();
+/* init() skipped for v4 */
+
+
+/* ════════════════════════════════════════════════════════════════
+   Menu as Home + Bottom Tabs  (v4 clean)
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const body = document.body;
+  body.classList.add("has-home");
+  body.classList.remove("chat-active");
+
+  const tabBar = document.getElementById("tabBar");
+  const tabBtns = tabBar.querySelectorAll(".tab-btn");
+  const phMap = {
+    calendar: document.getElementById("phCalendar"),
+    memory:   document.getElementById("phMemory"),
+    diary:    document.getElementById("phDiary"),
+    settings: document.getElementById("phSettings")
+  };
+  const menuPanel = document.getElementById("menuPanel");
+  const appEl = document.getElementById("app");
+  const loginEl = document.getElementById("login");
+
+  function setTab(name){
+    tabBtns.forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  }
+  function closePh(){
+    Object.values(phMap).forEach(p => p.classList.remove("open"));
+  }
+  function openPh(name){
+    closePh();
+    if (phMap[name]) phMap[name].classList.add("open");
+    body.classList.remove("chat-active");
+    body.classList.add("has-home");
+    setTab(name);
+  }
+  function goHome(){
+    closePh();
+    body.classList.remove("chat-active");
+    body.classList.add("has-home");
+    if (menuPanel){
+      menuPanel.classList.remove("hidden");
+      menuPanel.classList.add("open");
+      if (typeof refreshDays === "function") refreshDays();
+    }
+    if (appEl) appEl.classList.add("hidden");
+    if (loginEl) loginEl.classList.add("hidden");
+    setTab("home");
+  }
+  function goChat(){
+    closePh();
+    body.classList.add("chat-active");
+    body.classList.remove("has-home");
+    if (menuPanel){
+      menuPanel.classList.remove("open");
+      menuPanel.classList.add("hidden");
+    }
+    if (loginEl) loginEl.classList.add("hidden");
+    if (appEl) appEl.classList.remove("hidden");
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = btn.dataset.tab;
+      if (t === "home") goHome();
+      else openPh(t);
+    });
+  });
+
+  if (menuPanel){
+    menuPanel.addEventListener("click", (e) => {
+      const item = e.target.closest(".menu-item");
+      if (!item) return;
+      const m = item.dataset.menu;
+      if (m === "chat"){
+        e.stopImmediatePropagation();
+        goChat();
+      } else if (m === "album"){
+        location.assign("album.html");
+      } else if (m === "room"){
+        if (typeof openRoom === "function") openRoom();
+      }
+    }, true);
+  }
+
+  const backBtn = document.getElementById("backBtn");
+  if (backBtn){
+    backBtn.addEventListener("click", (e) => {
+      if (body.classList.contains("chat-active")){
+        e.stopImmediatePropagation();
+        goHome();
+      }
+    }, true);
+  }
+
+  window.openMenu = function(){
+    if (!menuPanel) return;
+    if (body.classList.contains("chat-active")){ goHome(); return; }
+    menuPanel.classList.remove("hidden");
+    menuPanel.classList.add("open");
+    if (typeof refreshDays === "function") refreshDays();
+  };
+  window.closeMenu = function(){
+    if (!body.classList.contains("chat-active")) return;
+    goHome();
+  };
+
+  goHome();
+  window.__goHome = goHome;
+  window.__goChat = goChat;
+})();
+
 </script>
+
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     Bottom Tab Bar + Placeholder Pages  (v4 clean)
+     ════════════════════════════════════════════════════════════════ -->
+<section class="placeholder-page" id="phCalendar" aria-label="Calendar">
+  <div class="ph-body"><div>
+    <div class="ph-orb"></div>
+    <div class="ph-caption">Calendar</div>
+    <div class="ph-sub">Coming soon.</div>
+  </div></div>
+</section>
+<section class="placeholder-page" id="phMemory" aria-label="Memory">
+  <div class="ph-body"><div>
+    <div class="ph-orb"></div>
+    <div class="ph-caption">Memory</div>
+    <div class="ph-sub">Coming soon.</div>
+  </div></div>
+</section>
+<section class="placeholder-page" id="phDiary" aria-label="Diary">
+  <div class="ph-body"><div>
+    <div class="ph-orb"></div>
+    <div class="ph-caption">Diary</div>
+    <div class="ph-sub">Coming soon.</div>
+  </div></div>
+</section>
+<section class="placeholder-page" id="phSettings" aria-label="Settings">
+  <div class="ph-body"><div>
+    <div class="ph-orb"></div>
+    <div class="ph-caption">Settings</div>
+    <div class="ph-sub">Coming soon.</div>
+  </div></div>
+</section>
+<nav class="tab-bar" id="tabBar" aria-label="Primary">
+  <button class="tab-btn" type="button" data-tab="calendar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.4"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    <span class="tab-lab">Calendar</span>
+  </button>
+  <button class="tab-btn" type="button" data-tab="memory">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5Z"/></svg>
+    <span class="tab-lab">Memory</span>
+  </button>
+  <button class="tab-btn active" type="button" data-tab="home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2z"/></svg>
+    <span class="tab-lab">Home</span>
+  </button>
+  <button class="tab-btn" type="button" data-tab="diary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h11a2 2 0 0 1 2 2v16H6z"/><path d="M6 3v18"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+    <span class="tab-lab">Diary</span>
+  </button>
+  <button class="tab-btn" type="button" data-tab="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5A7 7 0 0 0 19 12z"/></svg>
+    <span class="tab-lab">Settings</span>
+  </button>
+</nav>
 
 </body>
 </html>
