@@ -6155,6 +6155,7 @@ if ("serviceWorker" in navigator){
    Menu as Home + Bottom Tabs  (v4 clean)
    ════════════════════════════════════════════════════════════════ */
 (function(){
+  function __v4init(){
   const body = document.body;
   body.classList.add("has-home");
   body.classList.remove("chat-active");
@@ -6242,6 +6243,12 @@ if ("serviceWorker" in navigator){
   goHome();
   window.__goHome = goHome;
   window.__goChat = goChat;
+  }
+  if (document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", __v4init);
+  } else {
+    __v4init();
+  }
 })();
 
 </script>
