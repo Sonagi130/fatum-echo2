@@ -18,7 +18,14 @@
 
 <script>
   /* Pearl (light) theme — matches the PWA's default preset. */
-  (function(){ document.documentElement.setAttribute("data-theme","light"); })();
+  (function(){
+    try {
+      var t = localStorage.getItem("companion_theme") || "light";
+      document.documentElement.setAttribute("data-theme", t === "grove" ? "grove" : "light");
+    } catch(e) {
+      document.documentElement.setAttribute("data-theme","light");
+    }
+  })();
 </script>
 
 <style>
@@ -50,6 +57,31 @@
   --scrim:linear-gradient(180deg,rgba(255,255,255,.48),rgba(255,255,255,.16) 32%,rgba(255,255,255,.06) 66%,rgba(255,255,255,.30));
   --danger:#b06a6f;
   --peer-avatar:url("avatar-sea.png");
+
+:root[data-theme="grove"]{
+  --bg:#F6FBEE;
+  --wall:url("grove-wall.webp");
+  --text:#30402C;
+  --text-soft:#5B6D55;
+  --text-faint:#8E9E88;
+  --accent:#55744B;
+  --accent-deep:#3F5B38;
+  --hairline:rgba(96,122,88,.20);
+  --card-bg:rgba(246,251,238,.52);
+  --card-line:rgba(140,164,130,.26);
+  --field-bg:rgba(255,255,255,.60);
+  --field-line:rgba(255,255,255,.75);
+  --sheet-bg:rgba(250,253,245,.92);
+  --sheet-line:rgba(255,255,255,.85);
+  --sheet-hi:rgba(255,255,255,.75);
+  --sheet-scrim:rgba(48,64,44,.44);
+  --shadow:0 18px 46px rgba(70,90,62,.12);
+  --soft-shadow:0 10px 26px rgba(80,100,72,.10);
+  --photo-shadow:0 10px 24px rgba(60,80,56,.18);
+  --scrim:linear-gradient(180deg,rgba(255,255,255,.46),rgba(255,255,255,.16) 32%,rgba(255,255,255,.06) 66%,rgba(255,255,255,.28));
+  --danger:#a8676c;
+}
+
 }
 
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -408,6 +440,7 @@ button{ font:inherit; color:inherit; cursor:pointer; border:none; background:non
    ───────────────────────────────────────────────────────────── */
 const API_BASE="/relay";
 const LS_KEY="companion_secret";
+const FE2_API="https://echo.guhuai724.top:8443";
 let secret=localStorage.getItem(LS_KEY)||"";
 
 /* sync the AI avatar + remark name from the PWA (same localStorage keys) */
@@ -442,7 +475,7 @@ let filterGroup="", filterText="";
 
 function imgUrl(p){
   const u=(p&&p.img)?p.img:""; if(!u) return "";
-  return u+(u.indexOf("?")>=0?"&":"?")+"token="+encodeURIComponent(secret);
+  return u;
 }
 function authHeaders(extra){ return Object.assign({"Authorization":"Bearer "+secret}, extra||{}); }
 function trace(kind, fields){
@@ -454,9 +487,8 @@ function trace(kind, fields){
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
 async function api(path,opts){
-  const r=await fetch(API_BASE+path, opts||{headers:authHeaders()});
-  if(r.status===401){ secret=""; localStorage.removeItem(LS_KEY); show("gate"); throw new Error("401"); }
-  if(!r.ok){ let d=""; try{ d=(await r.json()).detail; }catch(_){} throw new Error(d||("HTTP "+r.status)); }
+  const r=await fetch(FE2_API+"/api"+path, opts||{});
+  if(!r.ok){ let d=""; try{ d=(await r.json()).err; }catch(_){} throw new Error(d||("HTTP "+r.status)); }
   return r;
 }
 
@@ -465,10 +497,16 @@ async function loadList(){
   show("list");
   $("listMsg").classList.add("hidden");
   try{
-    const d=await (await api("/app/album/list")).json();
+    const d=await (await api("/photo")).json();
+    ALL=(d.items||[]).map(function(it){
+      var dt=new Date(it.at||Date.now());
+      var tt=(dt.getMonth()+1)+"月"+dt.getDate()+"日 "+
+             String(dt.getHours()).padStart(2,"0")+":"+String(dt.getMinutes()).padStart(2,"0");
+      return { id: it.id, img: FE2_API+"/api/photo/"+encodeURIComponent(it.id),
+               caption: it.note || "", time: tt, group: "", views: 0, notes_list: [] };
+    });
     $("topLabel").innerHTML="PHOTO<br>ALBUM<span class='rule'></span>";
-    ALL=(d.photos||[]).slice();
-    hasGroups=ALL.some(p=>(p.group||"").trim());
+    hasGroups=false;
     $("listEmpty").classList.toggle("hidden", ALL.length>0);
     $("boardZone").classList.toggle("hidden", ALL.length===0);
     $("recentSec").classList.toggle("hidden", ALL.length===0);
@@ -590,16 +628,14 @@ function renderDetail(p){
   }
   $("notesTitle").textContent=peerName+"的评语";
 }
-async function openDetail(id){
-  try{ const p=await (await api("/app/album/photo/"+encodeURIComponent(id))).json(); renderDetail(p);
-    trace("photo",{id:String(id),caption:(p.caption||""),group:(p.group||"")}); }
-  catch(e){ if(e.message!=="401") alert("打不开："+e.message); }
+function openDetail(id){
+  const p=(ALL||[]).filter(function(x){ return String(x.id)===String(id); })[0];
+  if(p) renderDetail(p); else alert("找不到这张");
 }
-async function randomOne(){
+function randomOne(){
   closeUpload();
-  try{ const p=await (await api("/app/album/random")).json(); renderDetail(p);
-    trace("random",{id:String(p.id||""),caption:(p.caption||"")}); }
-  catch(e){ if(e.message!=="401") alert("抽不到："+e.message); }
+  if(!ALL || !ALL.length){ alert("相册还是空的"); return; }
+  renderDetail(ALL[Math.floor(Math.random()*ALL.length)]);
 }
 function openLightbox(){
   if(!curImg) return;
@@ -624,14 +660,21 @@ async function doUpload(){
   if(!f){ $("uploadStatus").textContent="先选一张照片"; return; }
   const qs=new URLSearchParams({ name:f.name||"photo.jpg", caption:$("capInput").value.trim(),
     time:$("timeInput").value.trim(), group:$("groupInput").value.trim() }).toString();
-  $("uploadSend").disabled=true; $("uploadStatus").textContent="上传中…（大图会自动压成看图版）";
+  $("uploadSend").disabled=true; $("uploadStatus").textContent="上传中…";
   try{
-    const d=await (await api("/app/album/upload?"+qs,{ method:"POST",
-      headers:authHeaders({"Content-Type":f.type||"application/octet-stream"}), body:f })).json();
-    $("uploadStatus").textContent="已收进相册："+d.id;
-    closeUpload(); await loadList(); openDetail(d.id);
+    const dataUrl=await new Promise(function(res,rej){
+      const fr=new FileReader();
+      fr.onload=function(){ res(fr.result); };
+      fr.onerror=function(){ rej(new Error("读不了这张图")); };
+      fr.readAsDataURL(f);
+    });
+    const d=await (await api("/photo",{ method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ data:dataUrl, name:f.name||"photo.jpg", note:$("capInput").value.trim() }) })).json();
+    $("uploadStatus").textContent="已收进相册";
+    closeUpload(); await loadList();
   }catch(e){
-    $("uploadStatus").textContent=e.message==="401"?"":("上传失败："+e.message+(/413|large/.test(e.message)?"（图太大，>10MB）":""));
+    $("uploadStatus").textContent="上传失败："+e.message;
   }finally{ $("uploadSend").disabled=false; }
 }
 
@@ -667,7 +710,7 @@ $("gateHome").onclick=()=>location.assign("index.html");
 $("gateSave").onclick=()=>{ const v=$("gateInput").value.trim(); if(v){ secret=v; localStorage.setItem(LS_KEY,v); loadList(); } };
 
 /* 启动 */
-if(!secret) show("gate"); else loadList();
+loadList();
 </script>
 </body>
 </html>
