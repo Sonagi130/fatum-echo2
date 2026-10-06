@@ -6733,13 +6733,7 @@ if ("serviceWorker" in navigator){
   }
   pollPat();
   setInterval(pollPat, 12000);
-  /* 攒着的拍,等聊天页出来再显示 */
-  setInterval(function(){
-    if (!patPending.length) return;
-    var list = patPending.slice();
-    patPending = [];
-    list.forEach(function(t){ showPat(t); });
-  }, 2500);
+
 })();
 
 /* ═══════════════════ Diary ═══════════════════ */
