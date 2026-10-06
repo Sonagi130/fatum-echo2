@@ -19,12 +19,22 @@
 <script>
   /* Pearl (light) theme — matches the PWA's default preset. */
   (function(){
-    try {
-      var t = localStorage.getItem("companion_theme") || "light";
-      document.documentElement.setAttribute("data-theme", t === "grove" ? "grove" : "light");
-    } catch(e) {
-      document.documentElement.setAttribute("data-theme","light");
+    function applyTheme(){
+      try {
+        var t = localStorage.getItem("companion_theme") || "light";
+        document.documentElement.setAttribute("data-theme", t === "grove" ? "grove" : "light");
+      } catch(e) {
+        document.documentElement.setAttribute("data-theme","light");
+      }
     }
+    applyTheme();
+    /* 别处改了主题 / 切回前台 → 立刻跟上 */
+    window.addEventListener("storage", function(ev){
+      if (!ev || !ev.key || ev.key === "companion_theme") applyTheme();
+    });
+    document.addEventListener("visibilitychange", function(){
+      if (!document.hidden) applyTheme();
+    });
   })();
 </script>
 
