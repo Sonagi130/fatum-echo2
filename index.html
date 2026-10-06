@@ -2205,6 +2205,35 @@ body.chat-active .login{ display: none !important; }
 }
 .sep{ position: relative; z-index: 2; font-size: 20px; color: var(--text-faint); opacity:.35; }
 
+/* ═══ 收藏夹 ═══ */
+.fav-page{
+  position: fixed; inset: 0; z-index: 175; display: none; flex-direction: column;
+  background: var(--bg); background-image: var(--wall-default);
+  background-size: cover; background-position: center; color: var(--text);
+}
+.fav-page.open{ display: flex; }
+.fav-page::before{ content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none; }
+.fav-top{ position: relative; z-index: 2; display: flex; align-items: flex-start; gap: 10px; padding: calc(30px + env(safe-area-inset-top)) 16px 12px; }
+.fav-back{ position: absolute; top: calc(8px + env(safe-area-inset-top)); left: 16px; z-index: 6;
+  width: 38px; height: 38px; border: 0; border-radius: 12px; background: var(--row-press); color: var(--text);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.fav-back svg{ width: 19px; height: 19px; }
+.fav-head{ display: block; text-align: center; padding: calc(74px + env(safe-area-inset-top)) 24px 0; width: 100%; }
+.fav-title{ font-family: "Pinyon Script", var(--font-en), cursive; font-size: clamp(44px, 15vw, 60px); line-height: 1.05; }
+.fav-sub{ margin-top: 10px; font-family: var(--font-en), Georgia, serif; font-style: italic; font-size: 12px; color: var(--text-faint); letter-spacing: .015em; }
+.fav-scroll{ position: relative; z-index: 2; flex: 1; overflow-y: auto; padding: 14px 18px calc(46px + env(safe-area-inset-bottom)); }
+.fav-item{
+  border: 1px dashed var(--hairline); border-radius: 16px;
+  padding: 13px 15px; margin-bottom: 11px;
+  background: var(--card-bg, rgba(255,255,255,.42));
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.fav-meta{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.fav-who{ font-size: 11.5px; letter-spacing: .03em; color: var(--accent); }
+.fav-time{ font-family: var(--font-en), Georgia, serif; font-size: 11.5px; color: var(--text-faint); }
+.fav-text{ font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+.fav-empty{ text-align: center; color: var(--text-faint); font-size: 13px; padding: 60px 20px; }
+
 /* ═══ 拍一拍(浮层) ═══ */
 .pat-sys{
   text-align: center;
@@ -2837,6 +2866,12 @@ body.cap-active .tab-bar{ display: none !important; }
           <span class="menu-copy"><span class="menu-name">Room</span><span class="menu-sub">Our quiet place.</span></span>
           <span class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
         </button>
+        <button class="menu-item" type="button" data-menu="saved">
+          <span class="menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.8l2.2 4.5 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L4.8 10l5-.7z"/></svg></span>
+          <span class="menu-dot"></span>
+          <span class="menu-copy"><span class="menu-name">Saved</span><span class="menu-sub">Kept on purpose.</span></span>
+          <span class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        </button>
         <button class="menu-item" type="button" data-menu="capsule">
           <span class="menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10M8 3v4.5L12 11l4-3.5V3M8 21v-4.5L12 13l4 3.5V21"/></svg></span>
           <span class="menu-dot"></span>
@@ -3006,6 +3041,10 @@ body.cap-active .tab-bar{ display: none !important; }
     <button class="msg-act" type="button" data-act="copy" role="menuitem">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
       <span>Copy</span>
+    </button>
+    <button class="msg-act" type="button" data-act="save" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.8l2.2 4.5 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L4.8 10l5-.7z"/></svg>
+      <span>Save</span>
     </button>
     <button class="msg-act danger" type="button" data-act="delete" role="menuitem">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M5 7l1 13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l1-13"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg>
@@ -3245,6 +3284,7 @@ if (menuPanel){
     else if (item.dataset.menu === "album") location.assign("album.html");
     else if (item.dataset.menu === "room") openRoom();
     else if (item.dataset.menu === "capsule"){ if (window.__openCapsule) window.__openCapsule(); }
+    else if (item.dataset.menu === "saved"){ if (window.__openFav) window.__openFav(); }
     else showToast("即将开放");
   });
 }
@@ -5984,6 +6024,27 @@ function applyReaction(ev){
       showToast(ok ? "已复制" : "复制失败");
     }catch(_){ showToast("复制失败"); }
   }
+  function doSave(){
+    const msg = openKey != null ? messageByKey.get(msgKey(openKey)) : null;
+    close();
+    if (!msg) return;
+    try {
+      var K = "fatum_favs_v1";
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem(K) || "[]") || []; } catch(e){ list = []; }
+      list.unshift({
+        id: String(Date.now()) + "-" + Math.random().toString(36).slice(2, 7),
+        ts: msg.ts || new Date().toISOString(),
+        from: msg.from || "ai",
+        kind: msg.kind || "reply",
+        text: msg.text || "",
+        at: Date.now()
+      });
+      if (list.length > 500) list = list.slice(0, 500);
+      localStorage.setItem(K, JSON.stringify(list));
+      showToast("已收藏");
+    } catch(e){}
+  }
   function doCopy(){
     const msg = openKey != null ? messageByKey.get(msgKey(openKey)) : null;
     const text = msg ? (msg.text || "") : "";
@@ -6670,6 +6731,79 @@ if ("serviceWorker" in navigator){
 
 
 
+
+/* ═══ 收藏夹 ═══ */
+(function(){
+  var KEY = "fatum_favs_v1";
+  function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch(e){ return []; } }
+  function save(list){ try { localStorage.setItem(KEY, JSON.stringify(list)); } catch(e){} }
+  function pad(n){ return String(n).padStart(2, "0"); }
+  function fmt(ts){
+    var d = new Date(ts);
+    if (isNaN(d.getTime())) return "";
+    return (d.getMonth()+1) + "月" + d.getDate() + "日 " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+  function esc(t){ return String(t || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function render(){
+    var listEl = document.getElementById("favList");
+    if (!listEl) return;
+    var list = load();
+    if (!list.length){
+      listEl.innerHTML = '<div class="fav-empty">还没有收藏。<br>长按一条消息，选 Save。</div>';
+      return;
+    }
+    listEl.innerHTML = list.map(function(it, i){
+      var who = it.from === "human" ? "宝宝" : "顾淮";
+      return '<div class="fav-item" data-i="' + i + '">'
+        + '<div class="fav-meta"><span class="fav-who">' + who + '</span><span class="fav-time">' + fmt(it.ts) + '</span></div>'
+        + '<div class="fav-text">' + esc(it.text) + '</div>'
+        + '</div>';
+    }).join("");
+  }
+  function open(){
+    var pg = document.getElementById("favPage");
+    if (!pg) return;
+    render();
+    pg.classList.add("open");
+    if (window.__setTab) window.__setTab("");
+  }
+  function close(){ var pg = document.getElementById("favPage"); if (pg) pg.classList.remove("open"); }
+  window.__openFav = open;
+  window.__closeFav = close;
+  var back = document.getElementById("favBack");
+  if (back) back.addEventListener("click", close);
+  var listEl = document.getElementById("favList");
+  if (listEl){
+    var pressTimer = null, longFired = false;
+    listEl.addEventListener("click", function(e){
+      if (longFired){ longFired = false; return; }
+      var item = e.target.closest(".fav-item");
+      if (!item) return;
+      var list = load();
+      var it = list[parseInt(item.getAttribute("data-i"), 10)];
+      if (!it) return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(it.text || "");
+        if (window.showToast) window.showToast("已复制");
+      } catch(err){}
+    });
+    listEl.addEventListener("touchstart", function(e){
+      var item = e.target.closest(".fav-item");
+      if (!item) return;
+      longFired = false;
+      pressTimer = setTimeout(function(){
+        longFired = true;
+        var list = load();
+        var idx = parseInt(item.getAttribute("data-i"), 10);
+        if (!list[idx]) return;
+        var t = (list[idx].text || "").slice(0, 24);
+        if (window.confirm("删除这条收藏？\n\n" + t)){ list.splice(idx, 1); save(list); render(); if (window.showToast) window.showToast("已删除"); }
+      }, 700);
+    }, { passive: true });
+    listEl.addEventListener("touchend", function(){ if (pressTimer) clearTimeout(pressTimer); }, { passive: true });
+    listEl.addEventListener("touchmove", function(){ if (pressTimer) clearTimeout(pressTimer); }, { passive: true });
+  }
+})();
 
 /* ═══ 拍一拍(双向) ═══ */
 (function(){
@@ -7438,6 +7572,16 @@ if ("serviceWorker" in navigator){
   <div class="cap-scroll"><div class="cap-list" id="capList"></div></div>
       </section>
 
+<section class="fav-page" id="favPage" aria-label="收藏">
+  <button class="fav-back" id="favBack" type="button" aria-label="返回">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <div class="fav-head">
+    <div class="fav-title">Saved</div>
+    <div class="fav-sub">Kept on purpose.</div>
+  </div>
+  <div class="fav-scroll"><div id="favList"></div></div>
+</section>
 <div class="cap-read" id="capRead">
   <div class="cap-read-top">
     <div class="cap-read-date" id="capReadDate"></div>
