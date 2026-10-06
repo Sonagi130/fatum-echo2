@@ -6624,8 +6624,9 @@ if ("serviceWorker" in navigator){
 
 
 
-/* ═══ 拍一拍 ═══ */
+/* ═══ 拍一拍(双向) ═══ */
 (function(){
+  var PAT_BASE = "https://echo.guhuai724.top:8443";
   var PAT_ME = [
     "顾淮拍了拍你 · 记得吃饭",
     "顾淮拍了拍你 · 在想你",
@@ -6640,23 +6641,53 @@ if ("serviceWorker" in navigator){
     "你拍了拍顾淮 · 他侧过头看你",
     "你拍了拍顾淮 · 他说：在"
   ];
-  var last = 0;
+  var lastTap = 0;
+  function showPat(text){
+    var rows = document.querySelectorAll(".row");
+    var host = rows.length ? rows[rows.length - 1] : null;
+    if (!host) return null;
+    var cut = String(text).indexOf(" · ");
+    var el = document.createElement("div");
+    el.className = "pat-line";
+    el.innerHTML = (cut > 0 ? text.slice(0, cut) : text) + " · <b>" + (cut > 0 ? text.slice(cut + 3) : "") + "</b>";
+    host.appendChild(el);
+    return el;
+  }
   document.addEventListener("dblclick", function(e){
     var row = e.target && e.target.closest ? e.target.closest(".row") : null;
     if (!row) return;
     var now = Date.now();
-    if (now - last < 700) return;
-    last = now;
+    if (now - lastTap < 700) return;
+    lastTap = now;
     var isHuman = row.classList.contains("human");
     var pool = isHuman ? PAT_ME : PAT_HIM;
     var txt = pool[Math.floor(Math.random() * pool.length)];
-    var cut = txt.indexOf(" · ");
-    var el = document.createElement("div");
-    el.className = "pat-line";
-    el.innerHTML = (cut > 0 ? txt.slice(0, cut) : txt) + " · <b>" + (cut > 0 ? txt.slice(cut + 3) : "") + "</b>";
-    row.appendChild(el);
-    /* 不自动消失——留在对话里 */
+    showPat(txt);
+    try {
+      fetch(PAT_BASE + "/api/pat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ by: "human", text: txt, t: new Date().toTimeString().slice(0, 5) })
+      }).catch(function(){});
+    } catch(err){}
   }, false);
+
+  /* 我拍你:每 12 秒问一次后端,有新拍就显示 */
+  var patSince = 0, patFirst = true;
+  setInterval(function(){
+    fetch(PAT_BASE + "/api/pat?since=" + patSince)
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if (!j || !j.ok || !j.items || !j.items.length) return;
+        var items = j.items;
+        if (patFirst){ patFirst = false; items = [items[items.length - 1]]; }
+        items.forEach(function(it){
+          if (it.ts > patSince) patSince = it.ts;
+          if (it.by !== "ai") return;
+          showPat(it.text || "顾淮拍了拍你");
+        });
+      }).catch(function(){});
+  }, 12000);
 })();
 
 /* ═══════════════════ Diary ═══════════════════ */
