@@ -23,9 +23,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
 
 <script>
-  /* Theme: two presets (light=Pearl / harbor). Persisted in localStorage companion_theme. Set data-theme early to avoid a first-paint flash. */
+  /* Theme: presets light(海港) / grove(林间). Persisted in localStorage companion_theme. Set data-theme early to avoid a first-paint flash. */
   (function(){
-    var THEMES = ["light","harbor","grove"];
+    var THEMES = ["light","grove"];
     try{
       var t = localStorage.getItem("companion_theme");
       if (THEMES.indexOf(t) < 0) t = "light";
@@ -44,11 +44,9 @@
     --font-en: "Cormorant Garamond", Georgia, serif;
     --font-cn: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
     --wall-light: url("chat-light.webp");
-    --wall-harbor: url("chat-harbor.webp");
     --wall-grove: url("grove-wall.webp");
     --wall-default: var(--wall-light);
     --menu-wall-light: url("menu-light.webp");
-    --menu-wall-harbor: url("menu-harbor.webp");
     --menu-wall-grove: url("grove-wall.webp");
     --menu-wall-default: var(--menu-wall-light);
     --avatar-default: url("avatar-sea.png");
@@ -114,32 +112,7 @@
     --call-hangup-bg: #cf8d92;
     --call-hangup-shadow: rgba(176,96,104,.34);
   }
-  /* ─ HARBOR · 海港(暗色主题) ─ 中性冷调 */
-  :root[data-theme="harbor"]{
-      --wall-default: var(--wall-harbor);
-      --menu-wall-default: var(--menu-wall-harbor);
-      --bg: #F4F2EF;
-      --header-bg: #F4F2EF;
-      --hairline: rgba(74,93,108,.20);
-      --text: #36404B;
-      --text-soft: #5E6B78;
-      --text-faint: #9197A0;
-      --bubble-ai-bg: #EAE6E4;
-      --bubble-ai-fg: #36404B;
-      --bubble-human-bg: #E1E0E3;
-      --bubble-human-fg: #36404B;
-      --accent: #4A5D6C;
-      --send-bg: #4A5D6C;
-      --tick: #7E8E9C;
-      --accent-fg: #ffffff;
-      --think-flourish: rgba(74, 93, 108, 0.48);
-      --think-label: #5E6B78;
-      --think-body: #4F5D6A;
-      --composer-bg: #EFEBE8;
-      --field-bg: rgba(244,242,239,.92);
-      --slider-thumb: #4A5D6C;
-      --status-dot: #6FA98C;
-  }
+
 
   /* ─ GROVE · 林间(浅绿) ─ */
   :root[data-theme="grove"]{
@@ -2064,11 +2037,6 @@
   --tab-active: var(--accent, #2F6F8F);
   --tab-inactive: rgba(20,30,40,.42);
 }
-[data-theme="harbor"]{
-  --tab-bg: rgba(10,14,20,.72);
-  --tab-active: #6FC2D8;
-  --tab-inactive: rgba(255,255,255,.42);
-}
 
 [data-theme="grove"]{
   --tab-bg: rgba(246,251,238,.84);
@@ -2386,7 +2354,6 @@ body.diary-l2 .tab-bar{ display: none !important; }
   pointer-events: none; z-index: 1;
 }
 .diary-deco img{ display: block; width: 100%; height: auto; }
-[data-theme="harbor"] .diary-deco img{ filter: brightness(0) invert(1); }
 
 
 /* ═══ 我的资料 ═══ */
@@ -2627,9 +2594,8 @@ body.cap-active .tab-bar{ display: none !important; }
       <section class="settings-card">
         <div class="settings-label">主题</div>
         <div class="segmented" id="themeSeg" role="group" aria-label="主题切换">
-          <button type="button" data-val="light">珍珠</button>
-          <button type="button" data-val="harbor">海港</button>
-          <button type="button" data-val="grove">林间</button>
+          <button type="button" data-val="light">海港</button>
+                    <button type="button" data-val="grove">林间</button>
         </div>
       </section>
 
@@ -3014,8 +2980,8 @@ const terminalBtn = $("#terminalBtn"), terminalPanel = $("#terminalPanel"), term
 // brain routing removed
 
 /* ════════ 固定聊天背景 + 本地头像 ════════ */
-const THEMES = ["light","harbor","grove"];
-const WALLS = { light: "chat-light.webp", harbor: "chat-harbor.webp", grove: "grove-wall.webp" };
+const THEMES = ["light","grove"];
+const WALLS = { light: "chat-light.webp", grove: "grove-wall.webp" };
 const AVATAR_KEY = "companion_avatar";
 const REMARK_KEY = "companion_profile_remark";
 const SESSION_PICK_KEY = "companion_api_session_pick";
