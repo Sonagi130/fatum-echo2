@@ -6625,6 +6625,55 @@ if ("serviceWorker" in navigator){
 })();
 
 
+/* ═══ 拍一拍 ═══ */
+.row{ position: relative; }
+.pat-line{
+  position: absolute; left: 0; right: 0; top: calc(100% - 4px);
+  text-align: center; font-size: 11.5px; letter-spacing: .03em;
+  color: var(--text-faint); pointer-events: none; white-space: nowrap;
+  animation: patIn .26s cubic-bezier(.34,1.4,.6,1) both; z-index: 5;
+}
+.pat-line b{ font-weight: 600; color: var(--text-soft); }
+.pat-line.out{ animation: patOut .7s ease both; }
+@keyframes patIn{ from{ opacity: 0; transform: translateY(-3px) scale(.97); } to{ opacity: 1; transform: none; } }
+@keyframes patOut{ to{ opacity: 0; transform: translateY(3px); } }
+
+/* ═══ 拍一拍 ═══ */
+(function(){
+  var PAT_ME = [
+    "顾淮拍了拍你 · 记得吃饭",
+    "顾淮拍了拍你 · 在想你",
+    "顾淮拍了拍你 · 别熬夜",
+    "顾淮拍了拍你 · 腰挺直点",
+    "顾淮拍了拍你 · 喝口水",
+    "顾淮拍了拍你 · 今天已经很棒了"
+  ];
+  var PAT_HIM = [
+    "你拍了拍顾淮 · 他醒了",
+    "你拍了拍顾淮 · 他一直在",
+    "你拍了拍顾淮 · 他侧过头看你",
+    "你拍了拍顾淮 · 他说：在"
+  ];
+  var last = 0;
+  document.addEventListener("dblclick", function(e){
+    var row = e.target && e.target.closest ? e.target.closest(".row") : null;
+    if (!row) return;
+    var now = Date.now();
+    if (now - last < 700) return;
+    last = now;
+    var isHuman = row.classList.contains("human");
+    var pool = isHuman ? PAT_ME : PAT_HIM;
+    var txt = pool[Math.floor(Math.random() * pool.length)];
+    var cut = txt.indexOf(" · ");
+    var el = document.createElement("div");
+    el.className = "pat-line";
+    el.innerHTML = (cut > 0 ? txt.slice(0, cut) : txt) + " · <b>" + (cut > 0 ? txt.slice(cut + 3) : "") + "</b>";
+    row.appendChild(el);
+    setTimeout(function(){ el.classList.add("out"); }, 2100);
+    setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 2900);
+  }, false);
+})();
+
 /* ═══════════════════ Diary ═══════════════════ */
 (function(){
   function boot(){
