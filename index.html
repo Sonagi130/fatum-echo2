@@ -2207,8 +2207,9 @@ body.chat-active .login{ display: none !important; }
 
 /* ═══ 拍一拍 ═══ */
 .row{ position: relative; }
+.row.has-pat{ margin-bottom: 20px; }
 .pat-line{
-  position: absolute; left: 0; right: 0; top: calc(100% - 4px);
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px);
   text-align: center; font-size: 11.5px; letter-spacing: .03em;
   color: var(--text-faint); pointer-events: none; white-space: nowrap;
   animation: patIn .26s cubic-bezier(.34,1.4,.6,1) both; z-index: 5;
@@ -4132,24 +4133,7 @@ const Mock = (() => {
   ];
 
   function emit(m){ subs.forEach(s => s._deliver(m)); }
-  // the AI occasionally sends something on its own, to keep the demo "alive"
-  setInterval(() => {
-    if (subs.length === 0) return;
-    const r = Math.random();
-    if (r < 0.2){
-      const m = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"thinking",
-                  text: thinks[Math.floor(Math.random()*thinks.length)], meta:{} };
-      messages.push(m); emit(m);
-    } else if (r < 0.5){
-      const a = acts[Math.floor(Math.random()*acts.length)];
-      const m = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"act", text:a.text, meta:a.meta };
-      messages.push(m); emit(m);
-    } else if (r < 0.8){
-      const m = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"reply",
-                  text: lines[Math.floor(Math.random()*lines.length)], meta:{} };
-      messages.push(m); emit(m);
-    }
-  }, 13000);
+  /* 自动刷屏已关闭——mock 只保留开场那几条，不再自己长 */
 
   return {
     history: ({ since = 0, beforeId = null, latest = false, limit = 200 } = {}) => {
@@ -6671,8 +6655,7 @@ if ("serviceWorker" in navigator){
     el.className = "pat-line";
     el.innerHTML = (cut > 0 ? txt.slice(0, cut) : txt) + " · <b>" + (cut > 0 ? txt.slice(cut + 3) : "") + "</b>";
     row.appendChild(el);
-    setTimeout(function(){ el.classList.add("out"); }, 2100);
-    setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 2900);
+    /* 不自动消失——留在对话里 */
   }, false);
 })();
 
