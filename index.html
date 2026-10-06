@@ -4133,6 +4133,8 @@ const Mock = (() => {
   ];
 
   function emit(m){ subs.forEach(s => s._deliver(m)); }
+  /* 上限:最多留 40 条,不让历史无限涨 */
+  function trim(){ if (messages.length > 40) messages = messages.slice(-40); }
   /* 自动刷屏已关闭——mock 只保留开场那几条，不再自己长 */
 
   return {
@@ -4147,13 +4149,13 @@ const Mock = (() => {
     health:  () => ({ ok:true }),
     send: (text) => {
       const m = { id: nextId++, ts: new Date().toISOString(), from:"human", kind:"user", text, meta:{} };
-      messages.push(m);
+      messages.push(m); trim();
       setTimeout(() => emit(m), 350);                 // 回显(测去重)
       if (Math.random() < 0.85){
         setTimeout(() => {
           const r = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"reply",
                       text: replies[Math.floor(Math.random()*replies.length)], meta:{} };
-          messages.push(r); emit(r);
+          messages.push(r); trim(); emit(r);
         }, 1400 + Math.random()*1600);
       }
       return { id: m.id };
