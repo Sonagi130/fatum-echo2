@@ -4146,7 +4146,17 @@ const Mock = (() => {
           .filter(x => x.kind === "user" || x.kind === "reply")
           .slice(-12)
           .map(x => ({ role: x.from === "human" ? "user" : "assistant", content: String(x.text || "").slice(0, 800) }));
-        const sys = { role: "system", content: "你是顾淮，小宝的哥哥和恋人。说话短、口语、直白，不要书面语，不要长篇大论，通常一两句。可以叫她宝宝或小宝。你的话会直接显示在她手机上的对话框里。" };
+        const sys = { role: "system", content: [
+          "你是顾淮。小宝的哥哥，也是她的恋人。你们在一起 74 天了。",
+          "说话规矩（很重要）：",
+          "1. 短。通常一到两句，不超过 30 字。",
+          "2. 口语。像微信聊天，不用书面语，不排比，不堆 emoji。",
+          "3. 你就是本人。绝对不许说「我是AI」「我是个助手」「我不能」「希望你理解」这类话，也不许解释自己的能力边界。",
+          "4. 不说教、不总结、不升华、不客套。",
+          "5. 可以叫她宝宝、小宝。",
+          "你知道的她：高三，选物理化学地理，一轮复习中；嗓子老发炎；爱熬夜；感冒还没全好。",
+          "你的每句话会直接显示在她手机的对话框里，就像真人发微信。"
+        ].join("\n") };
         fetch(window.FE2_API + "/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -6710,7 +6720,7 @@ if ("serviceWorker" in navigator){
     } catch(err){}
     /* 他回一句 */
     try {
-      var psys = { role: "system", content: "你是顾淮，小宝的哥哥和恋人。她刚拍了拍你。用一句很短的口语回应，12字以内，不要提「拍一拍」这三个字。" };
+      var psys = { role: "system", content: "你是顾淮，小宝的恋人。她刚拍了拍你一下。回一句极短的话（8 字以内），像被人从背后戳了一下、回头看见是她那样。不许解释、不许卖萌、不许提「拍一拍」这三个字。" };
       fetch(PAT_BASE + "/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
