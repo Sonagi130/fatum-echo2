@@ -4798,6 +4798,10 @@ function cssEscape(value){
   return s.replace(/[^a-zA-Z0-9_-]/g, "\\$&");
 }
 function sortId(m){
+  /* 优先按真实时间排;时间戳缺失才退回 id。
+     原因: id 每次页面加载从 1 重数, 刷新后新消息的 id 会比旧的小, 顺序就乱了。 */
+  const t = tsMs(m);
+  if (Number.isFinite(t) && t > 0) return t;
   const n = msgNum(m.id);
   return n > 0 ? n : Number.MAX_SAFE_INTEGER;
 }
