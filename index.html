@@ -6489,6 +6489,8 @@ if ("serviceWorker" in navigator){
   tabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const t = btn.dataset.tab;
+      if (window.__closeCapsule) window.__closeCapsule();
+      if (t !== "diary" && window.__closeDiary) window.__closeDiary();
       if (t === "home") goHome();
       else if (t === "diary" && window.__openDiary) window.__openDiary();
       else openPh(t);
