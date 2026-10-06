@@ -2393,26 +2393,40 @@ body.diary-l2 .tab-bar{ display: none !important; }
   background-size: cover; background-position: center; background-repeat: no-repeat;
 }
 [data-theme="grove"] .cap-page .cap-sticker{ display: block; }
-.cap-top{ position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: calc(14px + env(safe-area-inset-top)) 16px 10px; }
+.cap-top{ position: relative; z-index: 2; display: flex; align-items: flex-start; gap: 10px; padding: calc(30px + env(safe-area-inset-top)) 16px 14px; }
 .cap-back{ width: 38px; height: 38px; flex: none; border: 0; border-radius: 12px; background: var(--row-press); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .cap-back svg{ width: 19px; height: 19px; }
-.cap-title{ flex: 1; text-align: center; font-family:"Pinyon Script", var(--font-en), cursive; font-size: 30px; line-height: 1; }
+.cap-head{ flex: 1; text-align: center; }
+.cap-title{ font-family:"Pinyon Script", var(--font-en), cursive; font-size: clamp(34px, 9vw, 46px); line-height: 1.05; }
+.cap-sub{ margin-top: 8px; font-family: var(--font-en), Georgia, serif; font-style: italic; font-size: 12px; line-height: 1.55; letter-spacing: .015em; color: var(--text-faint); }
 .cap-spacer{ width: 38px; flex: none; }
 .cap-scroll{ position: relative; z-index: 2; flex: 1; overflow-y: auto; padding: 6px 18px calc(96px + env(safe-area-inset-bottom)); }
 .cap-add{
-  position: fixed; right: 20px; bottom: calc(22px + env(safe-area-inset-bottom));
-  width: 54px; height: 54px; border-radius: 50%; border: 0;
-  background: var(--accent, #2F6F8F); color: #fff;
+  position: fixed; right: 20px; bottom: calc(13px + env(safe-area-inset-bottom));
+  width: 56px; height: 56px; border-radius: 50%; border: 0;
+  background: var(--accent, #2F6F8F); color: var(--accent-fg, #fff);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 22px rgba(0,0,0,.28); z-index: 3; cursor: pointer;
+  opacity: 1;
+  box-shadow: 0 10px 24px rgba(48,70,44,.30), inset 0 1px 0 rgba(255,255,255,.24);
+  z-index: 3; cursor: pointer;
 }
 .cap-add svg{ width: 24px; height: 24px; }
 .cap-item{
-  border: 1px solid var(--hairline); border-radius: 16px;
-  padding: 14px 16px; margin-bottom: 14px;
-  background: var(--card, rgba(255,255,255,.05));
+  position: relative;
+  border: 1px dashed var(--hairline); border-radius: 18px;
+  padding: 15px 17px; margin-bottom: 14px;
+  background: var(--card-bg, rgba(255,255,255,.42));
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  box-shadow: 0 10px 26px rgba(52,76,48,.07), inset 0 0 0 1px rgba(255,255,255,.34);
 }
-.cap-meta{ font-size: 11.5px; color: var(--text-faint); letter-spacing: .04em; margin-bottom: 8px; }
+.cap-tag{
+  flex: none; font-size: 10.5px; line-height: 1; padding: 4px 9px; border-radius: 999px;
+  background: rgba(85,116,75,.13); color: var(--accent); letter-spacing: .02em;
+}
+.cap-tag.on{ background: rgba(85,116,75,.22); }
+.cap-meta{ display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--text-faint); letter-spacing: .03em; margin-bottom: 10px; }
+.cap-dates{ font-family: var(--font-en), Georgia, serif; font-size: 12.5px; letter-spacing: .02em; }
 .cap-text{ font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; }
 .cap-item .cap-lock{ display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-faint); }
 .cap-item .cap-lock svg{ width: 15px; height: 15px; }
@@ -6939,7 +6953,8 @@ if ("serviceWorker" in navigator){
       }
       listEl.innerHTML = arr.map(function(c){
         var d = daysTo(c.unlock), open = d <= 0;
-        var meta = "封于 " + c.created + " · 开封 " + c.unlock + (open ? "" : " · 还有 " + d + " 天");
+        var tag = open ? '<span class="cap-tag on">已开封</span>' : '<span class="cap-tag">还有 ' + d + ' 天</span>';
+        var meta = '<span class="cap-dates">封于 ' + c.created + ' · 开封 ' + c.unlock + '</span>' + tag;
         var body = open
           ? '<div class="cap-text">' + esc(c.text) + '</div>'
           : '<div class="cap-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><span>还没到时候。</span></div>';
@@ -7124,7 +7139,10 @@ if ("serviceWorker" in navigator){
     <button class="cap-back" id="capBack" type="button" aria-label="返回">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
-    <div class="cap-title">Time Capsule</div>
+    <div class="cap-head">
+      <div class="cap-title">Time Capsule</div>
+      <div class="cap-sub">Voices locked in time,<br>awakening in days yet to come.</div>
+    </div>
     <span class="cap-spacer"></span>
   </div>
   <div class="cap-scroll"><div class="cap-list" id="capList"></div></div>
