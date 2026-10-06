@@ -2212,6 +2212,8 @@ body.chat-active .login{ display: none !important; }
   background-size: cover; background-position: center; color: var(--text);
 }
 .fav-page.open{ display: flex; }
+body.fav-open #tabBar{ display: none !important; }
+body.fav-open{ padding-bottom: 0 !important; }
 .fav-page::before{ content:""; position:absolute; inset:0; background: var(--scrim); pointer-events:none; }
 .fav-top{ position: relative; z-index: 2; display: flex; align-items: flex-start; gap: 10px; padding: calc(30px + env(safe-area-inset-top)) 16px 12px; }
 .fav-back{ position: absolute; top: calc(8px + env(safe-area-inset-top)); left: 16px; z-index: 6;
@@ -6766,13 +6768,25 @@ if ("serviceWorker" in navigator){
     if (!pg) return;
     render();
     pg.classList.add("open");
+    document.body.classList.add("fav-open");
     if (window.__setTab) window.__setTab("");
   }
-  function close(){ var pg = document.getElementById("favPage"); if (pg) pg.classList.remove("open"); }
+  function close(){
+    var pg = document.getElementById("favPage");
+    if (pg) pg.classList.remove("open");
+    document.body.classList.remove("fav-open");
+  }
   window.__openFav = open;
   window.__closeFav = close;
-  var back = document.getElementById("favBack");
-  if (back) back.addEventListener("click", close);
+  document.addEventListener("click", function(e){
+    if (e.target && e.target.closest && e.target.closest("#favBack")){
+      e.stopPropagation();
+      close();
+    }
+  }, true);
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && document.body.classList.contains("fav-open")) close();
+  });
   var listEl = document.getElementById("favList");
   if (listEl){
     var pressTimer = null, longFired = false;
