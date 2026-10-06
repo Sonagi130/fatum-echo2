@@ -6536,9 +6536,19 @@ if (window.visualViewport){
   applyVV();
 }
 
-/* Service Worker */
+/* Service Worker —— 每次都查更新;新 SW 接管后自动重载一次,避免看到旧页面 */
 if ("serviceWorker" in navigator){
-  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  let __swReloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (__swReloaded) return;
+    __swReloaded = true;
+    location.reload();
+  });
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+      .then((reg) => { try { reg.update(); } catch(e){} })
+      .catch(() => {});
+  });
 }
 
 /* init() skipped for v4 */
