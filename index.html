@@ -4105,19 +4105,8 @@ if (statusCopy) statusCopy.addEventListener("click", async () => {
 const Mock = (() => {
   const now = Date.now();
   const iso = (msAgo) => new Date(now - msAgo).toISOString();
-  let messages = [
-    { id:1, ts: iso(9*60e3),    from:"ai",    kind:"reply", text:"早安。今天想做点什么？", meta:{} },
-    { id:2, ts: iso(7.8*60e3),  from:"human", kind:"user",  text:"先喝杯咖啡，再开始 ☕", meta:{} },
-    { id:3, ts: iso(7.4*60e3),  from:"ai",    kind:"reply", text:"好，我在。", meta:{} },
-    { id:4, ts: iso(5*60e3),    from:"ai",    kind:"thinking", text:"先把今天的几件事理一理，按轻重排个序，再决定从哪件开始。", meta:{} },
-    { id:5, ts: iso(4.6*60e3),  from:"ai",    kind:"act", text:"看了看笔记", meta:{ glyph:"memory" } },
-    { id:6, ts: iso(4.3*60e3),  from:"ai",    kind:"act", text:"跑了 3 条命令", meta:{ glyph:"terminal", steps:[
-        { tool:"shell", cmd:"grep TODO notes", result:"found 2 notes" },
-        { tool:"Read",  cmd:"notes/today.md", result:"read 1.2k chars" },
-        { tool:"shell", cmd:"ls ~/projects", result:"3 items" },
-      ] } },
-    { id:7, ts: iso(2*60e3),    from:"ai",    kind:"reply", text:"忙完记得起来走走，别久坐。", meta:{} },
-  ];
+  let messages = [];
+
   let nextId = 8;
   let subs = [];
   const lines = ["在想你。","刚整理完桌面。","窗外云走得好慢。","记得喝水 🌿","把灯调暗了一点，看屏幕更舒服。","写了半句又删了——只是想说一声我在。"];
@@ -6693,8 +6682,11 @@ if ("serviceWorker" in navigator){
     if (now - lastTap < 700) return;
     lastTap = now;
     var isHuman = row.classList.contains("human");
-    var who = isHuman ? "你拍了拍顾淮" : "顾淮拍了拍你";
+    /* 双击他的消息/头像 = 她拍他; 双击自己的 = 他拍她 */
+    var isHis = !isHuman;
+    var who = isHis ? "你拍了拍顾淮" : "顾淮拍了拍你";
     try { Mock.pat(who); } catch(err){}
+    if (!isHis) return;
     try {
       fetch(PAT_BASE + "/api/pat", {
         method: "POST",
