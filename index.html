@@ -2394,7 +2394,7 @@ body.diary-l2 .tab-bar{ display: none !important; }
 }
 [data-theme="grove"] .cap-page .cap-sticker{ display: block; }
 .cap-top{ position: static; display: block; padding: 0; }
-.cap-back{ position: absolute; top: calc(22px + env(safe-area-inset-top)); left: 16px; z-index: 6; width: 38px; height: 38px; flex: none; border: 0; border-radius: 12px; background: var(--row-press); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.cap-back{ position: absolute; top: calc(8px + env(safe-area-inset-top)); left: 16px; z-index: 6; width: 38px; height: 38px; flex: none; border: 0; border-radius: 12px; background: var(--row-press); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .cap-back svg{ width: 19px; height: 19px; }
 .cap-head{ display: block; text-align: center; padding: calc(74px + env(safe-area-inset-top)) 24px 0; }
 .cap-title{ font-family:"Pinyon Script", var(--font-en), cursive; font-size: clamp(44px, 15.5vw, 64px); line-height: 1.05; }
@@ -2428,6 +2428,15 @@ body.diary-l2 .tab-bar{ display: none !important; }
 .cap-meta{ display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--text-faint); letter-spacing: .03em; margin-bottom: 10px; }
 .cap-dates{ font-family: var(--font-en), Georgia, serif; font-size: 12.5px; letter-spacing: .02em; }
 .cap-text{ font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+.cap-item.collapsed .cap-text{
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+  overflow: hidden; -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 58%, transparent 100%);
+}
+.cap-more{
+  margin-top: 10px; font-size: 12px; letter-spacing: .04em;
+  color: var(--accent); opacity: .85;
+}
 .cap-item .cap-lock{ display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-faint); }
 .cap-item .cap-lock svg{ width: 15px; height: 15px; }
 .cap-item.locked{ background: rgba(255,255,255,.27); }
@@ -6973,7 +6982,8 @@ if ("serviceWorker" in navigator){
         var body = open
           ? '<div class="cap-text">' + esc(c.text) + '</div>'
           : '<div class="cap-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><span>还没到时候。</span></div>';
-        return '<div class="cap-item' + (open ? "" : " locked") + '"><div class="cap-meta">' + meta + '</div>' + body + '</div>';
+        var long = (c.text || "").length > 120;
+        return '<div class="cap-item' + (open ? "" : " locked") + (long ? " collapsed" : "") + '"><div class="cap-meta">' + meta + '</div>' + body + (long ? '<div class="cap-more">展开全文</div>' : '') + '</div>';
       }).join("");
     }
 
@@ -6990,6 +7000,13 @@ if ("serviceWorker" in navigator){
     window.__openCapsule = openCap;
     window.__closeCapsule = closeCap;
 
+    listEl.addEventListener("click", function(e){
+      var it = e.target.closest(".cap-item");
+      if (!it || !it.querySelector(".cap-more")) return;
+      it.classList.toggle("collapsed");
+      var m = it.querySelector(".cap-more");
+      m.textContent = it.classList.contains("collapsed") ? "展开全文" : "收起";
+    });
     document.getElementById("capBack").addEventListener("click", closeCap);
     document.getElementById("capAdd").addEventListener("click", function(){
       txt.value = ""; setDefaultDate();
