@@ -2206,21 +2206,12 @@ body.chat-active .login{ display: none !important; }
 .sep{ position: relative; z-index: 2; font-size: 20px; color: var(--text-faint); opacity:.35; }
 
 /* ═══ 拍一拍(浮层) ═══ */
-.pat-layer{
-  position: fixed; left: 0; right: 0;
-  bottom: calc(var(--composer-zone) + 8px);
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  pointer-events: none; z-index: 60;
-}
-.pat-line{
-  display: inline-block;
+.pat-sys{
+  text-align: center;
   font-size: 11.5px; letter-spacing: .03em;
-  color: var(--text-soft); white-space: nowrap;
-  background: rgba(255,255,255,.78);
-  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-  border: 1px solid var(--hairline);
-  padding: 4px 11px; border-radius: 999px;
-  animation: patIn .26s cubic-bezier(.34,1.4,.6,1) both;
+  color: var(--text-faint);
+  padding: 7px 18px 3px;
+  animation: patIn .3s ease both;
 }
 .pat-line b{ font-weight: 600; color: var(--text-soft); }
 .pat-line.out{ animation: patOut .7s ease both; }
@@ -4160,6 +4151,7 @@ const Mock = (() => {
       const m = { id: nextId++, ts: new Date().toISOString(), from:"human", kind:"user", text, meta:{} };
       messages.push(m); trim();
       setTimeout(() => emit(m), 200);
+      setTimeout(function(){ try { if (typeof scrollToBottom === "function") scrollToBottom(); } catch(e){} }, 300);
       try {
         const hist = messages
           .filter(x => x.kind === "user" || x.kind === "reply")
@@ -4185,6 +4177,16 @@ const Mock = (() => {
         });
       } catch(e){}
       return { id: m.id };
+    },
+    pat: (text) => {
+      const m = { id: nextId++, ts: new Date().toISOString(), from:"human", kind:"pat", text: text || "你拍了拍顾淮", meta:{} };
+      messages.push(m); trim(); emit(m);
+      return { id: m.id };
+    },
+    reply: (text) => {
+      const r = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"reply", text: String(text || ""), meta:{} };
+      messages.push(r); trim(); emit(r);
+      return { id: r.id };
     },
     subscribe: (s) => { subs.push(s); setTimeout(() => s._open(), 220); },
     unsubscribe: (s) => { subs = subs.filter(x => x !== s); }
@@ -5166,6 +5168,11 @@ function buildVirtualRows(){
       rows.push({ type:"new", key:`new:${newDividerBeforeKey}` });
       prevBubble = null;
     }
+    if (m.kind === "pat"){
+      rows.push({ type:"pat", key:`m:${m._key}`, message:m });
+      prevBubble = null;
+      return;
+    }
     if (m.kind === "thinking"){
       rows.push({ type:"thinking", key:`m:${m._key}`, message:m });
       prevBubble = null;
@@ -5219,6 +5226,7 @@ function estImageHeight(a){
 function estimatedHeight(row){
   if (rowHeights.has(row.key)) return rowHeights.get(row.key);
   if (row.type === "day") return DEFAULT_DAY_HEIGHT;
+  if (row.type === "pat") return 32;
   if (row.type === "new") return DEFAULT_NEW_HEIGHT;
   if (row.type === "thinking") return DEFAULT_THINK_HEIGHT;
   if (row.type === "act") return DEFAULT_ACT_HEIGHT;
@@ -5272,6 +5280,12 @@ function makeDay(row){
   const d = document.createElement("div");
   d.className = "day";
   d.textContent = row.text;
+  return d;
+}
+function makePat(row){
+  const d = document.createElement("div");
+  d.className = "pat-sys";
+  d.textContent = (row.message && row.message.text) || "拍了拍";
   return d;
 }
 function makeNewDivider(){
@@ -5431,6 +5445,7 @@ function makeMessage(rowData){
 function createVirtualNode(row){
   let el;
   if (row.type === "day") el = makeDay(row);
+  else if (row.type === "pat") el = makePat(row);
   else if (row.type === "new") el = makeNewDivider(row);
   else if (row.type === "thinking") el = makeThinking(row);
   else if (row.type === "act") el = makeAct(row);
@@ -6670,18 +6685,7 @@ if ("serviceWorker" in navigator){
     "你拍了拍顾淮 · 他说：在"
   ];
   var lastTap = 0;
-  var patPending = [];
-  function showPat(text){
-    var layer = document.getElementById("patLayer");
-    if (!layer){ patPending.push(text); return null; }
-    var cut = String(text).indexOf(" · ");
-    var el = document.createElement("div");
-    el.className = "pat-line";
-    el.innerHTML = (cut > 0 ? text.slice(0, cut) : text) + " · <b>" + (cut > 0 ? text.slice(cut + 3) : "") + "</b>";
-    layer.appendChild(el);
-    while (layer.children.length > 3) layer.removeChild(layer.firstChild);
-    return el;
-  }
+  function showPat(text){ try { Mock.pat(text); } catch(e){} }
   document.addEventListener("dblclick", function(e){
     var row = e.target && e.target.closest ? e.target.closest(".row") : null;
     if (!row) return;
@@ -6689,14 +6693,24 @@ if ("serviceWorker" in navigator){
     if (now - lastTap < 700) return;
     lastTap = now;
     var isHuman = row.classList.contains("human");
-    var pool = isHuman ? PAT_ME : PAT_HIM;
-    var txt = pool[Math.floor(Math.random() * pool.length)];
-    showPat(txt);
+    var who = isHuman ? "你拍了拍顾淮" : "顾淮拍了拍你";
+    try { Mock.pat(who); } catch(err){}
     try {
       fetch(PAT_BASE + "/api/pat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ by: "human", text: txt, t: new Date().toTimeString().slice(0, 5) })
+        body: JSON.stringify({ by: "human", text: who, t: new Date().toTimeString().slice(0, 5) })
+      }).catch(function(){});
+    } catch(err){}
+    /* 他回一句 */
+    try {
+      var psys = { role: "system", content: "你是顾淮，小宝的哥哥和恋人。她刚拍了拍你。用一句很短的口语回应，12字以内，不要提「拍一拍」这三个字。" };
+      fetch(PAT_BASE + "/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [psys, { role: "user", content: "（" + who + "）" }], max_tokens: 1200 })
+      }).then(function(r){ return r.json(); }).then(function(j){
+        if (j && j.ok && j.text){ try { Mock.reply(j.text.trim()); } catch(err){} }
       }).catch(function(){});
     } catch(err){}
   }, false);
@@ -6713,7 +6727,7 @@ if ("serviceWorker" in navigator){
         items.forEach(function(it){
           if (it.ts > patSince) patSince = it.ts;
           if (it.by !== "ai") return;
-          showPat(it.text || "顾淮拍了拍你");
+          try { Mock.pat(it.text || "顾淮拍了拍你"); } catch(e){}
         });
       }).catch(function(){});
   }
@@ -7422,7 +7436,6 @@ if ("serviceWorker" in navigator){
   <div class="cap-scroll"><div class="cap-list" id="capList"></div></div>
       </section>
 
-<div class="pat-layer" id="patLayer" aria-hidden="true"></div>
 <div class="cap-read" id="capRead">
   <div class="cap-read-top">
     <div class="cap-read-date" id="capReadDate"></div>
