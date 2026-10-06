@@ -6515,7 +6515,7 @@ function startChat(initialMsgs, { connect = true, fromCache = false } = {}){
 async function init(){
   let showedCache = false;
   if (!secret){ secret = "demo"; }
-  await loadSessions();
+  try { await loadSessions(); } catch(e){}
   const cached = await readCachedMessages();
   if (cached.length){
     startChat(sessionFiltered(cached), { connect:false, fromCache:true });
@@ -6531,8 +6531,9 @@ async function init(){
       startChat(msgs);
     }
   }catch(err){
-    if (String(err.message) !== "401" && !showedCache) showLogin("连不上,请确认密钥。");
-    else if (showedCache) startRealtime();
+    /* 旧后端(老机 relay)已不再使用:拉不到历史就直接进主界面,不再拦人 */
+    if (!showedCache){ startChat([], { connect:false }); }
+    else { startRealtime(); }
   }
 }
 
