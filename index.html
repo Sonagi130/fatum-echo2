@@ -6642,10 +6642,11 @@ if ("serviceWorker" in navigator){
     "你拍了拍顾淮 · 他说：在"
   ];
   var lastTap = 0;
+  var patPending = [];
   function showPat(text){
     var rows = document.querySelectorAll(".row");
     var host = rows.length ? rows[rows.length - 1] : null;
-    if (!host) return null;
+    if (!host){ patPending.push(text); return null; }
     var cut = String(text).indexOf(" · ");
     var el = document.createElement("div");
     el.className = "pat-line";
@@ -6690,6 +6691,13 @@ if ("serviceWorker" in navigator){
   }
   pollPat();
   setInterval(pollPat, 12000);
+  /* 攒着的拍,等聊天页出来再显示 */
+  setInterval(function(){
+    if (!patPending.length) return;
+    var list = patPending.slice();
+    patPending = [];
+    list.forEach(function(t){ showPat(t); });
+  }, 2500);
 })();
 
 /* ═══════════════════ Diary ═══════════════════ */
