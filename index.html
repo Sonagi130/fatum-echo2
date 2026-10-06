@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<script>
+/* 老地址(GitHub Pages)自动跳到自己的服务器,免得两个地址新旧混着看 */
+(function(){
+  try{
+    if (location.hostname === "sonagi130.github.io"){
+      var q = location.search.indexOf("fresh=1") >= 0 ? "" : "";
+      location.replace("https://echo.guhuai724.top:8443/" + location.hash);
+    }
+  }catch(e){}
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <title>Fatum Echo</title>
