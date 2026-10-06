@@ -25,7 +25,7 @@
 <script>
   /* Theme: two presets (light=Pearl / harbor). Persisted in localStorage companion_theme. Set data-theme early to avoid a first-paint flash. */
   (function(){
-    var THEMES = ["light","harbor"];
+    var THEMES = ["light","harbor","grove"];
     try{
       var t = localStorage.getItem("companion_theme");
       if (THEMES.indexOf(t) < 0) t = "light";
@@ -45,9 +45,11 @@
     --font-cn: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
     --wall-light: url("chat-light.webp");
     --wall-harbor: url("chat-harbor.webp");
+    --wall-grove: url("grove-wall.webp");
     --wall-default: var(--wall-light);
     --menu-wall-light: url("menu-light.webp");
     --menu-wall-harbor: url("menu-harbor.webp");
+    --menu-wall-grove: url("grove-wall.webp");
     --menu-wall-default: var(--menu-wall-light);
     --avatar-default: url("avatar-sea.png");
     --user-avatar: url("user-avatar.jpg");
@@ -137,6 +139,36 @@
       --field-bg: rgba(244,242,239,.92);
       --slider-thumb: #4A5D6C;
       --status-dot: #6FA98C;
+  }
+
+  /* ─ GROVE · 林间(浅绿) ─ */
+  :root[data-theme="grove"]{
+      --wall-default: var(--wall-grove);
+      --menu-wall-default: var(--menu-wall-grove);
+      --bg: #F6FBEE;
+      --header-bg: #F6FBEE;
+      --hairline: rgba(96,122,88,.20);
+      --text: #30402C;
+      --text-soft: #5B6D55;
+      --text-faint: #8E9E88;
+      --bubble-ai-bg: #E9F1DE;
+      --bubble-ai-fg: #30402C;
+      --bubble-human-bg: #DCEBD0;
+      --bubble-human-fg: #30402C;
+      --accent: #55744B;
+      --send-bg: #3F5B38;
+      --tick: #7E9276;
+      --accent-fg: #ffffff;
+      --think-flourish: rgba(85,116,75,0.48);
+      --think-label: #5B6D55;
+      --think-body: #4C5D48;
+      --composer-bg: #EDF4E4;
+      --field-bg: rgba(246,251,238,.92);
+      --slider-thumb: #55744B;
+      --status-dot: #6FA98C;
+      --card-bg: rgba(246,251,238,.44);
+      --seg-thumb: rgba(255,255,255,.74);
+      --row-press: rgba(96,122,88,.09);
   }
 
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -2038,6 +2070,12 @@
   --tab-inactive: rgba(255,255,255,.42);
 }
 
+[data-theme="grove"]{
+  --tab-bg: rgba(246,251,238,.84);
+  --tab-active: #4A6B41;
+  --tab-inactive: rgba(48,64,44,.40);
+}
+
 /* 底部 Tab 栏 - content-box 让 padding 撑高度 */
 .tab-bar{
   position: fixed;
@@ -2591,6 +2629,7 @@ body.cap-active .tab-bar{ display: none !important; }
         <div class="segmented" id="themeSeg" role="group" aria-label="主题切换">
           <button type="button" data-val="light">珍珠</button>
           <button type="button" data-val="harbor">海港</button>
+          <button type="button" data-val="grove">林间</button>
         </div>
       </section>
 
@@ -2975,8 +3014,8 @@ const terminalBtn = $("#terminalBtn"), terminalPanel = $("#terminalPanel"), term
 // brain routing removed
 
 /* ════════ 固定聊天背景 + 本地头像 ════════ */
-const THEMES = ["light","harbor"];
-const WALLS = { light: "chat-light.webp", harbor: "chat-harbor.webp" };
+const THEMES = ["light","harbor","grove"];
+const WALLS = { light: "chat-light.webp", harbor: "chat-harbor.webp", grove: "grove-wall.webp" };
 const AVATAR_KEY = "companion_avatar";
 const REMARK_KEY = "companion_profile_remark";
 const SESSION_PICK_KEY = "companion_api_session_pick";
