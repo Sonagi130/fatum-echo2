@@ -2418,14 +2418,31 @@ body.diary-l2 .tab-bar{ display: none !important; }
 .cap-lbl{ font-size:13px; color: var(--text-soft); flex:none; }
 .cap-pick{ display:flex; gap:8px; flex:1; }
 .cap-sel{
-  flex:1; min-width:0; height:44px; box-sizing:border-box;
+  flex:1; min-width:0; height:46px; box-sizing:border-box;
   border:1px solid var(--hairline); border-radius:12px;
-  background: transparent; color: var(--text);
-  font: inherit; font-size:14px; padding:0 6px;
-  -webkit-appearance:none; appearance:none;
-  text-align:center; text-align-last:center;
+  background: var(--row-press); color: var(--text); cursor:pointer;
+  font: inherit; font-size:16px; padding:0 6px; text-align:center;
 }
-.cap-sel option{ color:#111; background:#fff; }
+.cap-sel:active{ transform: scale(.97); }
+.cap-opts{
+  position:fixed; inset:0; z-index:210;
+  display:none; align-items:flex-end; justify-content:center;
+  background: rgba(0,0,0,.42);
+}
+.cap-opts.open{ display:flex; }
+.cap-opts-sheet{
+  width:100%; max-width:520px; max-height:62vh;
+  background: var(--bg); border-radius:22px 22px 0 0;
+  padding:14px 18px calc(18px + env(safe-area-inset-bottom));
+  display:flex; flex-direction:column; color:var(--text);
+}
+.cap-opts-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex:none; }
+.cap-opts-title{ font-size:14px; font-weight:600; }
+.cap-opts-close{ width:30px; height:30px; border:0; border-radius:9px; background:var(--row-press); color:var(--text); font-size:17px; cursor:pointer; }
+.cap-opts-list{ overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.cap-opt{ display:block; width:100%; text-align:center; padding:14px 0; border:0; background:transparent; color:var(--text); font:inherit; font-size:16px; cursor:pointer; border-radius:10px; }
+.cap-opt.on{ background: var(--row-press); font-weight:600; }
+.cap-editor .de-text{ min-height:170px; }
 body.cap-active .menu-panel{ display: none !important; }
 body.cap-active .app{ display: none !important; }
 body.cap-active .tab-bar{ display: none !important; }
@@ -6834,7 +6851,9 @@ if ("serviceWorker" in navigator){
     var listEl = document.getElementById("capList");
     var editor = document.getElementById("capEditor");
     var txt = document.getElementById("capText");
-    var selY = document.getElementById("capY"), selM = document.getElementById("capM"), selD = document.getElementById("capD");
+    var btnY = document.getElementById("capYBtn"), btnM = document.getElementById("capMBtn"), btnD = document.getElementById("capDBtn");
+    var pick = { y: 0, m: 1, d: 1 };
+    var optsEl = document.getElementById("capOpts"), optsList = document.getElementById("capOptsList"), optsTitle = document.getElementById("capOptsTitle");
     if (!page || !listEl) return;
 
     function pad(n){ return String(n).padStart(2, "0"); }
@@ -6847,40 +6866,53 @@ if ("serviceWorker" in navigator){
       return Math.round((b - a) / 86400000);
     }
 
-    function fillSel(el, from, to){
-      var h = "";
-      for (var i = from; i <= to; i++) h += '<option value="' + i + '">' + i + '</option>';
-      el.innerHTML = h;
-    }
-    function updateDays(){
-      var y = parseInt(selY.value, 10) || new Date().getFullYear();
-      var m = parseInt(selM.value, 10) || 1;
-      var cur = parseInt(selD.value, 10) || 1;
-      var n = new Date(y, m, 0).getDate();
-      fillSel(selD, 1, n);
-      selD.value = Math.min(cur, n);
+    function daysInM(y, m){ return new Date(y, m, 0).getDate(); }
+    function clampD(){ var mx = daysInM(pick.y, pick.m); if (pick.d > mx) pick.d = mx; }
+    function paintBtns(){
+      if (btnY) btnY.textContent = pick.y;
+      if (btnM) btnM.textContent = pad(pick.m);
+      if (btnD) btnD.textContent = pad(pick.d);
     }
     function setDefaultDate(){
       var d = new Date();
       d.setMonth(d.getMonth() + 3);
-      if (selY.value) selY.value = d.getFullYear();
-      if (selM.value) selM.value = d.getMonth() + 1;
-      updateDays();
-      if (selD.value) selD.value = d.getDate();
+      pick.y = d.getFullYear(); pick.m = d.getMonth() + 1; pick.d = d.getDate();
+      clampD(); paintBtns();
     }
-    function valOfDate(){
-      if (!selY.value || !selM.value || !selD.value) return "";
-      return selY.value + "-" + pad(selM.value) + "-" + pad(selD.value);
+    function valOfDate(){ return pick.y + "-" + pad(pick.m) + "-" + pad(pick.d); }
+    function openOpts(field){
+      if (!optsEl) return;
+      var arr = [], cur = pick[field];
+      var label = field === "y" ? "年" : (field === "m" ? "月" : "日");
+      if (field === "y"){ var y0 = new Date().getFullYear(); for (var i = y0; i <= y0 + 10; i++) arr.push(i); }
+      else if (field === "m"){ for (var j = 1; j <= 12; j++) arr.push(j); }
+      else { var mx = daysInM(pick.y, pick.m); for (var k = 1; k <= mx; k++) arr.push(k); }
+      optsTitle.textContent = label;
+      optsList.innerHTML = arr.map(function(v){
+        return '<button class="cap-opt' + (v === cur ? " on" : "") + '" type="button" data-v="' + v + '">' + (field === "y" ? v : pad(v)) + '</button>';
+      }).join("");
+      optsEl.classList.add("open");
+      var onEl = optsList.querySelector(".cap-opt.on");
+      if (onEl) setTimeout(function(){ onEl.scrollIntoView({ block: "center" }); }, 40);
+      optsList.onclick = function(e){
+        var b = e.target.closest(".cap-opt");
+        if (!b) return;
+        pick[field] = parseInt(b.getAttribute("data-v"), 10);
+        if (field !== "d") clampD();
+        paintBtns();
+        optsEl.classList.remove("open");
+      };
     }
-    function initDateSelects(){
-      if (!selY) return;
-      var y0 = new Date().getFullYear();
-      fillSel(selY, y0, y0 + 10);
-      fillSel(selM, 1, 12);
-      fillSel(selD, 1, 31);
-      selY.addEventListener("change", updateDays);
-      selM.addEventListener("change", updateDays);
-      selD.addEventListener("change", updateDays);
+    function initPicker(){
+      if (!btnY) return;
+      btnY.addEventListener("click", function(){ openOpts("y"); });
+      btnM.addEventListener("click", function(){ openOpts("m"); });
+      btnD.addEventListener("click", function(){ openOpts("d"); });
+      if (optsEl){
+        optsEl.addEventListener("click", function(e){ if (e.target === optsEl) optsEl.classList.remove("open"); });
+        var oc = document.getElementById("capOptsClose");
+        if (oc) oc.addEventListener("click", function(){ optsEl.classList.remove("open"); });
+      }
       setDefaultDate();
     }
 
@@ -6934,7 +6966,7 @@ if ("serviceWorker" in navigator){
       if (window.showToast) window.showToast("已封存");
     });
 
-    initDateSelects();
+    initPicker();
     render();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
@@ -7085,6 +7117,16 @@ if ("serviceWorker" in navigator){
   </button>
 </section>
 
+<div class="cap-opts" id="capOpts">
+  <div class="cap-opts-sheet">
+    <div class="cap-opts-head">
+      <span class="cap-opts-title" id="capOptsTitle">选</span>
+      <button class="cap-opts-close" id="capOptsClose" type="button">&times;</button>
+    </div>
+    <div class="cap-opts-list" id="capOptsList"></div>
+  </div>
+</div>
+
 <div class="cap-editor" id="capEditor">
   <div class="de-sheet">
     <div class="de-top">
@@ -7095,9 +7137,9 @@ if ("serviceWorker" in navigator){
     <div class="cap-row">
       <label class="cap-lbl">开封日</label>
       <div class="cap-pick">
-        <select class="cap-sel" id="capY"></select>
-        <select class="cap-sel" id="capM"></select>
-        <select class="cap-sel" id="capD"></select>
+        <button class="cap-sel" type="button" id="capYBtn" data-f="y">&mdash;</button>
+        <button class="cap-sel" type="button" id="capMBtn" data-f="m">&mdash;</button>
+        <button class="cap-sel" type="button" id="capDBtn" data-f="d">&mdash;</button>
       </div>
     </div>
     <button class="de-save" id="capSave" type="button">封存</button>
