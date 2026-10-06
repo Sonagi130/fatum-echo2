@@ -2406,6 +2406,14 @@ body.diary-l2 .tab-bar{ display: none !important; }
 .cap-item.locked{ background: transparent; border-style: dashed; }
 .cap-empty{ text-align: center; color: var(--text-faint); font-size: 13px; padding: 60px 0; }
 .cap-badge{ display:inline-block; margin-left:8px; padding:2px 7px; border-radius:7px; background: var(--row-press); font-size:10.5px; letter-spacing:.06em; }
+.cap-editor{
+  position: fixed; inset: 0; z-index: 200;
+  display: none; align-items: flex-end; justify-content: center;
+  background: rgba(0,0,0,.42);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.cap-editor.open{ display: flex; }
 .cap-row{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
 .cap-lbl{ font-size:13px; color: var(--text-soft); flex:none; }
 .cap-pick{ display:flex; gap:8px; flex:1; }
