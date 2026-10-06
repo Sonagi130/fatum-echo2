@@ -6620,6 +6620,7 @@ if ("serviceWorker" in navigator){
 (function(){
   function boot(){
     var DKEY = "fatum_diary_v1";
+    var FE2_API = "https://echo.guhuai724.top:8443";
     var ITEM = 44;
     var remote = {};
     var local = {};
@@ -6838,8 +6839,16 @@ if ("serviceWorker" in navigator){
       if (!txt) return;
       var k = key(selY, selM, selD);
       if (!local[k]) local[k] = [];
-      local[k].push({ t: deTime.value || "00:00", by: "human", text: txt });
+      var rec = { t: deTime.value || "00:00", by: "human", text: txt };
+      local[k].push(rec);
       saveLocal();
+      try {
+        fetch(FE2_API + "/api/diary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: k, t: rec.t, by: rec.by, text: rec.text })
+        }).catch(function(){});
+      } catch(e){}
       editor.classList.remove("open");
       renderTimeline();
       updateBtn();
@@ -6861,10 +6870,16 @@ if ("serviceWorker" in navigator){
     });
 
     /* ---- load remote diary.json ---- */
-    fetch("./diary.json", { cache: "no-store" })
-      .then(function(r){ return r.ok ? r.json() : {}; })
-      .then(function(j){ remote = j || {}; updateBtn(); if (detail.classList.contains("open")) renderTimeline(); })
-      .catch(function(){});
+    function applyRemote(j){ remote = j || {}; updateBtn(); if (detail.classList.contains("open")) renderTimeline(); }
+    fetch(FE2_API + "/api/diary", { cache: "no-store" })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ if (j && j.ok && j.diary) applyRemote(j.diary); else throw new Error("api"); })
+      .catch(function(){
+        fetch("./diary.json", { cache: "no-store" })
+          .then(function(r){ return r.ok ? r.json() : {}; })
+          .then(applyRemote)
+          .catch(function(){});
+      });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
