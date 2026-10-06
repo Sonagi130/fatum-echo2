@@ -2205,9 +2205,17 @@ body.chat-active .login{ display: none !important; }
 }
 .sep{ position: relative; z-index: 2; font-size: 20px; color: var(--text-faint); opacity:.35; }
 
-.diary-actions{ position: relative; z-index: 2; padding: 8px 22px calc(74px + env(safe-area-inset-bottom)); }
+.diary-actions{ position: relative; z-index: 2; display: flex; gap: 10px; padding: 8px 22px calc(74px + env(safe-area-inset-bottom)); }
+.diary-write-btn{
+  flex: 0 0 auto; padding: 0 22px; height: 50px; border-radius: 16px;
+  border: 1px solid var(--hairline); background: rgba(255,255,255,.55);
+  color: var(--accent); font: inherit; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: transform .12s ease;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.diary-write-btn:active{ transform: scale(.97); }
 .diary-open-btn{
-  width: 100%; height: 50px; border: none; border-radius: 16px;
+  flex: 1; height: 50px; border: none; border-radius: 16px;
   font: inherit; font-size: 15px; font-weight: 600;
   background: var(--accent, #2F6F8F); color: #fff;
   cursor: pointer; transition: opacity .18s ease, transform .12s ease;
@@ -6832,6 +6840,8 @@ if ("serviceWorker" in navigator){
       setTimeout(function(){ deText.focus(); }, 120);
     }
     document.getElementById("ddAdd").addEventListener("click", openEditor);
+    var wb = document.getElementById("diaryWriteBtn");
+    if (wb) wb.addEventListener("click", openEditor);
     document.getElementById("deClose").addEventListener("click", function(){ editor.classList.remove("open"); });
     editor.addEventListener("click", function(e){ if (e.target === editor) editor.classList.remove("open"); });
     document.getElementById("deSave").addEventListener("click", function(){
@@ -7244,6 +7254,7 @@ if ("serviceWorker" in navigator){
     <div class="picker-mask"></div>
   </div>
   <div class="diary-actions">
+    <button class="diary-write-btn" id="diaryWriteBtn" type="button">写一篇</button>
     <button class="diary-open-btn" id="diaryOpenBtn" type="button" disabled>阅览日记</button>
   </div>
 </section>
