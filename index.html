@@ -4139,6 +4139,7 @@ const Mock = (() => {
     send: (text) => {
       const m = { id: nextId++, ts: new Date().toISOString(), from:"human", kind:"user", text, meta:{} };
       messages.push(m); trim();
+      try { fetch(window.FE2_API + "/api/active", { method: "POST" }).catch(function(){}); } catch(e){}
       setTimeout(() => emit(m), 200);
       setTimeout(function(){ try { if (typeof scrollToBottom === "function") scrollToBottom(); } catch(e){} }, 300);
       try {
@@ -6739,6 +6740,7 @@ if ("serviceWorker" in navigator){
   }
   pollPat();
   setInterval(pollPat, 5000);
+  try { fetch(PAT_BASE + "/api/active", { method: "POST" }).catch(function(){}); } catch(e){}
 
 })();
 
