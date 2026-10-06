@@ -6614,8 +6614,21 @@ if ("serviceWorker" in navigator){
     __swReloaded = true;
     location.reload();
   });
+  /* 打开 ?fresh=1 —— 一次性清掉旧 Service Worker 和所有缓存 */
+  if (location.search.indexOf("fresh=1") >= 0){
+    try {
+      if (window.caches && caches.keys){
+        caches.keys().then(function(ks){ ks.forEach(function(k){ try { caches.delete(k); } catch(e){} }); });
+      }
+      navigator.serviceWorker.getRegistrations().then(function(rs){
+        rs.forEach(function(r){ try { r.unregister(); } catch(e){} });
+      });
+      try { localStorage.removeItem("companion_shell_v"); } catch(e){}
+    } catch(e){}
+  }
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+    /* 版本号写进脚本 URL:浏览器会当成新脚本去拿,绕开 sw.js 被 HTTP 缓存的问题 */
+    navigator.serviceWorker.register("sw.js?v=16", { updateViaCache: "none" })
       .then((reg) => { try { reg.update(); } catch(e){} })
       .catch(() => {});
   });
