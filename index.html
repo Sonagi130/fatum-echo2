@@ -6880,6 +6880,34 @@ if ("serviceWorker" in navigator){
           .then(applyRemote)
           .catch(function(){});
       });
+
+    /* ---- 本地旧日记一次性上云 ---- */
+    function syncLocalToCloud(){
+      try {
+        if (localStorage.getItem("fatum_diary_synced_v1")) return;
+        var list = [];
+        Object.keys(local).forEach(function(k){
+          (local[k] || []).forEach(function(e){
+            if (e.by === "ai") return;
+            list.push({ date: k, t: e.t || "00:00", by: "human", text: e.text || "" });
+          });
+        });
+        if (!list.length){ localStorage.setItem("fatum_diary_synced_v1", "1"); return; }
+        (function next(i){
+          if (i >= list.length){
+            localStorage.setItem("fatum_diary_synced_v1", "1");
+            if (window.showToast) window.showToast("旧日记已上云");
+            return;
+          }
+          fetch(FE2_API + "/api/diary", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(list[i])
+          }).then(function(){ next(i + 1); }).catch(function(){});
+        })(0);
+      } catch(e){}
+    }
+    syncLocalToCloud();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
