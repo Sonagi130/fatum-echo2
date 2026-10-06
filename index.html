@@ -6674,7 +6674,7 @@ if ("serviceWorker" in navigator){
 
   /* 我拍你:每 12 秒问一次后端,有新拍就显示 */
   var patSince = 0, patFirst = true;
-  setInterval(function(){
+  function pollPat(){
     fetch(PAT_BASE + "/api/pat?since=" + patSince)
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(j){
@@ -6687,7 +6687,9 @@ if ("serviceWorker" in navigator){
           showPat(it.text || "顾淮拍了拍你");
         });
       }).catch(function(){});
-  }, 12000);
+  }
+  pollPat();
+  setInterval(pollPat, 12000);
 })();
 
 /* ═══════════════════ Diary ═══════════════════ */
