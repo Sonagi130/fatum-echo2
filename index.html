@@ -6106,7 +6106,8 @@ function applyReaction(ev){
     const act = e.target.closest(".msg-act");
     if (!act) return;
     if (act.dataset.act === "copy") doCopy();
-    else if (act.dataset.act === "delete") doDelete();
+    else if (act.dataset.act === "save") doSave();
+else if (act.dataset.act === "delete") doDelete();
   });
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
   window.addEventListener("resize", close);
