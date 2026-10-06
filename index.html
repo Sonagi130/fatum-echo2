@@ -2205,6 +2205,19 @@ body.chat-active .login{ display: none !important; }
 }
 .sep{ position: relative; z-index: 2; font-size: 20px; color: var(--text-faint); opacity:.35; }
 
+/* ═══ 拍一拍 ═══ */
+.row{ position: relative; }
+.pat-line{
+  position: absolute; left: 0; right: 0; top: calc(100% - 4px);
+  text-align: center; font-size: 11.5px; letter-spacing: .03em;
+  color: var(--text-faint); pointer-events: none; white-space: nowrap;
+  animation: patIn .26s cubic-bezier(.34,1.4,.6,1) both; z-index: 5;
+}
+.pat-line b{ font-weight: 600; color: var(--text-soft); }
+.pat-line.out{ animation: patOut .7s ease both; }
+@keyframes patIn{ from{ opacity: 0; transform: translateY(-3px) scale(.97); } to{ opacity: 1; transform: none; } }
+@keyframes patOut{ to{ opacity: 0; transform: translateY(3px); } }
+
 .diary-actions{ position: relative; z-index: 2; display: flex; gap: 10px; padding: 8px 22px calc(74px + env(safe-area-inset-bottom)); }
 .diary-write-btn{
   flex: 0 0 auto; padding: 0 22px; height: 50px; border-radius: 16px;
@@ -6625,18 +6638,7 @@ if ("serviceWorker" in navigator){
 })();
 
 
-/* ═══ 拍一拍 ═══ */
-.row{ position: relative; }
-.pat-line{
-  position: absolute; left: 0; right: 0; top: calc(100% - 4px);
-  text-align: center; font-size: 11.5px; letter-spacing: .03em;
-  color: var(--text-faint); pointer-events: none; white-space: nowrap;
-  animation: patIn .26s cubic-bezier(.34,1.4,.6,1) both; z-index: 5;
-}
-.pat-line b{ font-weight: 600; color: var(--text-soft); }
-.pat-line.out{ animation: patOut .7s ease both; }
-@keyframes patIn{ from{ opacity: 0; transform: translateY(-3px) scale(.97); } to{ opacity: 1; transform: none; } }
-@keyframes patOut{ to{ opacity: 0; transform: translateY(3px); } }
+
 
 /* ═══ 拍一拍 ═══ */
 (function(){
