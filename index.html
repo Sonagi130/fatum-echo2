@@ -2400,17 +2400,35 @@ body.diary-l2 .tab-bar{ display: none !important; }
 .cap-title{ font-family:"Pinyon Script", var(--font-en), cursive; font-size: clamp(44px, 15.5vw, 64px); line-height: 1.05; }
 .cap-sub{ margin-top: 8px; font-family: var(--font-en), Georgia, serif; font-style: italic; font-size: 12px; line-height: 1.55; letter-spacing: .015em; color: var(--text-faint); }
 .cap-spacer{ display: none; }
+.cap-filter{
+  position: relative; z-index: 2;
+  display: flex; justify-content: center; gap: 8px;
+  padding: 16px 20px 4px;
+}
+.cap-filter button{
+  border: 1px solid var(--hairline); background: transparent;
+  color: var(--text-faint); font: inherit; font-size: 12px;
+  letter-spacing: .06em; padding: 6px 15px; border-radius: 999px;
+  cursor: pointer; transition: background .22s ease, color .22s ease, border-color .22s ease;
+}
+.cap-filter button.on{
+  background: var(--accent); color: var(--accent-fg, #fff); border-color: transparent;
+}
 .cap-scroll{ position: relative; z-index: 2; flex: 1; overflow-y: auto; padding: 6px 18px calc(96px + env(safe-area-inset-bottom)); }
 .cap-add{
-  position: fixed; right: 20px; bottom: calc(13px + env(safe-area-inset-bottom));
-  width: 56px; height: 56px; border-radius: 50%; border: 0;
-  background: var(--accent, #2F6F8F); color: var(--accent-fg, #fff);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 1;
-  box-shadow: 0 10px 24px rgba(48,70,44,.30), inset 0 1px 0 rgba(255,255,255,.24);
+  position: fixed; right: 18px; bottom: calc(14px + env(safe-area-inset-bottom));
+  height: 42px; padding: 0 18px 0 15px; border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: rgba(255,255,255,.62);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  color: var(--accent);
+  display: flex; align-items: center; gap: 7px;
+  font: inherit; font-size: 13px; letter-spacing: .04em;
+  box-shadow: 0 8px 22px rgba(52,76,48,.13);
   z-index: 3; cursor: pointer;
 }
-.cap-add svg{ width: 24px; height: 24px; }
+.cap-add svg{ width: 17px; height: 17px; }
 .cap-item{
   position: relative;
   border: 1px dashed var(--hairline); border-radius: 18px;
@@ -6893,6 +6911,7 @@ if ("serviceWorker" in navigator){
     var pick = { y: 0, m: 1, d: 1 };
     var optsEl = document.getElementById("capOpts"), optsList = document.getElementById("capOptsList"), optsTitle = document.getElementById("capOptsTitle");
     if (!page || !listEl) return;
+    var capFilter = "open";
 
     function pad(n){ return String(n).padStart(2, "0"); }
     function todayStr(){ var d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
@@ -6970,9 +6989,10 @@ if ("serviceWorker" in navigator){
     }
 
     function render(){
-      var arr = load().slice().sort(function(a,b){ return String(a.unlock||"").localeCompare(String(b.unlock||"")); });
+      var all = load().slice().sort(function(a,b){ return String(b.unlock||"").localeCompare(String(a.unlock||"")); });
+      var arr = all.filter(function(c){ var dd = daysTo(c.unlock); return capFilter === "open" ? dd <= 0 : dd > 0; });
       if (!arr.length){
-        listEl.innerHTML = '<div class="cap-empty">还没有。<br>写一封给以后的我们。</div>';
+        listEl.innerHTML = '<div class="cap-empty">' + (capFilter === "open" ? "还没有可以看的信。" : "没有在等的信。<br>写一封给以后的我们。") + '</div>';
         return;
       }
       listEl.innerHTML = arr.map(function(c){
@@ -7007,6 +7027,16 @@ if ("serviceWorker" in navigator){
       var m = it.querySelector(".cap-more");
       m.textContent = it.classList.contains("collapsed") ? "展开全文" : "收起";
     });
+    var filterEl = document.getElementById("capFilter");
+    if (filterEl){
+      filterEl.addEventListener("click", function(e){
+        var b = e.target.closest("button[data-f]");
+        if (!b) return;
+        capFilter = b.getAttribute("data-f");
+        filterEl.querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+        render();
+      });
+    }
     document.getElementById("capBack").addEventListener("click", closeCap);
     document.getElementById("capAdd").addEventListener("click", function(){
       txt.value = ""; setDefaultDate();
@@ -7149,7 +7179,7 @@ if ("serviceWorker" in navigator){
     <div class="timeline" id="ddTimeline"></div>
   </div>
   <button class="dd-add" id="ddAdd" type="button" aria-label="写日记">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>写一封信</span>
   </button>
 </section>
 
@@ -7177,6 +7207,10 @@ if ("serviceWorker" in navigator){
       <div class="cap-sub">Voices locked in time,<br>awakening in days yet to come.</div>
     </div>
     <span class="cap-spacer"></span>
+  </div>
+  <div class="cap-filter" id="capFilter">
+    <button type="button" data-f="open" class="on">已解锁</button>
+    <button type="button" data-f="locked">静待开启</button>
   </div>
   <div class="cap-scroll"><div class="cap-list" id="capList"></div></div>
   <button class="cap-add" id="capAdd" type="button" aria-label="写一封信">
