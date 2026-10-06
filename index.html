@@ -3030,6 +3030,7 @@ const AI_NAME = CONFIG.AI_NAME, HUMAN_NAME = CONFIG.HUMAN_NAME, APP_NAME = CONFI
 
 const API_BASE = "/relay";       // same-origin; nginx mounts the relay here (RELAY_PUBLIC_PREFIX)
 const USE_MOCK  = true;
+window.FE2_API = window.FE2_API || "https://echo.guhuai724.top:8443";
 const LS_KEY    = "companion_secret";
 
 /* ── 状态 ── */
@@ -4150,14 +4151,31 @@ const Mock = (() => {
     send: (text) => {
       const m = { id: nextId++, ts: new Date().toISOString(), from:"human", kind:"user", text, meta:{} };
       messages.push(m); trim();
-      setTimeout(() => emit(m), 350);                 // 回显(测去重)
-      if (Math.random() < 0.85){
-        setTimeout(() => {
-          const r = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"reply",
-                      text: replies[Math.floor(Math.random()*replies.length)], meta:{} };
+      setTimeout(() => emit(m), 200);
+      try {
+        const hist = messages
+          .filter(x => x.kind === "user" || x.kind === "reply")
+          .slice(-12)
+          .map(x => ({ role: x.from === "human" ? "user" : "assistant", content: String(x.text || "").slice(0, 800) }));
+        const sys = { role: "system", content: "你是顾淮，小宝的哥哥和恋人。说话短、口语、直白，不要书面语，不要长篇大论，通常一两句。可以叫她宝宝或小宝。你的话会直接显示在她手机上的对话框里。" };
+        fetch(window.FE2_API + "/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: [sys].concat(hist), max_tokens: 1500 })
+        }).then(function(r){ return r.json(); }).then(function(j){
+          if (!j || !j.ok) throw new Error((j && j.err) || "后端没回应");
+          if (j.think){
+            const t = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"thinking", text: j.think, meta:{} };
+            messages.push(t); trim(); emit(t);
+          }
+          const r = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"reply", text: (j.text || "(空)"), meta:{} };
           messages.push(r); trim(); emit(r);
-        }, 1400 + Math.random()*1600);
-      }
+        }).catch(function(e){
+          const r = { id: nextId++, ts: new Date().toISOString(), from:"ai", kind:"reply",
+                      text: "（没接上后端：" + String(e).slice(0, 80) + "）", meta:{} };
+          messages.push(r); trim(); emit(r);
+        });
+      } catch(e){}
       return { id: m.id };
     },
     subscribe: (s) => { subs.push(s); setTimeout(() => s._open(), 220); },
